@@ -1,0 +1,154 @@
+{
+  "summary_bullets": [
+    {
+      "claim": "Market the app as offline-capable \u2014 it's a key selling point.",
+      "confidence": "high",
+      "evidence": [
+        {
+          "review_id": 26,
+          "quote": "Most of the old apps were not too functional on the Kindle Fire because they required WiFi."
+        }
+      ]
+    },
+    {
+      "claim": "Highlighting and note-taking features are popular among users.",
+      "confidence": "high",
+      "evidence": [
+        {
+          "review_id": 32,
+          "quote": "My only complaint is when I tried a translation or devotional it stays in my content. But that is not so annoying that I would drop my rating."
+        }
+      ]
+    },
+    {
+      "claim": "The app's ease of navigation and searchability are appreciated by users.",
+      "confidence": "high",
+      "evidence": [
+        {
+          "review_id": 35,
+          "quote": "I love this application. It has a lot of extra material with it and I really enjoy the parallel Bible option."
+        }
+      ]
+    },
+    {
+      "claim": "Users find the app useful for personal study and Bible learning.",
+      "confidence": "high",
+      "evidence": [
+        {
+          "review_id": 45,
+          "quote": "This is a very impressive app for personal study and Bible learning enrichment."
+        }
+      ]
+    },
+    {
+      "claim": "Ease of use and offline access are dominant strengths \u2014 emphasize these in marketing copy.",
+      "confidence": "high",
+      "evidence": [
+        {
+          "review_id": 82,
+          "quote": "This took a while to download - but it is the entire Bible and can be read offline. And it's free!"
+        }
+      ]
+    },
+    {
+      "claim": "Audio feature is a bonus \u2014 mention it in marketing copy.",
+      "confidence": "medium",
+      "evidence": [
+        {
+          "review_id": 97,
+          "quote": "I love it because the bible is available off line. I have searched for such an app for a while and I am grateful I found this one. It also as an audio feature. Awesome"
+        }
+      ]
+    }
+  ],
+  "top_strengths": [
+    {
+      "theme": "Ease of use",
+      "review_count": 62,
+      "confidence": "high",
+      "evidence": [
+        {
+          "review_id": 82,
+          "quote": "This took a while to download - but it is the entire Bible and can be read offline. And it's free!"
+        },
+        {
+          "review_id": 130,
+          "quote": "I found it to be a very simple, easy to use Bible app. It has the night mode which I love (battery saving mode)."
+        },
+        {
+          "review_id": 178,
+          "quote": "Very easy 2 use, easy 2 find a specific verse. Of all the bible apps on Amazon's Appstore this is the one I would recommend"
+        }
+      ]
+    },
+    {
+      "theme": "Offline access",
+      "review_count": 22,
+      "confidence": "high",
+      "evidence": [
+        {
+          "review_id": 82,
+          "quote": "This took a while to download - but it is the entire Bible and can be read offline. And it's free!"
+        },
+        {
+          "review_id": 122,
+          "quote": "This app does not need an internet connection in order for you to use it so it is ideal for all of the places you may want to read your Bible but have no access to a wi-fi network."
+        },
+        {
+          "review_id": 189,
+          "quote": "The quick Bible is awesome, I can access it from anywhere. The  best part I do not need the Internet to access it. Bravo!!!"
+        }
+      ]
+    },
+    {
+      "theme": "Highlighting and note-taking",
+      "review_count": 15,
+      "confidence": "high",
+      "evidence": [
+        {
+          "review_id": 98,
+          "quote": "I've had many different Bible apps and each one in their own way was hard to use. This KJV one is VERY useful. my favorite features are the highlighting and notes."
+        },
+        {
+          "review_id": 134,
+          "quote": "I love red letter bibles its the perfect bible for Christians or anyone. It doesn't matter who you are the bible is a great book (well books) to read."
+        }
+      ]
+    },
+    {
+      "theme": "Customizability",
+      "review_count": 10,
+      "confidence": "high",
+      "evidence": [
+        {
+          "review_id": 187,
+          "quote": "this is a very nice Bible program. loads quickly, runs flawlessly, gives me the options i want (text size, colors, etc), along with bookmarks and the ability to add verse notes. exactly what i was looking for to use for my daily Bible reading."
+        }
+      ]
+    },
+    {
+      "theme": "Daily verses feature",
+      "review_count": 7,
+      "confidence": "high",
+      "evidence": [
+        {
+          "review_id": 293,
+          "quote": "I love this app. I love having access so easily to daily Bible verses. I read it everyday and it brings me peace"
+        }
+      ]
+    }
+  ],
+  "top_complaints": [],
+  "sentiment": {
+    "positive_rate": 0.9661,
+    "negative_rate": 0.0339,
+    "n_reviews": 354
+  },
+  "unknowns": [],
+  "meta": {
+    "total_reviews": 354,
+    "chunks_processed": 7,
+    "chunks_failed": 1,
+    "chunk_size": 50
+  }
+}

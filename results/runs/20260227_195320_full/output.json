@@ -1,0 +1,207 @@
+{
+  "summary_bullets": [
+    {
+      "claim": "Addictiveness is the dominant strength \u2014 lean into this in marketing copy.",
+      "confidence": "high",
+      "evidence": [
+        {
+          "review_id": 5,
+          "quote": "This was my first time to play Angry Birds and I don'tthink I could have had a better first impression!  Because of this, I will purchase every Angry Birds gameI can get my hands on!  Now I see what all the 'fuss' is about!!!"
+        }
+      ]
+    },
+    {
+      "claim": "Market to parents and children \u2014 it's fun for all ages.",
+      "confidence": "high",
+      "evidence": [
+        {
+          "review_id": 34,
+          "quote": "I downloaded this to my son's Nabi Jr, it's one of his favorite games.  He has all the angry birds free apps downloaded and can play them better than most adults at only 5 years old."
+        }
+      ]
+    },
+    {
+      "claim": "Offer a premium ad-free version to cater to those who find ads intrusive.",
+      "confidence": "high",
+      "evidence": [
+        {
+          "review_id": 22,
+          "quote": "Buy the ad free. Worth the pennies it costs. Love Angry Birds! Developers are geniuses. Fun, fun game to play alone or with someone else."
+        }
+      ]
+    },
+    {
+      "claim": "The gameplay is easy and fun \u2014 emphasize this in marketing copy.",
+      "confidence": "high",
+      "evidence": [
+        {
+          "review_id": 65,
+          "quote": "Nice way to waste some spare time."
+        }
+      ]
+    },
+    {
+      "claim": "Offer in-app purchases to unlock additional levels.",
+      "confidence": "high",
+      "evidence": [
+        {
+          "review_id": 145,
+          "quote": "Angry Birds - This is one of my favorite games. My grandson has this game on his cell phone and he thought I wasn't ever going to give his phone back. HA,HA, HA. This game can be quite addicting."
+        }
+      ]
+    },
+    {
+      "claim": "Game is easy to learn but hard to master \u2014 highlight this in marketing copy.",
+      "confidence": "medium",
+      "evidence": [
+        {
+          "review_id": 183,
+          "quote": "I love playing Angry Birds because of different birds and levels, the game is very addictive, it is fun, and it teaches physics in a fun way!"
+        }
+      ]
+    }
+  ],
+  "top_strengths": [
+    {
+      "theme": "Fun and addictive gameplay",
+      "review_count": 76,
+      "confidence": "high",
+      "evidence": [
+        {
+          "review_id": 5,
+          "quote": "This was my first time to play Angry Birds and I don'tthink I could have had a better first impression!  Because of this, I will purchase every Angry Birds gameI can get my hands on!  Now I see what all the 'fuss' is about!!!"
+        },
+        {
+          "review_id": 99,
+          "quote": "I'm addicted to it."
+        },
+        {
+          "review_id": 108,
+          "quote": "Angry Birds is very addictive!"
+        }
+      ]
+    },
+    {
+      "theme": "Universal appeal",
+      "review_count": 46,
+      "confidence": "high",
+      "evidence": [
+        {
+          "review_id": 48,
+          "quote": "I love angry birds. I think it is the best game in the world. everyone should play angry birds. I &lt;3 (&deg;^&deg;)"
+        },
+        {
+          "review_id": 59,
+          "quote": "This is a #1 game at my house."
+        },
+        {
+          "review_id": 140,
+          "quote": "Amazing game! if you've never played Angry Birds before, start here!"
+        }
+      ]
+    },
+    {
+      "theme": "Fun and easy gameplay",
+      "review_count": 12,
+      "confidence": "high",
+      "evidence": [
+        {
+          "review_id": 179,
+          "quote": "Its Angry Birds..... who doesn't like angry birds. Kid Friendly for my kids ranging from 4 to 8 they love it."
+        }
+      ]
+    },
+    {
+      "theme": "Easy to learn and play",
+      "review_count": 8,
+      "confidence": "medium",
+      "evidence": [
+        {
+          "review_id": 65,
+          "quote": "Nice way to waste some spare time."
+        }
+      ]
+    },
+    {
+      "theme": "Engaging for both kids and adults",
+      "review_count": 6,
+      "confidence": "medium",
+      "evidence": [
+        {
+          "review_id": 141,
+          "quote": "Had been hearing for ages and ages about Angry Birds and thought to give it a try with the free app for Kindle. IMMEDIATELY sucked in, my oldest 2 daughters (7 and 4) like to play it as a treat when school work, chores, etc. are done for the afternoon."
+        },
+        {
+          "review_id": 219,
+          "quote": "I am not changing the world through Twitter. I merely entertain myself here instead of chasing Angry Birds, etc..."
+        }
+      ]
+    }
+  ],
+  "top_complaints": [
+    {
+      "theme": "Intrusive ads",
+      "review_count": 6,
+      "confidence": "medium",
+      "evidence": [
+        {
+          "review_id": 13,
+          "quote": "Games it self are good but had to switch to ad free  original angry birds . Didn't like the ads interfering with the game."
+        },
+        {
+          "review_id": 136,
+          "quote": "I have become addict to Angry Birds and Love to achieve more awards and levels and kill those little pigs! But I hate the ads."
+        },
+        {
+          "review_id": 196,
+          "quote": "except the ads in the free version"
+        }
+      ]
+    },
+    {
+      "theme": "Repetitive",
+      "review_count": 2,
+      "confidence": "low",
+      "evidence": [
+        {
+          "review_id": 17,
+          "quote": "Angry birds is so boring all you do is knock down the pigs and then the birds are doing flops and stuff it's stupid."
+        }
+      ]
+    },
+    {
+      "theme": "Not suitable for children",
+      "review_count": 1,
+      "confidence": "low",
+      "evidence": [
+        {
+          "review_id": 30,
+          "quote": "not good...games bad...not good ffor kids...they r throwing birds! really people...sue them dumb people! sue who made Angry birds. xhhshsjsjsnsn shshs"
+        }
+      ]
+    },
+    {
+      "theme": "Technical issues",
+      "review_count": 1,
+      "confidence": "low",
+      "evidence": [
+        {
+          "review_id": 29,
+          "quote": "got this kindle fire for Christmas. trying to download free angry birds and it is not working. started to down load over 2 hours ago. an it is only at 2 percent still. piece of crap:("
+        }
+      ]
+    }
+  ],
+  "sentiment": {
+    "positive_rate": 0.9319,
+    "negative_rate": 0.0681,
+    "n_reviews": 235
+  },
+  "unknowns": [],
+  "meta": {
+    "total_reviews": 235,
+    "chunks_processed": 5,
+    "chunks_failed": 0,
+    "chunk_size": 50
+  }
+}

@@ -1,0 +1,67 @@
+Error: Schema error: 'unknowns' is a required property
+
+Raw output:
+{
+  "summary_bullets": [
+    {
+      "claim": "The app is praised for its offline functionality — emphasize this in marketing copy.",
+      "confidence": "high",
+      "evidence": [{"review_id": 46, "quote": "This App Is Wonderful.. I Am Just Starting Out To Read My Bible More.. And This Apps Me To Understand What Exactly I Am Reading.."}]
+    },
+    {
+      "claim": "Users appreciate the ability to highlight and take notes — promote these features.",
+      "confidence": "high",
+      "evidence": [{"review_id": 54, "quote": "I can take this to church and not worry about having a large bible.  The layout is great and you can bookmark certain scriptures for reading later"}],
+    "claim": "The KJV version is preferred by many users — prioritize this translation."
+      },
+      {
+        "claim": "Some users find navigation difficult — address this in the app's design or instructions.",
+        "confidence": "medium",
+        "evidence": [{"review_id": 92, "quote": "I have to weed through everything to get to the verse that I want to read."}]
+      }
+    ],
+  "top_strengths": [
+    {
+      "theme": "Offline functionality",
+      "review_count": 10,
+      "confidence": "high",
+      "evidence": [{"review_id": 46, "quote": "This App Is Wonderful.. I Am Just Starting Out To Read My Bible More.. And This Apps Me To Understand What Exactly I Am Reading.."}]
+    },
+    {
+      "theme": "Highlighting and note-taking",
+      "review_count": 6,
+      "confidence": "high",
+      "evidence": [{"review_id": 54, "quote": "I can take this to church and not worry about having a large bible.  The layout is great and you can bookmark certain scriptures for reading later"}]
+    },
+    {
+      "theme": "KJV translation",
+      "review_count": 12,
+      "confidence": "high",
+      "evidence": [{"review_id": 87, "quote": "I love this app of the King James Bible!!!  It's very well designed and easy to use and I highly recommend downloading it!  Thank you Tecarta!"}]
+    }
+  ],
+  "top_complaints": [
+    {
+      "theme": "Navigation difficulties",
+      "review_count": 1,
+      "confidence": "medium",
+      "evidence": [{"review_id": 92, "quote": "I have to weed through everything to get to the verse that I want to read."}]
+    }
+  ],
+  "sentiment": {
+    "positive_rate": 0.96,
+    "negative_rate": 0.04
+  },
+  "unknown_complaints": [
+    {
+      "theme": "Audio feature",
+      "review_count": 1,
+      "evidence": [{"review_id": 97, "quote": "I love it because the bible is available off line. I have searched for such an app for a while and I am grateful I found this one. It also as an audio feature. Awesome"}]
+    },
+    {
+      "theme": "Commentaries",
+      "review_count": 1,
+      "evidence": [{"review_id": 94, "quote": "I am pleased beyond words with this app. I have been a student of the Bible for many years and have bought many commentaries.  Having them at my finger tips and on my Kindle Fire is awesome. I can't wait for more commentaries to be added."}]
+    }
+  ]
+}

@@ -1,0 +1,61 @@
+Error: Schema error: 'unknowns' is a required property
+
+Raw output:
+{
+  "summary_bullets": [
+    {
+      "claim": "The app is highly rated for its ease of use and useful features.",
+      "confidence": "high",
+      "evidence": [{"review_id": 268, "quote": "Great Bible App and easy to navigate through. Has alot of features that are useful for Bible study."}]
+    },
+    {
+      "claim": "Users appreciate the offline functionality.",
+      "confidence": "high",
+      "evidence": [{"review_id": 259, "quote": "I have looked at lots of Bible apps but had not found one like this where I can highlight only one word or I can make notes and it's easy to locate individual verses."}]
+    },
+    {
+      "claim": "Some users find the app useful for religious debates.",
+      "confidence": "medium",
+      "evidence": [{"review_id": 289, "quote": "I'm not a religious person but this Bible is exactly what I was looking for whenever a religious debate comes up because you have the NT in Greek as well as the complete Vulgate in Latin and even a Hebrew version."}]
+    },
+    {
+      "claim": "Some users find the app helpful for daily spiritual guidance.",
+      "confidence": "medium",
+      "evidence": [{"review_id": 294, "quote": "I love this app. I love having access so easily to daily Bible verses. I read it everyday and it brings me peace."}]
+    }
+  ],
+  "top_strengths": [
+    {
+      "theme": "Ease of use",
+      "review_count": 12,
+      "confidence": "high",
+      "evidence": [{"review_id": 268, "quote": "Great Bible App and easy to navigate through. Has alot of features that are useful for Bible study."}]
+    },
+    {
+      "theme": "Offline functionality",
+      "review_count": 10,
+      "confidence": "high",
+      "evidence": [{"review_id": 259, "quote": "I have looked at lots of Bible apps but had not found one like this where I can highlight only one word or I can make notes and it's easy to locate individual verses."}]
+    },
+    {
+      "theme": "Useful for religious debates",
+      "review_count": 1,
+      "confidence": "medium",
+      "evidence": [{"review_id": 289, "quote": "I'm not a religious person but this Bible is exactly what I was looking for whenever a religious debate comes up because you have the NT in Greek as well as the complete Vulgate in Latin and even a Hebrew version."}]
+    },
+    {
+      "theme": "Daily spiritual guidance",
+      "review_count": 1,
+      "confidence": "medium",
+      "evidence": [{"review_id": 294, "quote": "I love this app. I love having access so easily to daily Bible verses. I read it everyday and it brings me peace."}]
+    }
+  ],
+  "top_complaints": [],
+  "sentiment": {
+    "positive_rate": 1,
+    "negative_rate": 0,
+    "neutral_rate": 0,
+    "review_count": 29
+  },
+  "unknown_sentiment": []
+}

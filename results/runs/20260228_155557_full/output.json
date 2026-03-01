@@ -1,0 +1,231 @@
+{
+  "summary_bullets": [
+    {
+      "claim": "Addictiveness is the dominant strength \u2014 lean into this in marketing copy.",
+      "confidence": "high",
+      "evidence": [
+        {
+          "review_id": 5,
+          "quote": "this game is incredibly addicting I can not stop playing"
+        }
+      ]
+    },
+    {
+      "claim": "Angry Birds has a wide appeal \u2014 target all age groups.",
+      "confidence": "high",
+      "evidence": [
+        {
+          "review_id": 34,
+          "quote": "I downloaded this to my son's Nabi Jr, it's one of his favorite games.  He has all the angry birds free apps downloaded and can play them better than most adults at only 5 years old."
+        }
+      ]
+    },
+    {
+      "claim": "Angry Birds is a great time killer \u2014 emphasize its entertainment value.",
+      "confidence": "high",
+      "evidence": [
+        {
+          "review_id": 47,
+          "quote": "We have enjoyed Angry Birds Free.  It has been a lot of fun for the whole family.  Easy to use!"
+        }
+      ]
+    },
+    {
+      "claim": "Angry Birds is suitable for both casual and hardcore gamers.",
+      "confidence": "medium",
+      "evidence": [
+        {
+          "review_id": 32,
+          "quote": "I am very addicted to angry birds! This is a great app and work perfect on my kindle fire! Its free and that is a plus too!"
+        }
+      ]
+    },
+    {
+      "claim": "Angry Birds offers a variety of levels for different skill levels.",
+      "confidence": "medium",
+      "evidence": [
+        {
+          "review_id": 36,
+          "quote": "Free Angry Birds... Just amazing, funny and with many different (and complicated) levels to spent your time. Just like every Angry Birds game."
+        }
+      ]
+    },
+    {
+      "claim": "Free version available with ads \u2014 highlight this as a selling point.",
+      "confidence": "medium",
+      "evidence": [
+        {
+          "review_id": 91,
+          "quote": "I hesitated to download this free version (I have never paid for a game) because of warnings about the ads. Enticed by the the 5-star reviews, I installed the game on my new KFHD8.9. Yes the"
+        }
+      ],
+      "note": "Also present in negative review: "
+    }
+  ],
+  "top_strengths": [
+    {
+      "theme": "Fun and addictive gameplay",
+      "review_count": 88,
+      "confidence": "high",
+      "evidence": [
+        {
+          "review_id": 5,
+          "quote": "this game is incredibly addicting I can not stop playing"
+        },
+        {
+          "review_id": 108,
+          "quote": "Angry Birds is very addictive! My husband and I have lots of fun playing against each other. Very good game."
+        },
+        {
+          "review_id": 186,
+          "quote": "Angry Birds Angry Birds Angry Birds Angry Birds Angry Birds Angry Birds Angry Birds Angry Birds Angry BirdsYesss!"
+        }
+      ]
+    },
+    {
+      "theme": "Wide appeal",
+      "review_count": 42,
+      "confidence": "high",
+      "evidence": [
+        {
+          "review_id": 34,
+          "quote": "I downloaded this to my son's Nabi Jr, it's one of his favorite games.  He has all the angry birds free apps downloaded and can play them better than most adults at only 5 years old."
+        },
+        {
+          "review_id": 67,
+          "quote": "My 18 month old, my 6 year old, even grandma. This app is free and it takes seconds to load it. Great for all ages!"
+        },
+        {
+          "review_id": 140,
+          "quote": "Amazing game! if you've never played Angry Birds before, start here!Its the new Pacman for sure!Great for kids, teens, and the elderly!"
+        }
+      ]
+    },
+    {
+      "theme": "Easy gameplay",
+      "review_count": 7,
+      "confidence": "medium",
+      "evidence": [
+        {
+          "review_id": 65,
+          "quote": "Nice game. I have never played Angry Birds before. So, when I purchased my tablet, one of the first games I downloaded was this."
+        }
+      ]
+    },
+    {
+      "theme": "Strong brand recognition",
+      "review_count": 6,
+      "confidence": "medium",
+      "evidence": [
+        {
+          "review_id": 216,
+          "quote": "Everyone in here is such a perfectionist. I swear, a working app cannot even get a 3 star rating. Why is everything compared to Angry Birds? Angry birds blows, and its old."
+        }
+      ]
+    },
+    {
+      "theme": "Educational value (teaches physics)",
+      "review_count": 4,
+      "confidence": "low",
+      "evidence": [
+        {
+          "review_id": 183,
+          "quote": "I love playing Angry Birds because of different birds and levels, the game is very addictive, it is fun, and it teaches physics in a fun way! You do not have to be good in math and/or science to play this game!"
+        },
+        {
+          "review_id": 225,
+          "quote": "I love a good thinking and strategy game, much like Angry Birds. This is a lot like that, except that you are moving boxes as efficiently as possible instead of knocking over buildings. You advance through levels trying to get 3 stars on each, even if yo"
+        }
+      ]
+    }
+  ],
+  "top_complaints": [
+    {
+      "theme": "Intrusive ads",
+      "review_count": 15,
+      "confidence": "high",
+      "evidence": [
+        {
+          "review_id": 13,
+          "quote": "Games it self are good but had to switch to ad free  original angry birds . Didn't like the ads interfering with the game."
+        },
+        {
+          "review_id": 15,
+          "quote": "I love angry birds, I have no issue with ad supported games.  I have a real issue with an &#34;ad supported game&#34; that constantly launches full screen ads that last substantially longer than the level you just played.  The in game ads are fine, and w"
+        },
+        {
+          "review_id": 96,
+          "quote": "I really like Angry Birds the game. But I could not stand the suggestive and violent ads that kept popping up on this free version of the game."
+        }
+      ]
+    },
+    {
+      "theme": "Game difficulty",
+      "review_count": 4,
+      "confidence": "low",
+      "evidence": [
+        {
+          "review_id": 8,
+          "quote": "Hard levels that take a while to beat; sometimes I had to look up a walk-through to pass them. Plenty of levels. Once I completed all the levels; I stopped playing."
+        },
+        {
+          "review_id": 228,
+          "quote": "I hate this game :(it's really hard and stupidA better game is Angry birdsI really hate it you shouldn't get this"
+        }
+      ]
+    },
+    {
+      "theme": "Technical issues",
+      "review_count": 4,
+      "confidence": "low",
+      "evidence": [
+        {
+          "review_id": 29,
+          "quote": "got this kindle fire for Christmas. trying to download free angry birds and it is not working. started to down load over 2 hours ago. an it is only at 2 percent still. piece of crap:("
+        },
+        {
+          "review_id": 40,
+          "quote": "I love this game=] There's nothing I don't like about this game. I first tried Angry Birds on my mom's phone and I was immediately hooked. But it takes forever to download."
+        },
+        {
+          "review_id": 139,
+          "quote": "1st I have to uninstall in order to get the new update. Now it crashes everytime I try to do any of the older levels. Rovio this is BS!!!!!!"
+        }
+      ]
+    },
+    {
+      "theme": "Gameplay is repetitive",
+      "review_count": 2,
+      "confidence": "low",
+      "evidence": [
+        {
+          "review_id": 18,
+          "quote": "Angry birds is so boring all you do is knock down the pigs and then the birds are doing flops and stuff it's stupid."
+        }
+      ]
+    },
+    {
+      "theme": "Repetitive gameplay",
+      "review_count": 1,
+      "confidence": "low",
+      "evidence": [
+        {
+          "review_id": 17,
+          "quote": "We all love the beloved angry birds characters but this app gets really old I mean really old, its fun the first couple of times but everyone has shirts of it youtube videos of it,I mean really this has a terrible lasting appeal"
+        }
+      ]
+    }
+  ],
+  "sentiment": {
+    "positive_rate": 0.9319,
+    "negative_rate": 0.0681,
+    "n_reviews": 235
+  },
+  "unknowns": [],
+  "meta": {
+    "total_reviews": 235,
+    "chunks_processed": 6,
+    "chunks_failed": 0,
+    "chunk_size": 50
+  }
+}

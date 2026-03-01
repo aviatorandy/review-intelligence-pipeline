@@ -1,0 +1,98 @@
+{
+  "summary_bullets": [
+    {
+      "claim": "High cost is a dominant complaint \u2014 consider offering a free version or lowering price.",
+      "confidence": "high",
+      "evidence": [
+        {
+          "review_id": 4,
+          "quote": "Not worth the $9.99 cost."
+        },
+        {
+          "review_id": 215,
+          "quote": "Well good luck."
+        }
+      ]
+    },
+    {
+      "claim": "Limited functionality is a complaint \u2014 address issues with search and downloading Bibles.",
+      "confidence": "high",
+      "evidence": [
+        {
+          "review_id": 273,
+          "quote": "It advertises many versions of the Bible and you only get 1."
+        },
+        {
+          "review_id": 285,
+          "quote": "I have tried this program on two different tablets. It will not download Bibles."
+        }
+      ]
+    },
+    {
+      "claim": "Lack of commentary is a complaint \u2014 consider adding this feature.",
+      "confidence": "medium",
+      "evidence": [
+        {
+          "review_id": 341,
+          "quote": "In the preview, it showed commentary ability. This not the case."
+        }
+      ]
+    }
+  ],
+  "top_strengths": [],
+  "top_complaints": [
+    {
+      "theme": "High cost",
+      "review_count": 2,
+      "confidence": "low",
+      "evidence": [
+        {
+          "review_id": 4,
+          "quote": "Not worth the $9.99 cost."
+        },
+        {
+          "review_id": 215,
+          "quote": "Well good luck."
+        }
+      ]
+    },
+    {
+      "theme": "Limited functionality",
+      "review_count": 2,
+      "confidence": "low",
+      "evidence": [
+        {
+          "review_id": 273,
+          "quote": "It advertises many versions of the Bible and you only get 1."
+        },
+        {
+          "review_id": 285,
+          "quote": "I have tried this program on two different tablets. It will not download Bibles."
+        }
+      ]
+    },
+    {
+      "theme": "Lack of commentary",
+      "review_count": 1,
+      "confidence": "low",
+      "evidence": [
+        {
+          "review_id": 341,
+          "quote": "In the preview, it showed commentary ability. This not the case."
+        }
+      ]
+    }
+  ],
+  "sentiment": {
+    "positive_rate": 0.9661,
+    "negative_rate": 0.0339,
+    "n_reviews": 354
+  },
+  "unknowns": [],
+  "meta": {
+    "total_reviews": 354,
+    "chunks_processed": 1,
+    "chunks_failed": 2,
+    "chunk_size": 180
+  }
+}

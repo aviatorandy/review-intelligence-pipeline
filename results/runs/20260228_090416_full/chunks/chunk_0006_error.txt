@@ -1,0 +1,84 @@
+Error: JSON parse error: Expecting ',' delimiter: line 51 column 2 (char 2287)
+
+Raw output:
+{
+  "summary_bullets": [
+    {
+      "claim": "Ad-free experience is a key strength — emphasize this in marketing copy.",
+      "confidence": "high",
+      "evidence": [{"review_id": 320, "quote": "I have quit a number of Bible books, apps on my Kindle, but this one is by far the best.  I use it to the exclusion of all the others."}]
+    },
+    {
+      "claim": "Ease of navigation and reading experience are top strengths — highlight these in marketing copy.",
+      "confidence": "high",
+      "evidence": [{"review_id": 320, "quote": "I really like the highlight feature along with notes and bookmarks. I will probably add a couple more versions."}]
+    },
+    {
+      "claim": "Offline access is a significant advantage — emphasize this in marketing copy.",
+      "confidence": "high",
+      "evidence": [{"review_id": 348, "quote": "Great way to follow the preacher.Tap on the book of the bible.Then Tap the chapter.Very quick.We love it."}]
+    },
+    {
+      "claim": "Multiple translations and study tools are available — promote these features in marketing copy.",
+      "confidence": "high",
+      "evidence": [{"review_id": 347, "quote": "I love this Bible! You can download different versions, dictionary's, maps and commentaries too! This app has everything you can want!!}]"
+    }
+  ],
+  "top_strengths": [
+    {
+      "theme": "Ease of use",
+      "review_count": 12,
+      "confidence": "high",
+      "evidence": [{"review_id": 320, "quote": "I really like the highlight feature along with notes and bookmarks. I will probably add a couple more versions."}]
+    },
+    {
+      "theme": "Multiple translations and study tools",
+      "review_count": 11,
+      "confidence": "high",
+      "evidence": [{"review_id": 347, "quote": "I love this Bible! You can download different versions, dictionary's, maps and commentaries too! This app has everything you can want!!}]"
+    },
+    {
+      "theme": "Offline access",
+      "review_count": 2,
+      "confidence": "medium",
+      "evidence": [{"review_id": 348, "quote": "Great way to follow the preacher.Tap on the book of the bible.Then Tap the chapter.Very quick.We love it."}]
+    }
+  ],
+  "top_complaints": [],
+  "sentiment": {
+    "positive_rate": 1,
+    "negative_rate": 0,
+    "n_reviews": 50
+  },
+  "unknowns": []
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

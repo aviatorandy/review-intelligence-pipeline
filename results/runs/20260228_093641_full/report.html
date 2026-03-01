@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Review Intelligence Report</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #0a0a0f;
+    --surface: #13131a;
+    --surface2: #1c1c26;
+    --border: #2a2a38;
+    --text: #e8e8f0;
+    --muted: #6b6b80;
+    --accent: #7c6af7;
+    --green: #22c55e;
+    --red: #ef4444;
+    --amber: #f59e0b;
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Mono', monospace;
+    min-height: 100vh;
+    padding: 40px 20px;
+  }
+
+  .container { max-width: 900px; margin: 0 auto; }
+
+  header {
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 32px;
+    margin-bottom: 48px;
+    animation: fadeUp 0.6s ease both;
+  }
+
+  header h1 {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(2rem, 5vw, 3.5rem);
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    background: linear-gradient(135deg, #e8e8f0 0%, #7c6af7 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    line-height: 1.1;
+  }
+
+  header .subtitle {
+    color: var(--muted);
+    font-size: 0.85rem;
+    margin-top: 8px;
+    letter-spacing: 0.05em;
+  }
+
+  .sentiment-block {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 32px;
+    margin-bottom: 48px;
+    animation: fadeUp 0.6s 0.1s ease both;
+  }
+
+  .sentiment-block h2 {
+    font-family: 'Syne', sans-serif;
+    font-size: 0.75rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 24px;
+  }
+
+  .sentiment-row {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 14px;
+  }
+
+  .sentiment-label {
+    width: 70px;
+    font-size: 0.8rem;
+    color: var(--muted);
+    flex-shrink: 0;
+  }
+
+  .bar-track {
+    flex: 1;
+    height: 10px;
+    background: var(--surface2);
+    border-radius: 99px;
+    overflow: hidden;
+  }
+
+  .bar-fill {
+    height: 100%;
+    border-radius: 99px;
+    transition: width 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .sentiment-pct {
+    width: 48px;
+    text-align: right;
+    font-size: 0.9rem;
+    font-weight: 500;
+  }
+
+  .n-reviews {
+    font-size: 0.75rem;
+    color: var(--muted);
+    margin-top: 12px;
+  }
+
+  .section {
+    margin-bottom: 48px;
+    animation: fadeUp 0.6s 0.2s ease both;
+  }
+
+  .section h2 {
+    font-family: 'Syne', sans-serif;
+    font-size: 1.1rem;
+    font-weight: 700;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px 24px;
+    margin-bottom: 12px;
+    transition: border-color 0.2s;
+  }
+
+  .card:hover { border-color: var(--accent); }
+
+  .card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 16px;
+    margin-bottom: 14px;
+    flex-wrap: wrap;
+  }
+
+  .theme-name {
+    font-family: 'Syne', sans-serif;
+    font-size: 1rem;
+    font-weight: 600;
+  }
+
+  .card-meta {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-shrink: 0;
+  }
+
+  .review-count {
+    font-size: 0.8rem;
+    font-weight: 500;
+  }
+
+  .badge {
+    font-size: 0.7rem;
+    padding: 3px 10px;
+    border-radius: 99px;
+    color: #000;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+
+  .evidence-list { display: flex; flex-direction: column; gap: 8px; }
+
+  .evidence-item {
+    background: var(--surface2);
+    border-left: 3px solid var(--accent);
+    border-radius: 0 8px 8px 0;
+    padding: 10px 14px;
+  }
+
+  .review-id {
+    font-size: 0.7rem;
+    color: var(--muted);
+    display: block;
+    margin-bottom: 4px;
+    letter-spacing: 0.05em;
+  }
+
+  .quote {
+    font-size: 0.82rem;
+    color: var(--text);
+    line-height: 1.5;
+    font-style: italic;
+  }
+
+  .bullet-item {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 18px 22px;
+    margin-bottom: 10px;
+    transition: border-color 0.2s;
+  }
+
+  .bullet-item:hover { border-color: var(--accent); }
+
+  .bullet-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    margin-bottom: 12px;
+    flex-wrap: wrap;
+  }
+
+  .bullet-claim {
+    font-size: 0.92rem;
+    line-height: 1.5;
+    flex: 1;
+  }
+
+  .unknown-tags { display: flex; flex-wrap: wrap; gap: 8px; }
+
+  .unknown-tag {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 99px;
+    padding: 6px 16px;
+    font-size: 0.78rem;
+    color: var(--muted);
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <header>
+    <h1>Review Intelligence<br>Report</h1>
+    <p class="subtitle">TWITTER · AMAZON REVIEWS · 213 REVIEWS SAMPLED</p>
+  </header>
+
+  <div class="sentiment-block">
+    <h2>Sentiment Distribution</h2>
+    <div class="sentiment-row">
+      <span class="sentiment-label">Positive</span>
+      <div class="bar-track">
+        <div class="bar-fill" style="width:90.1%; background: var(--green);"></div>
+      </div>
+      <span class="sentiment-pct" style="color: var(--green)">90.1%</span>
+    </div>
+    <div class="sentiment-row">
+      <span class="sentiment-label">Negative</span>
+      <div class="bar-track">
+        <div class="bar-fill" style="width:9.9%; background: var(--red);"></div>
+      </div>
+      <span class="sentiment-pct" style="color: var(--red)">9.9%</span>
+    </div>
+    <p class="n-reviews">Based on 213 sampled reviews with ground-truth labels</p>
+  </div>
+
+  <section class="section">
+    <h2>📋 Executive Summary</h2>
+    
+            <div class="bullet-item">
+                <div class="bullet-header">
+                    <span class="badge" style="background:#22c55e">high</span>
+                    <span class="bullet-claim">Addictiveness is the dominant strength — lean into this in marketing copy.</span>
+                </div>
+                <div class="evidence-list">
+            <div class="evidence-item">
+                <span class="review-id">Review #2</span>
+                <span class="quote">"I was having problems posting to Twitter from some of my other apps until I got the official Twitter App. I use it on my Kindle Fire HD. Now when I want to post something to Twitter from another App or game it gives me a pop up window with this Twitter a"</span>
+            </div></div>
+            </div>
+            <div class="bullet-item">
+                <div class="bullet-header">
+                    <span class="badge" style="background:#22c55e">high</span>
+                    <span class="bullet-claim">Twitter is popular among teens and adults alike — target these demographics in marketing.</span>
+                </div>
+                <div class="evidence-list">
+            <div class="evidence-item">
+                <span class="review-id">Review #79</span>
+                <span class="quote">"I like to be able to retweet or favorite someone else's Tweet."</span>
+            </div></div>
+            </div>
+            <div class="bullet-item">
+                <div class="bullet-header">
+                    <span class="badge" style="background:#22c55e">high</span>
+                    <span class="bullet-claim">Twitter is a convenient way to keep up with news and updates.</span>
+                </div>
+                <div class="evidence-list">
+            <div class="evidence-item">
+                <span class="review-id">Review #45</span>
+                <span class="quote">"I use Twitter much more than Facebook."</span>
+            </div></div>
+            </div>
+            <div class="bullet-item">
+                <div class="bullet-header">
+                    <span class="badge" style="background:#22c55e">high</span>
+                    <span class="bullet-claim">Users love the app for its easy navigation — emphasize this in marketing copy.</span>
+                </div>
+                <div class="evidence-list">
+            <div class="evidence-item">
+                <span class="review-id">Review #140</span>
+                <span class="quote">"This is a good app for me to read Twitter while I'm in my bed and want to catch the last Tweets before I go to bed.  *addicted*"</span>
+            </div>
+            <div class="evidence-item">
+                <span class="review-id">Review #168</span>
+                <span class="quote">"@namesping.  New to it but learning.  I would have never used it but entered a contest on The Ellen show with it and won so guess what. I use Twitter now."</span>
+            </div></div>
+            </div>
+            <div class="bullet-item">
+                <div class="bullet-header">
+                    <span class="badge" style="background:#22c55e">high</span>
+                    <span class="bullet-claim">Users appreciate the app's seamless integration with their Twitter accounts — highlight this in marketing copy.</span>
+                </div>
+                <div class="evidence-list">
+            <div class="evidence-item">
+                <span class="review-id">Review #158</span>
+                <span class="quote">"I've used lots of different twitter apps on my iPhone. This one on my Kindle Fire HD 8.9&#34; tablet really is the best. I find it so simple. It's much easier than using my browser on my desktop or laptop. This Kindle app works seamlessly."</span>
+            </div></div>
+            </div>
+            <div class="bullet-item">
+                <div class="bullet-header">
+                    <span class="badge" style="background:#22c55e">high</span>
+                    <span class="bullet-claim">Users enjoy the app for its simplicity — emphasize this in marketing copy.</span>
+                </div>
+                <div class="evidence-list">
+            <div class="evidence-item">
+                <span class="review-id">Review #185</span>
+                <span class="quote">"Does exactly what i want it to do which is take me to twitter so that I can check it"</span>
+            </div></div>
+            </div>
+  </section>
+
+  <section class="section">
+    <h2>✅ Top Strengths</h2>
+    
+            <div class="card">
+                <div class="card-header">
+                    <span class="theme-name">Fun and addictive gameplay</span>
+                    <div class="card-meta">
+                        <span class="review-count" style="color:#22c55e">12 reviews</span>
+                        <span class="badge" style="background:#22c55e">high</span>
+                    </div>
+                </div>
+                <div class="evidence-list">
+            <div class="evidence-item">
+                <span class="review-id">Review #2</span>
+                <span class="quote">"I was having problems posting to Twitter from some of my other apps until I got the official Twitter App. I use it on my Kindle Fire HD. Now when I want to post something to Twitter from another App or game it gives me a pop up window with this Twitter a"</span>
+            </div></div>
+            </div>
+            <div class="card">
+                <div class="card-header">
+                    <span class="theme-name">Ease of use</span>
+                    <div class="card-meta">
+                        <span class="review-count" style="color:#22c55e">11 reviews</span>
+                        <span class="badge" style="background:#22c55e">high</span>
+                    </div>
+                </div>
+                <div class="evidence-list">
+            <div class="evidence-item">
+                <span class="review-id">Review #82</span>
+                <span class="quote">"If you have a Kindle Fire and a Twitter account, you need this app. It works exactly how you would expect a Twitter app to work. No surprises or bugs I couldn't handle."</span>
+            </div>
+            <div class="evidence-item">
+                <span class="review-id">Review #181</span>
+                <span class="quote">"I have been a Twitter fan for quite a few years & this app is great to keep up with my contacts & keep tweeting"</span>
+            </div></div>
+            </div>
+            <div class="card">
+                <div class="card-header">
+                    <span class="theme-name">Convenience for following news and updates</span>
+                    <div class="card-meta">
+                        <span class="review-count" style="color:#22c55e">9 reviews</span>
+                        <span class="badge" style="background:#22c55e">high</span>
+                    </div>
+                </div>
+                <div class="evidence-list">
+            <div class="evidence-item">
+                <span class="review-id">Review #45</span>
+                <span class="quote">"I use Twitter much more than Facebook."</span>
+            </div></div>
+            </div>
+            <div class="card">
+                <div class="card-header">
+                    <span class="theme-name">Cross-platform management</span>
+                    <div class="card-meta">
+                        <span class="review-count" style="color:#22c55e">4 reviews</span>
+                        <span class="badge" style="background:#22c55e">high</span>
+                    </div>
+                </div>
+                <div class="evidence-list">
+            <div class="evidence-item">
+                <span class="review-id">Review #203</span>
+                <span class="quote">"I love being able to juggle my personal and business twitter accounts at the same time. Huge time saver. Must have."</span>
+            </div></div>
+            </div>
+            <div class="card">
+                <div class="card-header">
+                    <span class="theme-name">Easy navigation</span>
+                    <div class="card-meta">
+                        <span class="review-count" style="color:#22c55e">2 reviews</span>
+                        <span class="badge" style="background:#22c55e">high</span>
+                    </div>
+                </div>
+                <div class="evidence-list">
+            <div class="evidence-item">
+                <span class="review-id">Review #140</span>
+                <span class="quote">"This is a good app for me to read Twitter while I'm in my bed and want to catch the last Tweets before I go to bed.  *addicted*"</span>
+            </div>
+            <div class="evidence-item">
+                <span class="review-id">Review #185</span>
+                <span class="quote">"Does exactly what i want it to do which is take me to twitter so that I can check it"</span>
+            </div></div>
+            </div>
+  </section>
+
+  <section class="section">
+    <h2>❌ Top Complaints</h2>
+    
+  </section>
+
+  
+
+</div>
+</body>
+</html>

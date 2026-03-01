@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Review Intelligence Report</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #0a0a0f;
+    --surface: #13131a;
+    --surface2: #1c1c26;
+    --border: #2a2a38;
+    --text: #e8e8f0;
+    --muted: #6b6b80;
+    --accent: #7c6af7;
+    --green: #22c55e;
+    --red: #ef4444;
+    --amber: #f59e0b;
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Mono', monospace;
+    min-height: 100vh;
+    padding: 40px 20px;
+  }
+
+  .container { max-width: 900px; margin: 0 auto; }
+
+  header {
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 32px;
+    margin-bottom: 48px;
+    animation: fadeUp 0.6s ease both;
+  }
+
+  header h1 {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(2rem, 5vw, 3.5rem);
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    background: linear-gradient(135deg, #e8e8f0 0%, #7c6af7 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    line-height: 1.1;
+  }
+
+  header .subtitle {
+    color: var(--muted);
+    font-size: 0.85rem;
+    margin-top: 8px;
+    letter-spacing: 0.05em;
+  }
+
+  .sentiment-block {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 32px;
+    margin-bottom: 48px;
+    animation: fadeUp 0.6s 0.1s ease both;
+  }
+
+  .sentiment-block h2 {
+    font-family: 'Syne', sans-serif;
+    font-size: 0.75rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 24px;
+  }
+
+  .sentiment-row {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 14px;
+  }
+
+  .sentiment-label {
+    width: 70px;
+    font-size: 0.8rem;
+    color: var(--muted);
+    flex-shrink: 0;
+  }
+
+  .bar-track {
+    flex: 1;
+    height: 10px;
+    background: var(--surface2);
+    border-radius: 99px;
+    overflow: hidden;
+  }
+
+  .bar-fill {
+    height: 100%;
+    border-radius: 99px;
+    transition: width 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .sentiment-pct {
+    width: 48px;
+    text-align: right;
+    font-size: 0.9rem;
+    font-weight: 500;
+  }
+
+  .n-reviews {
+    font-size: 0.75rem;
+    color: var(--muted);
+    margin-top: 12px;
+  }
+
+  .section {
+    margin-bottom: 48px;
+    animation: fadeUp 0.6s 0.2s ease both;
+  }
+
+  .section h2 {
+    font-family: 'Syne', sans-serif;
+    font-size: 1.1rem;
+    font-weight: 700;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px 24px;
+    margin-bottom: 12px;
+    transition: border-color 0.2s;
+  }
+
+  .card:hover { border-color: var(--accent); }
+
+  .card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 16px;
+    margin-bottom: 14px;
+    flex-wrap: wrap;
+  }
+
+  .theme-name {
+    font-family: 'Syne', sans-serif;
+    font-size: 1rem;
+    font-weight: 600;
+  }
+
+  .card-meta {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-shrink: 0;
+  }
+
+  .review-count {
+    font-size: 0.8rem;
+    font-weight: 500;
+  }
+
+  .badge {
+    font-size: 0.7rem;
+    padding: 3px 10px;
+    border-radius: 99px;
+    color: #000;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+
+  .evidence-list { display: flex; flex-direction: column; gap: 8px; }
+
+  .evidence-item {
+    background: var(--surface2);
+    border-left: 3px solid var(--accent);
+    border-radius: 0 8px 8px 0;
+    padding: 10px 14px;
+  }
+
+  .review-id {
+    font-size: 0.7rem;
+    color: var(--muted);
+    display: block;
+    margin-bottom: 4px;
+    letter-spacing: 0.05em;
+  }
+
+  .quote {
+    font-size: 0.82rem;
+    color: var(--text);
+    line-height: 1.5;
+    font-style: italic;
+  }
+
+  .bullet-item {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 18px 22px;
+    margin-bottom: 10px;
+    transition: border-color 0.2s;
+  }
+
+  .bullet-item:hover { border-color: var(--accent); }
+
+  .bullet-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    margin-bottom: 12px;
+    flex-wrap: wrap;
+  }
+
+  .bullet-claim {
+    font-size: 0.92rem;
+    line-height: 1.5;
+    flex: 1;
+  }
+
+  .unknown-tags { display: flex; flex-wrap: wrap; gap: 8px; }
+
+  .unknown-tag {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 99px;
+    padding: 6px 16px;
+    font-size: 0.78rem;
+    color: var(--muted);
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <header>
+    <h1>Review Intelligence<br>Report</h1>
+    <p class="subtitle">ANGRY BIRDS · AMAZON REVIEWS · 100 REVIEWS SAMPLED</p>
+  </header>
+
+  <div class="sentiment-block">
+    <h2>Sentiment Distribution</h2>
+    <div class="sentiment-row">
+      <span class="sentiment-label">Positive</span>
+      <div class="bar-track">
+        <div class="bar-fill" style="width:89.0%; background: var(--green);"></div>
+      </div>
+      <span class="sentiment-pct" style="color: var(--green)">89.0%</span>
+    </div>
+    <div class="sentiment-row">
+      <span class="sentiment-label">Negative</span>
+      <div class="bar-track">
+        <div class="bar-fill" style="width:11.0%; background: var(--red);"></div>
+      </div>
+      <span class="sentiment-pct" style="color: var(--red)">11.0%</span>
+    </div>
+    <p class="n-reviews">Based on 100 sampled reviews with ground-truth labels</p>
+  </div>
+
+  <section class="section">
+    <h2>📋 Executive Summary</h2>
+    
+            <div class="bullet-item">
+                <div class="bullet-header">
+                    <span class="badge" style="background:#22c55e">high</span>
+                    <span class="bullet-claim">Addictiveness is the dominant strength — lean into this in marketing copy.</span>
+                </div>
+                <div class="evidence-list">
+            <div class="evidence-item">
+                <span class="review-id">Review #125</span>
+                <span class="quote">"Cool game. Very addictive."</span>
+            </div></div>
+            </div>
+            <div class="bullet-item">
+                <div class="bullet-header">
+                    <span class="badge" style="background:#22c55e">high</span>
+                    <span class="bullet-claim">Angry Birds appeals to a wide audience — target marketing across age groups.</span>
+                </div>
+                <div class="evidence-list">
+            <div class="evidence-item">
+                <span class="review-id">Review #10</span>
+                <span class="quote">"who doesn't like angry birds? i love angry birds!"</span>
+            </div></div>
+            </div>
+            <div class="bullet-item">
+                <div class="bullet-header">
+                    <span class="badge" style="background:#22c55e">high</span>
+                    <span class="bullet-claim">Angry Birds is a great time killer — emphasize this in app store description.</span>
+                </div>
+                <div class="evidence-list">
+            <div class="evidence-item">
+                <span class="review-id">Review #60</span>
+                <span class="quote">"I have angry birds on every device I own and I love to play it although I'm not really that great at the game although I still love to play it."</span>
+            </div></div>
+            </div>
+            <div class="bullet-item">
+                <div class="bullet-header">
+                    <span class="badge" style="background:#22c55e">high</span>
+                    <span class="bullet-claim">Angry Birds is a fun game for kids and adults alike — highlight this in marketing materials.</span>
+                </div>
+                <div class="evidence-list">
+            <div class="evidence-item">
+                <span class="review-id">Review #84</span>
+                <span class="quote">"We are late getting into Angry Birds but my husband and I absolutely love it! It is very addictive and it totally captures our attention!"</span>
+            </div></div>
+            </div>
+            <div class="bullet-item">
+                <div class="bullet-header">
+                    <span class="badge" style="background:#22c55e">high</span>
+                    <span class="bullet-claim">Angry Birds is a great time-killer — highlight its ability to entertain.</span>
+                </div>
+                <div class="evidence-list">
+            <div class="evidence-item">
+                <span class="review-id">Review #142</span>
+                <span class="quote">"Who doesnt love angry birds.... The game is fun and challenging.  Provides many levels which get harder and harder... So much fun it becomes addicting"</span>
+            </div></div>
+            </div>
+            <div class="bullet-item">
+                <div class="bullet-header">
+                    <span class="badge" style="background:#22c55e">high</span>
+                    <span class="bullet-claim">Angry Birds offers a challenge — emphasize its difficulty.</span>
+                </div>
+                <div class="evidence-list">
+            <div class="evidence-item">
+                <span class="review-id">Review #135</span>
+                <span class="quote">"I am terrified of real birds, but Love the Angry Birds!  Sometimes, you just have to keep trying a level till you get it right!  Always go back for the 3 stars if you don't get them right away!"</span>
+            </div></div>
+            </div>
+  </section>
+
+  <section class="section">
+    <h2>✅ Top Strengths</h2>
+    
+            <div class="card">
+                <div class="card-header">
+                    <span class="theme-name">Addictiveness</span>
+                    <div class="card-meta">
+                        <span class="review-count" style="color:#22c55e">25 reviews</span>
+                        <span class="badge" style="background:#22c55e">high</span>
+                    </div>
+                </div>
+                <div class="evidence-list">
+            <div class="evidence-item">
+                <span class="review-id">Review #125</span>
+                <span class="quote">"Cool game. Very addictive."</span>
+            </div>
+            <div class="evidence-item">
+                <span class="review-id">Review #5</span>
+                <span class="quote">"This was my first time to play Angry Birds and I don'tthink I could have had a better first impression!  Because of this, I will purchase every Angry Birds gameI can get my hands on!  Now I see what all the 'fuss' is about!!!"</span>
+            </div></div>
+            </div>
+            <div class="card">
+                <div class="card-header">
+                    <span class="theme-name">Wide appeal</span>
+                    <div class="card-meta">
+                        <span class="review-count" style="color:#22c55e">25 reviews</span>
+                        <span class="badge" style="background:#22c55e">high</span>
+                    </div>
+                </div>
+                <div class="evidence-list">
+            <div class="evidence-item">
+                <span class="review-id">Review #10</span>
+                <span class="quote">"who doesn't like angry birds? i love angry birds!"</span>
+            </div>
+            <div class="evidence-item">
+                <span class="review-id">Review #67</span>
+                <span class="quote">"Well I have never played Angry Birds, but my son sure loves it. If he's happy then so am I!"</span>
+            </div>
+            <div class="evidence-item">
+                <span class="review-id">Review #171</span>
+                <span class="quote">"I really enjoy angry birds games. This is a game that the whole family will enjoy with different levels and and themes."</span>
+            </div></div>
+            </div>
+            <div class="card">
+                <div class="card-header">
+                    <span class="theme-name">Time-killer</span>
+                    <div class="card-meta">
+                        <span class="review-count" style="color:#22c55e">10 reviews</span>
+                        <span class="badge" style="background:#22c55e">high</span>
+                    </div>
+                </div>
+                <div class="evidence-list">
+            <div class="evidence-item">
+                <span class="review-id">Review #142</span>
+                <span class="quote">"Who doesnt love angry birds.... The game is fun and challenging.  Provides many levels which get harder and harder... So much fun it becomes addicting"</span>
+            </div></div>
+            </div>
+            <div class="card">
+                <div class="card-header">
+                    <span class="theme-name">Challenge</span>
+                    <div class="card-meta">
+                        <span class="review-count" style="color:#22c55e">5 reviews</span>
+                        <span class="badge" style="background:#22c55e">high</span>
+                    </div>
+                </div>
+                <div class="evidence-list">
+            <div class="evidence-item">
+                <span class="review-id">Review #135</span>
+                <span class="quote">"I am terrified of real birds, but Love the Angry Birds!  Sometimes, you just have to keep trying a level till you get it right!  Always go back for the 3 stars if you don't get them right away!"</span>
+            </div></div>
+            </div>
+            <div class="card">
+                <div class="card-header">
+                    <span class="theme-name">Time killer</span>
+                    <div class="card-meta">
+                        <span class="review-count" style="color:#22c55e">3 reviews</span>
+                        <span class="badge" style="background:#f59e0b">medium</span>
+                    </div>
+                </div>
+                <div class="evidence-list">
+            <div class="evidence-item">
+                <span class="review-id">Review #60</span>
+                <span class="quote">"I have angry birds on every device I own and I love to play it although I'm not really that great at the game although I still love to play it."</span>
+            </div></div>
+            </div>
+  </section>
+
+  <section class="section">
+    <h2>❌ Top Complaints</h2>
+    
+            <div class="card">
+                <div class="card-header">
+                    <span class="theme-name">Intrusive ads</span>
+                    <div class="card-meta">
+                        <span class="review-count" style="color:#ef4444">2 reviews</span>
+                        <span class="badge" style="background:#ef4444">low</span>
+                    </div>
+                </div>
+                <div class="evidence-list">
+            <div class="evidence-item">
+                <span class="review-id">Review #196</span>
+                <span class="quote">"...except the ads in the free version. Angry birds is crazy addicting. Shooting little birds across the screen and knocking down rocks and walls. My son, daughter, husband, parents... everyone I know loves this game."</span>
+            </div></div>
+            </div>
+            <div class="card">
+                <div class="card-header">
+                    <span class="theme-name">Difficulty</span>
+                    <div class="card-meta">
+                        <span class="review-count" style="color:#ef4444">1 reviews</span>
+                        <span class="badge" style="background:#ef4444">low</span>
+                    </div>
+                </div>
+                <div class="evidence-list">
+            <div class="evidence-item">
+                <span class="review-id">Review #155</span>
+                <span class="quote">"Sometimes I'm sorry that I ever started Angry Birds...just because I cannot get to the next level..."</span>
+            </div></div>
+            </div>
+            <div class="card">
+                <div class="card-header">
+                    <span class="theme-name">Boredom</span>
+                    <div class="card-meta">
+                        <span class="review-count" style="color:#ef4444">1 reviews</span>
+                        <span class="badge" style="background:#ef4444">low</span>
+                    </div>
+                </div>
+                <div class="evidence-list">
+            <div class="evidence-item">
+                <span class="review-id">Review #230</span>
+                <span class="quote">"it is so dumb just get angry birds PLEASE I NEG YOU DO NOT GET THIS APP it is the WORST app ever it is so stupid it is not a good app plzzzzzzzzzzz do not get this app it is boring"</span>
+            </div></div>
+            </div>
+            <div class="card">
+                <div class="card-header">
+                    <span class="theme-name">Technical issues</span>
+                    <div class="card-meta">
+                        <span class="review-count" style="color:#ef4444">1 reviews</span>
+                        <span class="badge" style="background:#ef4444">low</span>
+                    </div>
+                </div>
+                <div class="evidence-list">
+            <div class="evidence-item">
+                <span class="review-id">Review #139</span>
+                <span class="quote">"1st I have to uninstall in order to get the new update. Now it crashes everytime I try to do any of the older levels. Rovio this is BS!!!!!!"</span>
+            </div></div>
+            </div>
+  </section>
+
+  
+
+</div>
+</body>
+</html>

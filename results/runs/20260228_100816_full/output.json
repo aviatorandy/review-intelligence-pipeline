@@ -1,0 +1,154 @@
+{
+  "summary_bullets": [
+    {
+      "claim": "Addictiveness is the dominant strength \u2014 lean into this in marketing copy.",
+      "confidence": "high",
+      "evidence": [
+        {
+          "review_id": 324,
+          "quote": "This is my third Tecarta Bible and I have never been disappointed. It is so easy to navigate and being able to do hilighting in the color of your choice, insert margin notes and organize and rename bookmarks is wonderful."
+        }
+      ]
+    },
+    {
+      "claim": "Users appreciate the app's ease of navigation \u2014 emphasize this in marketing.",
+      "confidence": "high",
+      "evidence": [
+        {
+          "review_id": 320,
+          "quote": "I was looking for an NASB Bible for my Kindle Fire HDX and I am sold glad that I found this app. Not only is it an NASB Bible, but I can actually listen to it read the Bible to me! I absolutely love it."
+        }
+      ]
+    },
+    {
+      "claim": "Users value the ability to add notes and highlights \u2014 promote these features.",
+      "confidence": "high",
+      "evidence": [
+        {
+          "review_id": 325,
+          "quote": "I have tried many Bible apps and this one is the easiest one I have used. It is very simple to highlight or bookmark things."
+        }
+      ]
+    },
+    {
+      "claim": "Users appreciate the app's offline functionality \u2014 emphasize this in marketing.",
+      "confidence": "high",
+      "evidence": [
+        {
+          "review_id": 348,
+          "quote": "I am excited beyond words!!! A Bible app that I can actually read in church!! No Internet connection needed! 1000 stars from me, and it's free!"
+        }
+      ]
+    },
+    {
+      "claim": "Users value the app's ability to compare different versions of the bible \u2014 highlight this in marketing.",
+      "confidence": "medium",
+      "evidence": [
+        {
+          "review_id": 346,
+          "quote": "This app does does so much. I love it!the kj is linked to the Strongs concordance it has a list of commentaries to use and bible dictionaries."
+        }
+      ]
+    },
+    {
+      "claim": "High cost is a major concern \u2014 consider offering a free trial or lowering the price.",
+      "confidence": "high",
+      "evidence": [
+        {
+          "review_id": 4,
+          "quote": "Not worth the $9.99 cost."
+        },
+        {
+          "review_id": 215,
+          "quote": "Well good luck."
+        }
+      ]
+    }
+  ],
+  "top_strengths": [
+    {
+      "theme": "Ease of navigation",
+      "review_count": 10,
+      "confidence": "high",
+      "evidence": [
+        {
+          "review_id": 320,
+          "quote": "I was looking for an NASB Bible for my Kindle Fire HDX and I am sold glad that I found this app. Not only is it an NASB Bible, but I can actually listen to it read the Bible to me! I absolutely love it."
+        }
+      ]
+    },
+    {
+      "theme": "Ability to add notes and highlights",
+      "review_count": 7,
+      "confidence": "medium",
+      "evidence": [
+        {
+          "review_id": 325,
+          "quote": "I have tried many Bible apps and this one is the easiest one I have used. It is very simple to highlight or bookmark things."
+        }
+      ]
+    },
+    {
+      "theme": "Offline functionality",
+      "review_count": 2,
+      "confidence": "low",
+      "evidence": [
+        {
+          "review_id": 348,
+          "quote": "I am excited beyond words!!! A Bible app that I can actually read in church!! No Internet connection needed! 1000 stars from me, and it's free!"
+        }
+      ]
+    },
+    {
+      "theme": "Ability to compare different versions of the bible",
+      "review_count": 2,
+      "confidence": "low",
+      "evidence": [
+        {
+          "review_id": 346,
+          "quote": "This app does does so much. I love it!the kj is linked to the Strongs concordance it has a list of commentaries to use and bible dictionaries."
+        }
+      ]
+    }
+  ],
+  "top_complaints": [
+    {
+      "theme": "Limited functionality",
+      "review_count": 2,
+      "confidence": "low",
+      "evidence": [
+        {
+          "review_id": 256,
+          "quote": "On the KJV app you go to where you want to start reading and reading is continuous, that is you"
+        },
+        {
+          "review_id": 273,
+          "quote": "I am so disappointed in this app!  It advertises many versions of the Bible and you only get 1."
+        }
+      ]
+    },
+    {
+      "theme": "Intrusive ads",
+      "review_count": 1,
+      "confidence": "low",
+      "evidence": [
+        {
+          "review_id": 49,
+          "quote": "This would be a great bible but its online so when not near or able to sign in somewhere, un~usable"
+        }
+      ]
+    }
+  ],
+  "sentiment": {
+    "positive_rate": 0.9661,
+    "negative_rate": 0.0339,
+    "n_reviews": 354
+  },
+  "unknowns": [],
+  "meta": {
+    "total_reviews": 354,
+    "chunks_processed": 2,
+    "chunks_failed": 3,
+    "chunk_size": 100
+  }
+}

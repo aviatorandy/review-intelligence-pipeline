@@ -1,0 +1,146 @@
+{
+  "summary_bullets": [
+    {
+      "claim": "Addictiveness is the dominant strength \u2014 lean into this in marketing copy.",
+      "confidence": "high",
+      "evidence": [
+        {
+          "review_id": 2,
+          "quote": "I was having problems posting to Twitter from some of my other apps until I got the official Twitter App. I use it on my Kindle Fire HD. Now when I want to post something to Twitter from another App or game it gives me a pop up window with this Twitter a"
+        }
+      ]
+    },
+    {
+      "claim": "Twitter is popular among teens and adults alike \u2014 target these demographics in marketing.",
+      "confidence": "high",
+      "evidence": [
+        {
+          "review_id": 79,
+          "quote": "I like to be able to retweet or favorite someone else's Tweet."
+        }
+      ]
+    },
+    {
+      "claim": "Twitter is a convenient way to keep up with news and updates.",
+      "confidence": "high",
+      "evidence": [
+        {
+          "review_id": 45,
+          "quote": "I use Twitter much more than Facebook."
+        }
+      ]
+    },
+    {
+      "claim": "Users love the app for its easy navigation \u2014 emphasize this in marketing copy.",
+      "confidence": "high",
+      "evidence": [
+        {
+          "review_id": 140,
+          "quote": "This is a good app for me to read Twitter while I'm in my bed and want to catch the last Tweets before I go to bed.  *addicted*"
+        },
+        {
+          "review_id": 168,
+          "quote": "@namesping.  New to it but learning.  I would have never used it but entered a contest on The Ellen show with it and won so guess what. I use Twitter now."
+        }
+      ]
+    },
+    {
+      "claim": "Users appreciate the app's seamless integration with their Twitter accounts \u2014 highlight this in marketing copy.",
+      "confidence": "high",
+      "evidence": [
+        {
+          "review_id": 158,
+          "quote": "I've used lots of different twitter apps on my iPhone. This one on my Kindle Fire HD 8.9&#34; tablet really is the best. I find it so simple. It's much easier than using my browser on my desktop or laptop. This Kindle app works seamlessly."
+        }
+      ]
+    },
+    {
+      "claim": "Users enjoy the app for its simplicity \u2014 emphasize this in marketing copy.",
+      "confidence": "high",
+      "evidence": [
+        {
+          "review_id": 185,
+          "quote": "Does exactly what i want it to do which is take me to twitter so that I can check it"
+        }
+      ]
+    }
+  ],
+  "top_strengths": [
+    {
+      "theme": "Fun and addictive gameplay",
+      "review_count": 12,
+      "confidence": "high",
+      "evidence": [
+        {
+          "review_id": 2,
+          "quote": "I was having problems posting to Twitter from some of my other apps until I got the official Twitter App. I use it on my Kindle Fire HD. Now when I want to post something to Twitter from another App or game it gives me a pop up window with this Twitter a"
+        }
+      ]
+    },
+    {
+      "theme": "Ease of use",
+      "review_count": 11,
+      "confidence": "high",
+      "evidence": [
+        {
+          "review_id": 82,
+          "quote": "If you have a Kindle Fire and a Twitter account, you need this app. It works exactly how you would expect a Twitter app to work. No surprises or bugs I couldn't handle."
+        },
+        {
+          "review_id": 181,
+          "quote": "I have been a Twitter fan for quite a few years & this app is great to keep up with my contacts & keep tweeting"
+        }
+      ]
+    },
+    {
+      "theme": "Convenience for following news and updates",
+      "review_count": 9,
+      "confidence": "high",
+      "evidence": [
+        {
+          "review_id": 45,
+          "quote": "I use Twitter much more than Facebook."
+        }
+      ]
+    },
+    {
+      "theme": "Cross-platform management",
+      "review_count": 4,
+      "confidence": "high",
+      "evidence": [
+        {
+          "review_id": 203,
+          "quote": "I love being able to juggle my personal and business twitter accounts at the same time. Huge time saver. Must have."
+        }
+      ]
+    },
+    {
+      "theme": "Easy navigation",
+      "review_count": 2,
+      "confidence": "high",
+      "evidence": [
+        {
+          "review_id": 140,
+          "quote": "This is a good app for me to read Twitter while I'm in my bed and want to catch the last Tweets before I go to bed.  *addicted*"
+        },
+        {
+          "review_id": 185,
+          "quote": "Does exactly what i want it to do which is take me to twitter so that I can check it"
+        }
+      ]
+    }
+  ],
+  "top_complaints": [],
+  "sentiment": {
+    "positive_rate": 0.9014,
+    "negative_rate": 0.0986,
+    "n_reviews": 213
+  },
+  "unknowns": [],
+  "meta": {
+    "total_reviews": 213,
+    "chunks_processed": 3,
+    "chunks_failed": 0,
+    "chunk_size": 100
+  }
+}

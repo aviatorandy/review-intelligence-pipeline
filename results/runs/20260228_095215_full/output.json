@@ -1,0 +1,169 @@
+{
+  "summary_bullets": [
+    {
+      "claim": "Addictiveness is the dominant strength \u2014 lean into this in marketing copy.",
+      "confidence": "high",
+      "evidence": [
+        {
+          "review_id": 145,
+          "quote": "Just wanted to have it always available even when I don't have the actual Bible with me. So much can be stored on my kindle that is very useful."
+        }
+      ]
+    },
+    {
+      "claim": "Ease of use and portability are key selling points.",
+      "confidence": "high",
+      "evidence": [
+        {
+          "review_id": 189,
+          "quote": "The quick Bible is awesome, I can access it from anywhere. The  best part I do not need the Internet to access it. Bravo!!!"
+        }
+      ]
+    },
+    {
+      "claim": "Offline functionality is a major advantage.",
+      "confidence": "high",
+      "evidence": [
+        {
+          "review_id": 122,
+          "quote": "This app does not need an internet connection in order for you to use it so it is ideal for all of the places you may want to read your Bible but have no access to a wi-fi network."
+        }
+      ]
+    },
+    {
+      "claim": "Users appreciate the app's ease of use and navigation.",
+      "confidence": "high",
+      "evidence": [
+        {
+          "review_id": 320,
+          "quote": "I was looking for an NASB Bible for my Kindle Fire HDX and I am sold glad that I found this app. Not only is it an NASB Bible, but I can actually listen to it read the Bible to me!"
+        }
+      ]
+    },
+    {
+      "claim": "The app's offline capabilities are a significant selling point.",
+      "confidence": "high",
+      "evidence": [
+        {
+          "review_id": 348,
+          "quote": "I am excited beyond words!!! A Bible app that I can actually read in church!! No Internet connection needed! 1000 stars from me, and it's free!"
+        }
+      ]
+    },
+    {
+      "claim": "Users value the app's ability to compare different versions of the bible.",
+      "confidence": "medium",
+      "evidence": [
+        {
+          "review_id": 327,
+          "quote": "The Word Of God in NASB new American standerd Biblea good way to spread the gospel...  and can email verses"
+        }
+      ]
+    }
+  ],
+  "top_strengths": [
+    {
+      "theme": "Ease of use",
+      "review_count": 29,
+      "confidence": "high",
+      "evidence": [
+        {
+          "review_id": 187,
+          "quote": "This is a very nice Bible program. loads quickly, runs flawlessly, gives me the options i want (text size, colors, etc), along with bookmarks and the ability to add verse notes. exactly what i was looking for to use for my daily Bible reading."
+        },
+        {
+          "review_id": 320,
+          "quote": "I was looking for an NASB Bible for my Kindle Fire HDX and I am sold glad that I found this app. Not only is it an NASB Bible, but I can actually listen to it read the Bible to me!"
+        }
+      ]
+    },
+    {
+      "theme": "Portability",
+      "review_count": 10,
+      "confidence": "high",
+      "evidence": [
+        {
+          "review_id": 195,
+          "quote": "I cannot carry my Bible with me everywhere I go, but, my Kindle Fire is always with me...love the convienience....."
+        }
+      ]
+    },
+    {
+      "theme": "Offline functionality",
+      "review_count": 4,
+      "confidence": "medium",
+      "evidence": [
+        {
+          "review_id": 122,
+          "quote": "This app does not need an internet connection in order for you to use it so it is ideal for all of the places you may want to read your Bible but have no access to a wi-fi network."
+        }
+      ]
+    },
+    {
+      "theme": "Offline capabilities",
+      "review_count": 2,
+      "confidence": "high",
+      "evidence": [
+        {
+          "review_id": 348,
+          "quote": "I am excited beyond words!!! A Bible app that I can actually read in church!! No Internet connection needed! 1000 stars from me, and it's free!"
+        }
+      ]
+    },
+    {
+      "theme": "Versions comparison",
+      "review_count": 1,
+      "confidence": "medium",
+      "evidence": [
+        {
+          "review_id": 327,
+          "quote": "The Word Of God in NASB new American standerd Biblea good way to spread the gospel...  and can email verses"
+        }
+      ]
+    }
+  ],
+  "top_complaints": [
+    {
+      "theme": "High cost",
+      "review_count": 2,
+      "confidence": "high",
+      "evidence": [
+        {
+          "review_id": 4,
+          "quote": "Not worth the $9.99 cost."
+        },
+        {
+          "review_id": 215,
+          "quote": "Well good luck."
+        }
+      ]
+    },
+    {
+      "theme": "Limited offline functionality",
+      "review_count": 2,
+      "confidence": "high",
+      "evidence": [
+        {
+          "review_id": 285,
+          "quote": "I have tried this program on two different tablets. It will not download Bibles."
+        },
+        {
+          "review_id": 309,
+          "quote": "This use to be the BEST bible app for offline. With the recent update now the owners can charge you through sms messaging,"
+        }
+      ]
+    }
+  ],
+  "sentiment": {
+    "positive_rate": 0.9661,
+    "negative_rate": 0.0339,
+    "n_reviews": 354
+  },
+  "unknowns": [],
+  "meta": {
+    "total_reviews": 354,
+    "chunks_processed": 3,
+    "chunks_failed": 2,
+    "chunk_size": 100
+  }
+}

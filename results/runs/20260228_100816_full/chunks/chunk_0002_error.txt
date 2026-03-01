@@ -1,0 +1,72 @@
+Error: Schema error: 'sentiment' is a required property
+
+Raw output:
+{
+  "summary_bullets": [
+    {
+      "claim": "The app is highly rated for ease of use and functionality.",
+      "confidence": "high",
+      "evidence": [{"review_id": 268, "quote": "Great Bible App and easy to navigate through. Has alot of features that are useful for Bible study."}]
+    },
+    {
+      "claim": "Users appreciate the offline functionality.",
+      "confidence": "high",
+      "evidence": [{"review_id": 259, "quote": "I have looked at lots of Bible apps but had not found one like this where I can highlight only one word or I can make notes and it's easy to locate individual verses."}]
+    },
+    {
+      "claim": "Users find the app useful for Bible study and sermon preparation.",
+      "confidence": "high",
+      "evidence": [{"review_id": 276, "quote": "Great resource, sermon help and bible study help. Everything I need to help as I study people, places and things."}]
+    },
+    {
+      "claim": "Some users find the app helpful for religious debates.",
+      "confidence": "medium",
+      "evidence": [{"review_id": 289, "quote": "I'm not a religious person but this Bible is exactly what I was looking for whenever a religious debate comes up because you have the NT in Greek as well as the complete Vulgate in Latin and even a Hebrew version, so it is great to look up the original verses."}]
+    },
+    {
+      "claim": "Some users find the app motivates them to study more.",
+      "confidence": "medium",
+      "evidence": [{"review_id": 290, "quote": "Makes reading more enjoyable and accessible.I often do not read the Bible as I should.  This product keeps me focused on spiritual applications of God's word. It also motivated me to study more."}]
+    }
+  ],
+  "top_strengths": [
+    {
+      "theme": "Ease of use and functionality",
+      "review_count": 12,
+      "confidence": "high",
+      "evidence": [{"review_id": 268, "quote": "Great Bible App and easy to navigate through. Has alot of features that are useful for Bible study."}]
+    },
+    {
+      "theme": "Offline functionality",
+      "review_count": 10,
+      "confidence": "high",
+      "evidence": [{"review_id": 259, "quote": "I have looked at lots of Bible apps but had not found one like this where I can highlight only one word or I can make notes and it's easy to locate individual verses."}]
+    },
+    {
+      "theme": "Useful for Bible study and sermon preparation",
+      "review_count": 7,
+      "confidence": "high",
+      "evidence": [{"review_id": 276, "quote": "Great resource, sermon help and bible study help. Everything I need to help as I study people, places and things."}]
+    },
+    {
+      "theme": "Helpful for religious debates",
+      "review_count": 1,
+      "confidence": "medium",
+      "evidence": [{"review_id": 289, "quote": "I'm not a religious person but this Bible is exactly what I was looking for whenever a religious debate comes up because you have the NT in Greek as well as the complete Vulgate in Latin and even a Hebrew version, so it is great to look up the original verses."}]
+    },
+    {
+      "theme": "Motivates users to study more",
+      "review_count": 2,
+      "confidence": "medium",
+      "evidence": [{"review_id": 290, "quote": "Makes reading more enjoyable and accessible.I often do not read the Bible as I should.  This product keeps me focused on spiritual applications of God's word. It also motivated me to study more."}]
+    }
+  ],
+  "top_weaknesses": [],
+  "top_complaints": [
+    {
+      "claim": "Some users have issues with the app not downloading Bibles.",
+      "review_count": 1,
+      "evidence": [{"review_id": 285, "quote": "I have tried this program on two different tablets. It will not download Bibles. Just will not work on either of my Android 4.XX tabs."}]
+    }
+  ]
+}

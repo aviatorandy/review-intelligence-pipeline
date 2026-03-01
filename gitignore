@@ -1,0 +1,42 @@
+# Python
+venv/
+.venv/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+*.egg-info/
+dist/
+build/
+
+# Data — don't upload raw review CSVs
+data/
+!data/sample/
+!data/sample/*.csv
+
+# Results — don't upload all run folders, only the sample
+results/runs/
+!results/sample/
+!results/sample/output.json
+!results/sample/report.html
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Environment
+.env
+.env.local
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Ollama / model files
+*.bin
+*.gguf
+*.ggml

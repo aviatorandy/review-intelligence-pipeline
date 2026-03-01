@@ -1,0 +1,181 @@
+{
+  "summary_bullets": [
+    {
+      "claim": "Addictiveness is the dominant strength \u2014 lean into this in marketing copy.",
+      "confidence": "high",
+      "evidence": [
+        {
+          "review_id": 5,
+          "quote": "This was my first time to play Angry Birds and I don'tthink I could have had a better first impression!  Because of this, I will purchase every Angry Birds gameI can get my hands on!"
+        }
+      ]
+    },
+    {
+      "claim": "Marketing should emphasize the wide appeal \u2014 it's popular with both kids and adults.",
+      "confidence": "high",
+      "evidence": [
+        {
+          "review_id": 89,
+          "quote": "My daughter, age 45, loves Angry Birds and has been playing it on her phone for a long time."
+        }
+      ]
+    },
+    {
+      "claim": "Consider offering an ad-free version to address user complaints about intrusive ads.",
+      "confidence": "medium",
+      "evidence": [
+        {
+          "review_id": 96,
+          "quote": "I really like Angry Birds the game. But I could not stand the suggestive and violent ads that kept popping up on this free version of the game."
+        }
+      ]
+    },
+    {
+      "claim": "Angry Birds is a time-killer \u2014 ideal for waiting or downtime.",
+      "confidence": "high",
+      "evidence": [
+        {
+          "review_id": 181,
+          "quote": "I really like Angry Birds it is a fun game to play it can be frustrating but still like it."
+        }
+      ]
+    },
+    {
+      "claim": "Angry Birds is easy to learn but hard to master \u2014 offers challenge for experienced players.",
+      "confidence": "medium",
+      "evidence": [
+        {
+          "review_id": 184,
+          "quote": "I believe this game got me started on an angry birds addiction.  The games are challenging and fun with loads of different backgrounds to keep it interesting."
+        }
+      ]
+    },
+    {
+      "claim": "Angry Birds teaches physics in a fun way.",
+      "confidence": "medium",
+      "evidence": [
+        {
+          "review_id": 183,
+          "quote": "I cant stop playing it sometimes. Its very challenging too. I cant stop playing it sometimes."
+        }
+      ]
+    }
+  ],
+  "top_strengths": [
+    {
+      "theme": "Fun and addictive gameplay",
+      "review_count": 67,
+      "confidence": "high",
+      "evidence": [
+        {
+          "review_id": 5,
+          "quote": "This was my first time to play Angry Birds and I don'tthink I could have had a better first impression!  Because of this, I will purchase every Angry Birds gameI can get my hands on!"
+        },
+        {
+          "review_id": 181,
+          "quote": "IT's a free game! And Angry Birds is fun to play it can be frustrating but still like it."
+        },
+        {
+          "review_id": 205,
+          "quote": "I'm hooked. The freebie has a ton of ads so I will likely upgrade."
+        }
+      ]
+    },
+    {
+      "theme": "Universal appeal",
+      "review_count": 18,
+      "confidence": "high",
+      "evidence": [
+        {
+          "review_id": 89,
+          "quote": "My daughter, age 45, loves Angry Birds and has been playing it on her phone for a long time."
+        },
+        {
+          "review_id": 179,
+          "quote": "Its Angry Birds..... who doesn't like angry birds. Kid Friendly for my kids ranging from 4 to 8 they love it."
+        },
+        {
+          "review_id": 207,
+          "quote": "He loves anything that has to do with Angry Birds."
+        }
+      ]
+    },
+    {
+      "theme": "Easy to play",
+      "review_count": 7,
+      "confidence": "medium",
+      "evidence": [
+        {
+          "review_id": 56,
+          "quote": "Angry birds was the first non console or hand held game I have ever played. It was fun from the instant I played it."
+        }
+      ]
+    },
+    {
+      "theme": "Time-killer",
+      "review_count": 3,
+      "confidence": "low",
+      "evidence": [
+        {
+          "review_id": 181,
+          "quote": "I really like Angry Birds it is a fun game to play it can be frustrating but still like it."
+        }
+      ]
+    },
+    {
+      "theme": "Challenging",
+      "review_count": 2,
+      "confidence": "low",
+      "evidence": [
+        {
+          "review_id": 184,
+          "quote": "I believe this game got me started on an angry birds addiction.  The games are challenging and fun with loads of different backgrounds to keep it interesting."
+        }
+      ]
+    }
+  ],
+  "top_complaints": [
+    {
+      "theme": "Intrusive ads",
+      "review_count": 10,
+      "confidence": "high",
+      "evidence": [
+        {
+          "review_id": 96,
+          "quote": "I really like Angry Birds the game. But I could not stand the suggestive and violent ads that kept popping up on this free version of the game."
+        },
+        {
+          "review_id": 204,
+          "quote": "I downloaded free angry birds for my kindle fire and all I noticed was full screen ads"
+        },
+        {
+          "review_id": 205,
+          "quote": "Ok come on now, who does not love Angry Birds.  Ive been stuck on a few of them for awhile but eventually break through"
+        }
+      ]
+    },
+    {
+      "theme": "Repetitive and boring",
+      "review_count": 1,
+      "confidence": "low",
+      "evidence": [
+        {
+          "review_id": 231,
+          "quote": "holy crap what a terrible game. talk about trying to ride the coattails of angry birds. the leveling system is a rip off of birds. and this game is so boring."
+        }
+      ]
+    }
+  ],
+  "sentiment": {
+    "positive_rate": 0.9319,
+    "negative_rate": 0.0681,
+    "n_reviews": 235
+  },
+  "unknowns": [],
+  "meta": {
+    "total_reviews": 235,
+    "chunks_processed": 4,
+    "chunks_failed": 0,
+    "chunk_size": 100
+  }
+}

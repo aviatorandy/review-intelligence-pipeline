@@ -1,0 +1,5 @@
+{"case_id": "case_001", "seed": 42, "n_reviews": 80, "mix": "stratified", "description": "Standard mixed sample, balanced positive/negative"}
+{"case_id": "case_002", "seed": 7, "n_reviews": 80, "mix": "stratified", "description": "Different seed, tests theme consistency across runs"}
+{"case_id": "case_003", "seed": 99, "n_reviews": 120, "mix": "mixed", "description": "Larger sample, tests schema stability at higher volume"}
+{"case_id": "case_004", "seed": 13, "n_reviews": 50, "mix": "negative_heavy", "description": "Oversample negatives — stress test complaint theme quality"}
+{"case_id": "case_005", "seed": 21, "n_reviews": 50, "mix": "positive_only", "description": "All positive reviews — complaints section should return empty or unknowns, not hallucinate"}

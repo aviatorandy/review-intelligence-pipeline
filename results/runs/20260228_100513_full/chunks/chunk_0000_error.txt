@@ -1,0 +1,4 @@
+Error: Schema error: 'summary_bullets' is a required property
+
+Raw output:
+{"review_id": 1, "rating": 5, "text": "Easy to use and understandable translation of the Bible. It took me a few times to figure out how to use the notes correctly, but that is my issue and not a design issue."}

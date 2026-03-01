@@ -1,0 +1,4 @@
+Error: Schema error: 'summary_bullets' is a required property
+
+Raw output:
+{"rating":4.5,"review":"You've provided a mix of positive and negative reviews for Bible apps, highlighting features such as offline access, multiple translations, commentaries, dictionaries, maps, and ease of use. Some users appreciate the ability to compare different versions side-by-side, while others have expressed disappointment when certain features were not available in the free version or after download. Overall, it seems that users value apps that offer a comprehensive study experience for the Bible."}

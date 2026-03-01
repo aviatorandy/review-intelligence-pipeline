@@ -1,0 +1,68 @@
+Error: Schema error: 'sentiment' is a required property
+
+Raw output:
+{
+  "summary_bullets": [
+    {
+      "claim": "The app is highly praised for its offline functionality — emphasize this feature in marketing copy.",
+      "confidence": "high",
+      "evidence": [{"review_id": 46, "quote": "This App Is Wonderful.. I Am Just Starting Out To Read My Bible More.. And This Apps Me To Understand What Exactly I Am Reading.."}]
+    },
+    {
+      "claim": "Users appreciate the ease of navigation and reading — focus on user-friendly design.",
+      "confidence": "high",
+      "evidence": [{"review_id": 67, "quote": "I love this app because I don't need to be online to use it. I can bookmark and highlight verses I want to go back to."}]
+    },
+    {
+      "claim": "The KJV version is the most popular among users — cater to this preference.",
+      "confidence": "high",
+      "evidence": [{"review_id": 55, "quote": "I prefer the KJV Bible. I grew up using it."}]
+    },
+    {
+      "claim": "Some users find the app difficult to navigate — address this issue in updates or instructions.",
+      "confidence": "medium",
+      "evidence": [{"review_id": 92, "quote": "I have to weed through everything to get to the verse that I want to read."}]
+    },
+    {
+      "claim": "The app's audio feature is appreciated by some users — consider promoting this feature.",
+      "confidence": "medium",
+      "evidence": [{"review_id": 43, "quote": "I love this app! It is very easy to use and follow with the bible. I like the fact it can be read to me a great feature."}]
+    }
+  ],
+  "top_strengths": [
+    {
+      "theme": "Offline functionality",
+      "review_count": 10,
+      "confidence": "high",
+      "evidence": [{"review_id": 46, "quote": "This App Is Wonderful.. I Am Just Starting Out To Read My Bible More.. And This Apps Me To Understand What Exactly I Am Reading.."}]
+    },
+    {
+      "theme": "User-friendly design",
+      "review_count": 9,
+      "confidence": "high",
+      "evidence": [{"review_id": 67, "quote": "I love this app because I don't need to be online to use it. I can bookmark and highlight verses I want to go back to."}]
+    },
+    {
+      "theme": "KJV version preference",
+      "review_count": 8,
+      "confidence": "high",
+      "evidence": [{"review_id": 55, "quote": "I prefer the KJV Bible. I grew up using it."}]
+    }
+  ],
+  "top_weaknesses": [
+    {
+      "theme": "Difficult navigation for some users",
+      "review_count": 1,
+      "confidence": "medium",
+      "evidence": [{"review_id": 92, "quote": "I have to weed through everything to get to the verse that I want to read."}]
+    }
+  ],
+  "top_opportunities": [
+    {
+      "theme": "Promote audio feature",
+      "review_count": 1,
+      "confidence": "medium",
+      "evidence": [{"review_id": 43, "quote": "I love this app! It is very easy to use and follow with the bible. I like the fact it can be read to me a great feature."}]
+    }
+  ]
+}

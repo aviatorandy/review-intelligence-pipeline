@@ -1,0 +1,82 @@
+Error: Schema error: 'sentiment' is a required property
+
+Raw output:
+{
+  "summary_bullets": [
+    {
+      "claim": "Addictiveness is the dominant strength — lean into this in marketing copy.",
+      "confidence": "high",
+      "evidence": [{"review_id": 150, "quote": "Just wanted to have it always available even when I don't have the actual Bible with me. So much can be stored on my kindle that is very useful."}]
+    },
+    {
+      "claim": "Ease of use and portability are key selling points.",
+      "confidence": "high",
+      "evidence": [{"review_id": 199, "quote": "I love reading the Bible on my Kindle. It is easy to read and to transport it. I Love it!"}]
+    },
+    {
+      "claim": "Users appreciate the ability to access multiple translations.",
+      "confidence": "high",
+      "evidence": [{"review_id": 174, "quote": "I have been searching for that \"perfect\" Bible app, and I do believe I have found it.  This is a very customizable app with many functions and requires very little space.  It can be used off line."}]
+    },
+    {
+      "claim": "Users value the offline functionality.",
+      "confidence": "high",
+      "evidence": [{"review_id": 189, "quote": "The quick Bible is awesome, I can access it from anywhere. The  best part I do not need the Internet to access it."}]
+    },
+    {
+      "claim": "Users appreciate the ability to highlight and bookmark verses.",
+      "confidence": "high",
+      "evidence": [{"review_id": 177, "quote": "Having downloaded several versions of the Bible I have become addicted to this one. It's easy to navigate, notes and highlighting features are easy and reliable."}]
+    }
+  ],
+  "top_strengths": [
+    {
+      "theme": "Ease of use",
+      "review_count": 14,
+      "confidence": "high",
+      "evidence": [{"review_id": 199, "quote": "I love reading the Bible on my Kindle. It is easy to read and to transport it. I Love it!"}]
+    },
+    {
+      "theme": "Portability",
+      "review_count": 7,
+      "confidence": "high",
+      "evidence": [{"review_id": 150, "quote": "Just wanted to have it always available even when I don't have the actual Bible with me. So much can be stored on my kindle that is very useful."}]
+    },
+    {
+      "theme": "Multiple translations",
+      "review_count": 3,
+      "confidence": "medium",
+      "evidence": [{"review_id": 174, "quote": "I have been searching for that \"perfect\" Bible app, and I do believe I have found it.  This is a very customizable app with many functions and requires very little space.  It can be used off line."}]
+    },
+    {
+      "theme": "Offline functionality",
+      "review_count": 2,
+      "confidence": "medium",
+      "evidence": [{"review_id": 189, "quote": "The quick Bible is awesome, I can access it from anywhere. The  best part I do not need the Internet to access it."}]
+    },
+    {
+      "theme": "Highlighting and bookmarking",
+      "review_count": 2,
+      "confidence": "medium",
+      "evidence": [{"review_id": 177, "quote": "Having downloaded several versions of the Bible I have become addicted to this one. It's easy to navigate, notes and highlighting features are easy and reliable."}]
+    }
+  ],
+  "top_weaknesses": [],
+  "opportunities": [
+    {
+      "claim": "Improve search functionality for quicker access to verses.",
+      "confidence": "medium",
+      "evidence": [{"review_id": 180, "quote": "I cannot carry my Bible with me everywhere I go, but, my Kindle Fire is always with me...love the convienience....."}]
+    },
+    {
+      "claim": "Add more customization options for fonts and colors.",
+      "confidence": "medium",
+      "evidence": [{"review_id": 188, "quote": "Simply a very good Bible so very easy to search and use.  Customizable fonts and colors."}]
+    },
+    {
+      "claim": "Incorporate social features for sharing verses or insights.",
+      "confidence": "low",
+      "evidence": [{"review_id": 175, "quote": "I RECOMEND THIS BIBLE FOR NOTE BOOKS AND KINDLES . FOR IT IS THE TRUEST , PUREST , MOST DOWN TO EARTH KING JAMES BIBLE, I LOVE IT , OUR PREACHER'S WIFE SHOW'D THIS TO US TO DOWNLOAD ONTO THE KINDLE FOR CHURCH, IT IS THE TRUEST BIBLE , HAS ALL OF GOD'S WO"}]
+    }
+  ]
+}

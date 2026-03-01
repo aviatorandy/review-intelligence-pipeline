@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Review Intelligence Report</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #0a0a0f;
+    --surface: #13131a;
+    --surface2: #1c1c26;
+    --border: #2a2a38;
+    --text: #e8e8f0;
+    --muted: #6b6b80;
+    --accent: #7c6af7;
+    --green: #22c55e;
+    --red: #ef4444;
+    --amber: #f59e0b;
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Mono', monospace;
+    min-height: 100vh;
+    padding: 40px 20px;
+  }
+
+  .container { max-width: 900px; margin: 0 auto; }
+
+  header {
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 32px;
+    margin-bottom: 48px;
+    animation: fadeUp 0.6s ease both;
+  }
+
+  header h1 {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(2rem, 5vw, 3.5rem);
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    background: linear-gradient(135deg, #e8e8f0 0%, #7c6af7 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    line-height: 1.1;
+  }
+
+  header .subtitle {
+    color: var(--muted);
+    font-size: 0.85rem;
+    margin-top: 8px;
+    letter-spacing: 0.05em;
+  }
+
+  .sentiment-block {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 32px;
+    margin-bottom: 48px;
+    animation: fadeUp 0.6s 0.1s ease both;
+  }
+
+  .sentiment-block h2 {
+    font-family: 'Syne', sans-serif;
+    font-size: 0.75rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 24px;
+  }
+
+  .sentiment-row {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 14px;
+  }
+
+  .sentiment-label {
+    width: 70px;
+    font-size: 0.8rem;
+    color: var(--muted);
+    flex-shrink: 0;
+  }
+
+  .bar-track {
+    flex: 1;
+    height: 10px;
+    background: var(--surface2);
+    border-radius: 99px;
+    overflow: hidden;
+  }
+
+  .bar-fill {
+    height: 100%;
+    border-radius: 99px;
+    transition: width 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .sentiment-pct {
+    width: 48px;
+    text-align: right;
+    font-size: 0.9rem;
+    font-weight: 500;
+  }
+
+  .n-reviews {
+    font-size: 0.75rem;
+    color: var(--muted);
+    margin-top: 12px;
+  }
+
+  .section {
+    margin-bottom: 48px;
+    animation: fadeUp 0.6s 0.2s ease both;
+  }
+
+  .section h2 {
+    font-family: 'Syne', sans-serif;
+    font-size: 1.1rem;
+    font-weight: 700;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px 24px;
+    margin-bottom: 12px;
+    transition: border-color 0.2s;
+  }
+
+  .card:hover { border-color: var(--accent); }
+
+  .card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 16px;
+    margin-bottom: 14px;
+    flex-wrap: wrap;
+  }
+
+  .theme-name {
+    font-family: 'Syne', sans-serif;
+    font-size: 1rem;
+    font-weight: 600;
+  }
+
+  .card-meta {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-shrink: 0;
+  }
+
+  .review-count {
+    font-size: 0.8rem;
+    font-weight: 500;
+  }
+
+  .badge {
+    font-size: 0.7rem;
+    padding: 3px 10px;
+    border-radius: 99px;
+    color: #000;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+
+  .evidence-list { display: flex; flex-direction: column; gap: 8px; }
+
+  .evidence-item {
+    background: var(--surface2);
+    border-left: 3px solid var(--accent);
+    border-radius: 0 8px 8px 0;
+    padding: 10px 14px;
+  }
+
+  .review-id {
+    font-size: 0.7rem;
+    color: var(--muted);
+    display: block;
+    margin-bottom: 4px;
+    letter-spacing: 0.05em;
+  }
+
+  .quote {
+    font-size: 0.82rem;
+    color: var(--text);
+    line-height: 1.5;
+    font-style: italic;
+  }
+
+  .bullet-item {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 18px 22px;
+    margin-bottom: 10px;
+    transition: border-color 0.2s;
+  }
+
+  .bullet-item:hover { border-color: var(--accent); }
+
+  .bullet-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    margin-bottom: 12px;
+    flex-wrap: wrap;
+  }
+
+  .bullet-claim {
+    font-size: 0.92rem;
+    line-height: 1.5;
+    flex: 1;
+  }
+
+  .unknown-tags { display: flex; flex-wrap: wrap; gap: 8px; }
+
+  .unknown-tag {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 99px;
+    padding: 6px 16px;
+    font-size: 0.78rem;
+    color: var(--muted);
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <header>
+    <h1>Review Intelligence<br>Report</h1>
+    <p class="subtitle">ANGRY BIRDS · AMAZON REVIEWS · 354 REVIEWS SAMPLED</p>
+  </header>
+
+  <div class="sentiment-block">
+    <h2>Sentiment Distribution</h2>
+    <div class="sentiment-row">
+      <span class="sentiment-label">Positive</span>
+      <div class="bar-track">
+        <div class="bar-fill" style="width:96.6%; background: var(--green);"></div>
+      </div>
+      <span class="sentiment-pct" style="color: var(--green)">96.6%</span>
+    </div>
+    <div class="sentiment-row">
+      <span class="sentiment-label">Negative</span>
+      <div class="bar-track">
+        <div class="bar-fill" style="width:3.4%; background: var(--red);"></div>
+      </div>
+      <span class="sentiment-pct" style="color: var(--red)">3.4%</span>
+    </div>
+    <p class="n-reviews">Based on 354 sampled reviews with ground-truth labels</p>
+  </div>
+
+  <section class="section">
+    <h2>📋 Executive Summary</h2>
+    
+            <div class="bullet-item">
+                <div class="bullet-header">
+                    <span class="badge" style="background:#22c55e">high</span>
+                    <span class="bullet-claim">Market the app as offline-capable — it's a key selling point.</span>
+                </div>
+                <div class="evidence-list">
+            <div class="evidence-item">
+                <span class="review-id">Review #26</span>
+                <span class="quote">"Most of the old apps were not too functional on the Kindle Fire because they required WiFi."</span>
+            </div></div>
+            </div>
+            <div class="bullet-item">
+                <div class="bullet-header">
+                    <span class="badge" style="background:#22c55e">high</span>
+                    <span class="bullet-claim">Highlighting and note-taking features are popular among users.</span>
+                </div>
+                <div class="evidence-list">
+            <div class="evidence-item">
+                <span class="review-id">Review #32</span>
+                <span class="quote">"My only complaint is when I tried a translation or devotional it stays in my content. But that is not so annoying that I would drop my rating."</span>
+            </div></div>
+            </div>
+            <div class="bullet-item">
+                <div class="bullet-header">
+                    <span class="badge" style="background:#22c55e">high</span>
+                    <span class="bullet-claim">The app's ease of navigation and searchability are appreciated by users.</span>
+                </div>
+                <div class="evidence-list">
+            <div class="evidence-item">
+                <span class="review-id">Review #35</span>
+                <span class="quote">"I love this application. It has a lot of extra material with it and I really enjoy the parallel Bible option."</span>
+            </div></div>
+            </div>
+            <div class="bullet-item">
+                <div class="bullet-header">
+                    <span class="badge" style="background:#22c55e">high</span>
+                    <span class="bullet-claim">Users find the app useful for personal study and Bible learning.</span>
+                </div>
+                <div class="evidence-list">
+            <div class="evidence-item">
+                <span class="review-id">Review #45</span>
+                <span class="quote">"This is a very impressive app for personal study and Bible learning enrichment."</span>
+            </div></div>
+            </div>
+            <div class="bullet-item">
+                <div class="bullet-header">
+                    <span class="badge" style="background:#22c55e">high</span>
+                    <span class="bullet-claim">Ease of use and offline access are dominant strengths — emphasize these in marketing copy.</span>
+                </div>
+                <div class="evidence-list">
+            <div class="evidence-item">
+                <span class="review-id">Review #82</span>
+                <span class="quote">"This took a while to download - but it is the entire Bible and can be read offline. And it's free!"</span>
+            </div></div>
+            </div>
+            <div class="bullet-item">
+                <div class="bullet-header">
+                    <span class="badge" style="background:#f59e0b">medium</span>
+                    <span class="bullet-claim">Audio feature is a bonus — mention it in marketing copy.</span>
+                </div>
+                <div class="evidence-list">
+            <div class="evidence-item">
+                <span class="review-id">Review #97</span>
+                <span class="quote">"I love it because the bible is available off line. I have searched for such an app for a while and I am grateful I found this one. It also as an audio feature. Awesome"</span>
+            </div></div>
+            </div>
+  </section>
+
+  <section class="section">
+    <h2>✅ Top Strengths</h2>
+    
+            <div class="card">
+                <div class="card-header">
+                    <span class="theme-name">Ease of use</span>
+                    <div class="card-meta">
+                        <span class="review-count" style="color:#22c55e">62 reviews</span>
+                        <span class="badge" style="background:#22c55e">high</span>
+                    </div>
+                </div>
+                <div class="evidence-list">
+            <div class="evidence-item">
+                <span class="review-id">Review #82</span>
+                <span class="quote">"This took a while to download - but it is the entire Bible and can be read offline. And it's free!"</span>
+            </div>
+            <div class="evidence-item">
+                <span class="review-id">Review #130</span>
+                <span class="quote">"I found it to be a very simple, easy to use Bible app. It has the night mode which I love (battery saving mode)."</span>
+            </div>
+            <div class="evidence-item">
+                <span class="review-id">Review #178</span>
+                <span class="quote">"Very easy 2 use, easy 2 find a specific verse. Of all the bible apps on Amazon's Appstore this is the one I would recommend"</span>
+            </div></div>
+            </div>
+            <div class="card">
+                <div class="card-header">
+                    <span class="theme-name">Offline access</span>
+                    <div class="card-meta">
+                        <span class="review-count" style="color:#22c55e">22 reviews</span>
+                        <span class="badge" style="background:#22c55e">high</span>
+                    </div>
+                </div>
+                <div class="evidence-list">
+            <div class="evidence-item">
+                <span class="review-id">Review #82</span>
+                <span class="quote">"This took a while to download - but it is the entire Bible and can be read offline. And it's free!"</span>
+            </div>
+            <div class="evidence-item">
+                <span class="review-id">Review #122</span>
+                <span class="quote">"This app does not need an internet connection in order for you to use it so it is ideal for all of the places you may want to read your Bible but have no access to a wi-fi network."</span>
+            </div>
+            <div class="evidence-item">
+                <span class="review-id">Review #189</span>
+                <span class="quote">"The quick Bible is awesome, I can access it from anywhere. The  best part I do not need the Internet to access it. Bravo!!!"</span>
+            </div></div>
+            </div>
+            <div class="card">
+                <div class="card-header">
+                    <span class="theme-name">Highlighting and note-taking</span>
+                    <div class="card-meta">
+                        <span class="review-count" style="color:#22c55e">15 reviews</span>
+                        <span class="badge" style="background:#22c55e">high</span>
+                    </div>
+                </div>
+                <div class="evidence-list">
+            <div class="evidence-item">
+                <span class="review-id">Review #98</span>
+                <span class="quote">"I've had many different Bible apps and each one in their own way was hard to use. This KJV one is VERY useful. my favorite features are the highlighting and notes."</span>
+            </div>
+            <div class="evidence-item">
+                <span class="review-id">Review #134</span>
+                <span class="quote">"I love red letter bibles its the perfect bible for Christians or anyone. It doesn't matter who you are the bible is a great book (well books) to read."</span>
+            </div></div>
+            </div>
+            <div class="card">
+                <div class="card-header">
+                    <span class="theme-name">Customizability</span>
+                    <div class="card-meta">
+                        <span class="review-count" style="color:#22c55e">10 reviews</span>
+                        <span class="badge" style="background:#22c55e">high</span>
+                    </div>
+                </div>
+                <div class="evidence-list">
+            <div class="evidence-item">
+                <span class="review-id">Review #187</span>
+                <span class="quote">"this is a very nice Bible program. loads quickly, runs flawlessly, gives me the options i want (text size, colors, etc), along with bookmarks and the ability to add verse notes. exactly what i was looking for to use for my daily Bible reading."</span>
+            </div></div>
+            </div>
+            <div class="card">
+                <div class="card-header">
+                    <span class="theme-name">Daily verses feature</span>
+                    <div class="card-meta">
+                        <span class="review-count" style="color:#22c55e">7 reviews</span>
+                        <span class="badge" style="background:#22c55e">high</span>
+                    </div>
+                </div>
+                <div class="evidence-list">
+            <div class="evidence-item">
+                <span class="review-id">Review #293</span>
+                <span class="quote">"I love this app. I love having access so easily to daily Bible verses. I read it everyday and it brings me peace"</span>
+            </div></div>
+            </div>
+  </section>
+
+  <section class="section">
+    <h2>❌ Top Complaints</h2>
+    
+  </section>
+
+  
+
+</div>
+</body>
+</html>

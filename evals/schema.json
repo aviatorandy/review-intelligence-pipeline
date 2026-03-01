@@ -1,0 +1,177 @@
+{
+  "type": "object",
+  "required": [
+    "summary_bullets",
+    "top_strengths",
+    "top_complaints",
+    "sentiment",
+    "unknowns"
+  ],
+  "properties": {
+    "summary_bullets": {
+      "type": "array",
+      "minItems": 3,
+      "maxItems": 6,
+      "items": {
+        "type": "object",
+        "required": [
+          "claim",
+          "evidence",
+          "confidence"
+        ],
+        "properties": {
+          "claim": {
+            "type": "string"
+          },
+          "confidence": {
+            "type": "string",
+            "enum": [
+              "high",
+              "medium",
+              "low"
+            ]
+          },
+          "evidence": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "review_id",
+                "quote"
+              ],
+              "properties": {
+                "review_id": {
+                  "type": "integer"
+                },
+                "quote": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "top_strengths": {
+      "type": "array",
+      "maxItems": 5,
+      "items": {
+        "type": "object",
+        "required": [
+          "theme",
+          "review_count",
+          "evidence",
+          "confidence"
+        ],
+        "properties": {
+          "theme": {
+            "type": "string"
+          },
+          "review_count": {
+            "type": "integer"
+          },
+          "confidence": {
+            "type": "string",
+            "enum": [
+              "high",
+              "medium",
+              "low"
+            ]
+          },
+          "evidence": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "object",
+              "required": [
+                "review_id",
+                "quote"
+              ],
+              "properties": {
+                "review_id": {
+                  "type": "integer"
+                },
+                "quote": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "top_complaints": {
+      "type": "array",
+      "maxItems": 5,
+      "items": {
+        "type": "object",
+        "required": [
+          "theme",
+          "review_count",
+          "evidence",
+          "confidence"
+        ],
+        "properties": {
+          "theme": {
+            "type": "string"
+          },
+          "review_count": {
+            "type": "integer"
+          },
+          "confidence": {
+            "type": "string",
+            "enum": [
+              "high",
+              "medium",
+              "low"
+            ]
+          },
+          "evidence": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "object",
+              "required": [
+                "review_id",
+                "quote"
+              ],
+              "properties": {
+                "review_id": {
+                  "type": "integer"
+                },
+                "quote": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "sentiment": {
+      "type": "object",
+      "required": [
+        "positive_rate",
+        "negative_rate",
+        "n_reviews"
+      ],
+      "properties": {
+        "positive_rate": {
+          "type": "number"
+        },
+        "negative_rate": {
+          "type": "number"
+        },
+        "n_reviews": {
+          "type": "integer"
+        }
+      }
+    },
+    "unknowns": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  }
+}

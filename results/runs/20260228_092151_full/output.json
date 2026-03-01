@@ -1,0 +1,191 @@
+{
+  "summary_bullets": [
+    {
+      "claim": "Addictiveness is the dominant strength \u2014 lean into this in marketing copy.",
+      "confidence": "high",
+      "evidence": [
+        {
+          "review_id": 125,
+          "quote": "Cool game. Very addictive."
+        }
+      ]
+    },
+    {
+      "claim": "Angry Birds appeals to a wide audience \u2014 target marketing across age groups.",
+      "confidence": "high",
+      "evidence": [
+        {
+          "review_id": 10,
+          "quote": "who doesn't like angry birds? i love angry birds!"
+        }
+      ]
+    },
+    {
+      "claim": "Angry Birds is a great time killer \u2014 emphasize this in app store description.",
+      "confidence": "high",
+      "evidence": [
+        {
+          "review_id": 60,
+          "quote": "I have angry birds on every device I own and I love to play it although I'm not really that great at the game although I still love to play it."
+        }
+      ]
+    },
+    {
+      "claim": "Angry Birds is a fun game for kids and adults alike \u2014 highlight this in marketing materials.",
+      "confidence": "high",
+      "evidence": [
+        {
+          "review_id": 84,
+          "quote": "We are late getting into Angry Birds but my husband and I absolutely love it! It is very addictive and it totally captures our attention!"
+        }
+      ]
+    },
+    {
+      "claim": "Angry Birds is a great time-killer \u2014 highlight its ability to entertain.",
+      "confidence": "high",
+      "evidence": [
+        {
+          "review_id": 142,
+          "quote": "Who doesnt love angry birds.... The game is fun and challenging.  Provides many levels which get harder and harder... So much fun it becomes addicting"
+        }
+      ]
+    },
+    {
+      "claim": "Angry Birds offers a challenge \u2014 emphasize its difficulty.",
+      "confidence": "high",
+      "evidence": [
+        {
+          "review_id": 135,
+          "quote": "I am terrified of real birds, but Love the Angry Birds!  Sometimes, you just have to keep trying a level till you get it right!  Always go back for the 3 stars if you don't get them right away!"
+        }
+      ]
+    }
+  ],
+  "top_strengths": [
+    {
+      "theme": "Addictiveness",
+      "review_count": 25,
+      "confidence": "high",
+      "evidence": [
+        {
+          "review_id": 125,
+          "quote": "Cool game. Very addictive."
+        },
+        {
+          "review_id": 5,
+          "quote": "This was my first time to play Angry Birds and I don'tthink I could have had a better first impression!  Because of this, I will purchase every Angry Birds gameI can get my hands on!  Now I see what all the 'fuss' is about!!!"
+        }
+      ]
+    },
+    {
+      "theme": "Wide appeal",
+      "review_count": 25,
+      "confidence": "high",
+      "evidence": [
+        {
+          "review_id": 10,
+          "quote": "who doesn't like angry birds? i love angry birds!"
+        },
+        {
+          "review_id": 67,
+          "quote": "Well I have never played Angry Birds, but my son sure loves it. If he's happy then so am I!"
+        },
+        {
+          "review_id": 171,
+          "quote": "I really enjoy angry birds games. This is a game that the whole family will enjoy with different levels and and themes."
+        }
+      ]
+    },
+    {
+      "theme": "Time-killer",
+      "review_count": 10,
+      "confidence": "high",
+      "evidence": [
+        {
+          "review_id": 142,
+          "quote": "Who doesnt love angry birds.... The game is fun and challenging.  Provides many levels which get harder and harder... So much fun it becomes addicting"
+        }
+      ]
+    },
+    {
+      "theme": "Challenge",
+      "review_count": 5,
+      "confidence": "high",
+      "evidence": [
+        {
+          "review_id": 135,
+          "quote": "I am terrified of real birds, but Love the Angry Birds!  Sometimes, you just have to keep trying a level till you get it right!  Always go back for the 3 stars if you don't get them right away!"
+        }
+      ]
+    },
+    {
+      "theme": "Time killer",
+      "review_count": 3,
+      "confidence": "medium",
+      "evidence": [
+        {
+          "review_id": 60,
+          "quote": "I have angry birds on every device I own and I love to play it although I'm not really that great at the game although I still love to play it."
+        }
+      ]
+    }
+  ],
+  "top_complaints": [
+    {
+      "theme": "Intrusive ads",
+      "review_count": 2,
+      "confidence": "low",
+      "evidence": [
+        {
+          "review_id": 196,
+          "quote": "...except the ads in the free version. Angry birds is crazy addicting. Shooting little birds across the screen and knocking down rocks and walls. My son, daughter, husband, parents... everyone I know loves this game."
+        }
+      ]
+    },
+    {
+      "theme": "Difficulty",
+      "review_count": 1,
+      "confidence": "low",
+      "evidence": [
+        {
+          "review_id": 155,
+          "quote": "Sometimes I'm sorry that I ever started Angry Birds...just because I cannot get to the next level..."
+        }
+      ]
+    },
+    {
+      "theme": "Boredom",
+      "review_count": 1,
+      "confidence": "low",
+      "evidence": [
+        {
+          "review_id": 230,
+          "quote": "it is so dumb just get angry birds PLEASE I NEG YOU DO NOT GET THIS APP it is the WORST app ever it is so stupid it is not a good app plzzzzzzzzzzz do not get this app it is boring"
+        }
+      ]
+    },
+    {
+      "theme": "Technical issues",
+      "review_count": 1,
+      "confidence": "low",
+      "evidence": [
+        {
+          "review_id": 139,
+          "quote": "1st I have to uninstall in order to get the new update. Now it crashes everytime I try to do any of the older levels. Rovio this is BS!!!!!!"
+        }
+      ]
+    }
+  ],
+  "sentiment": {
+    "positive_rate": 0.89,
+    "negative_rate": 0.11,
+    "n_reviews": 100
+  },
+  "unknowns": [],
+  "meta": {
+    "total_reviews": 100,
+    "chunks_processed": 2,
+    "chunks_failed": 0,
+    "chunk_size": 50
+  }
+}
