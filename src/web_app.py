@@ -17,6 +17,7 @@ from pathlib import Path
 from flask import Flask, jsonify, render_template, request, send_file, Response
 
 from .ingest import load_reviews, detect_apps, is_enriched
+from scripts.enrich_reviews import enrich_dataframe
 from .full_pipeline import aggregate_chunks, process_chunk, build_chunks
 from .pipeline_strategy import get_strategy, estimate_time_minutes
 from .synthesizer import run_synthesis, compute_quality_metrics
@@ -52,6 +53,12 @@ def _run_pipeline(job_id: str, csv_path: Path):
 
         df = load_reviews(str(csv_path))
         total_uploaded = len(df)
+
+        if not is_enriched(df):
+            _update_job(job_id, progress=3, message="Tagging reviews by topic and sentiment...")
+            df = enrich_dataframe(df)
+            # Re-run ingest to drop label_conflict rows now that the column exists
+            df = df[df["label_conflict"].astype(str).str.lower() != "true"].copy()
 
         apps = detect_apps(df)
 

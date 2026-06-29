@@ -181,6 +181,33 @@ def short_summary(text: str, sentiment: str, topic: str) -> str:
     return f"{prefix.strip()}: \"{snippet}\""
 
 
+def enrich_dataframe(df):
+    """Enrich a pandas DataFrame in-memory. Returns the enriched DataFrame."""
+    import pandas as pd
+
+    records = df.to_dict(orient="records")
+    enriched = []
+    for row in records:
+        text = str(row.get("text", "")).strip()
+        label = int(row.get("label", 1))
+        sentiment = classify_sentiment_text(text)
+        topic = classify_topic(text)
+        severity = classify_severity(text, sentiment)
+        actionability = classify_actionability(topic, severity)
+        label_positive = label == 1
+        text_positive = sentiment == "positive"
+        conflict = label_positive != text_positive and sentiment != "mixed"
+        enriched.append({
+            **row,
+            "topic": topic,
+            "sentiment_text": sentiment,
+            "severity": severity,
+            "actionability": actionability,
+            "label_conflict": str(conflict).lower(),
+        })
+    return pd.DataFrame(enriched)
+
+
 def enrich(input_path: str, output_path: str, product_name: str = ""):
     rows_in = []
     with open(input_path, newline="", encoding="utf-8-sig") as f:
