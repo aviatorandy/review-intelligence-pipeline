@@ -27,6 +27,31 @@ from .report_html import generate_html
 
 # ─── Progress bar ────────────────────────────────────────────────────────────
 
+import re
+
+_NEGATIVE_SIGNALS = re.compile(
+    r"\b(bad|terrible|awful|hate|hated|worst|broken|crash(es|ing|ed)?|bug(gy|s)?|"
+    r"useless|disappoint(ing|ed|ment)?|annoy(ing|ed)?|frustrat(ing|ed|ion)?|"
+    r"problem(s)?|issue(s)?|doesn.t work|won.t|slow|lag(gy)?|freez(e|ing|es)?|"
+    r"ruin(s|ed)?|terrible|horrible|waste|scam|fake|mislead|glitch(y|es)?|"
+    r"uninstall|remove(d)?|not worth|never again|poor|keep(s)? crash|stopped working|"
+    r"can.t|cannot|no longer|used to|unfortunately|unfortunately)\b",
+    re.IGNORECASE,
+)
+
+
+def _text_verified_negatives(rows: list) -> list:
+    """
+    Return label=0 rows where the review text itself contains negative language.
+    Filters out mislabeled reviews (positive text, wrong label) that would otherwise
+    cause the LLM to hallucinate complaint themes.
+    """
+    return [
+        r for r in rows
+        if int(r.get("label", 1)) == 0 and bool(_NEGATIVE_SIGNALS.search(r.get("text", "")))
+    ]
+
+
 def progress_bar(current, total, start_time, width=40):
     pct = current / total
     filled = int(pct * width)
@@ -250,12 +275,13 @@ def main():
     # Split into chunks
     chunks = [rows[i:i + args.chunk_size] for i in range(0, total, args.chunk_size)]
 
-    # Add a dedicated negative-only chunk if there are enough negatives
-    # This guarantees complaints surface even when negatives are sparse (< 5 per chunk)
-    negatives = [r for r in rows if int(r.get("label", 1)) == 0]
+    # Add a dedicated negative-only chunk using TEXT-verified negatives.
+    # We filter by text content, not just label, to avoid mislabeled reviews
+    # generating hallucinated complaints.
+    negatives = _text_verified_negatives(rows)
     if len(negatives) >= 5:
         chunks.append(negatives)
-        print(f"Adding dedicated negative chunk ({len(negatives)} reviews) to surface complaints")
+        print(f"Adding dedicated negative chunk ({len(negatives)} text-verified negatives)")
 
     n_chunks = len(chunks)
 

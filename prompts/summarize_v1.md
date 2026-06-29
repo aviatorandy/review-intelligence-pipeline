@@ -51,24 +51,38 @@ Rules:
 2) top_strengths: up to 5, ranked by review_count descending.
    Merge themes that mean the same thing into ONE entry with a higher count.
    Do NOT list "Wide appeal" AND "Universal appeal" AND "Widespread appeal" separately — pick one name.
-   Draw evidence primarily from reviews marked sentiment="POSITIVE".
+   Draw evidence primarily from reviews where the TEXT expresses clear satisfaction or praise.
 
 3) top_complaints: up to 5, ranked by review_count descending.
-   IMPORTANT: Each review has a "sentiment" field — either "POSITIVE" or "NEGATIVE".
-   - PRIORITIZE evidence from reviews marked sentiment="NEGATIVE" for complaints.
-   - Only use sentiment="POSITIVE" reviews as complaint evidence if the complaint is
-     explicit and unambiguous (e.g. "I love the game but the ads are terrible").
-   - NEVER file a complaint where the evidence quote expresses overall satisfaction.
-   - Look hard for complaints — check ALL sentiment="NEGATIVE" reviews first.
-   - Common complaint themes: ads, crashes, too difficult, repetitive, boring, high cost,
-     limited features, offline issues.
-   - If you find ANY negative signal — include it with low confidence rather than leaving
-     top_complaints empty.
+
+   GROUND TRUTH RULE — READ THIS CAREFULLY:
+   The `sentiment` field in each review is derived from a dataset label and may be WRONG.
+   Always treat the TEXT of the review as the source of truth.
+
+   A complaint is only valid if:
+   a) The review text EXPLICITLY describes a problem, frustration, or negative experience
+   b) The evidence quote DIRECTLY expresses dissatisfaction — words like "hate", "crash",
+      "broken", "annoying", "doesn't work", "too many ads", "disappointing", etc.
+   c) You can read the quote cold and immediately understand what the user dislikes.
+
+   STRICTLY FORBIDDEN — these DISQUALIFY a complaint:
+   - A quote that is purely complimentary or enthusiastic (e.g. "THIS IS A VERY GOOD APP")
+   - A quote that praises the product with no complaint buried in it
+   - Manufacturing a complaint theme that isn't explicitly stated in any review text
+   - Using a review as evidence just because its sentiment label says "NEGATIVE"
+
+   SELF-CHECK: Before including any complaint, re-read the evidence quote. Ask yourself:
+   "Does this quote actually express frustration or identify a problem?" 
+   If the answer is no, DO NOT include it.
+
+   It is CORRECT and EXPECTED to return fewer than 5 complaints, or even an empty
+   top_complaints list, if the reviews in this batch don't contain genuine complaints.
+   An empty list is far better than fabricated complaints.
 
 4) sentiment: count label=1 as positive, label=0 as negative. Count exactly.
 
 5) Every "quote" must be copied CHARACTER FOR CHARACTER from the review text.
-   The quote must support the theme — do not cite an unrelated review.
+   The quote must directly support the theme — not be loosely associated with it.
 
 Reviews (JSONL):
 {{REVIEWS_JSONL}}

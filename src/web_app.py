@@ -16,8 +16,8 @@ from pathlib import Path
 
 from flask import Flask, jsonify, render_template, request, send_file, Response
 
-from .ingest import load_reviews
-from .full_pipeline import aggregate_chunks, process_chunk
+from .ingest import load_reviews, detect_apps
+from .full_pipeline import aggregate_chunks, process_chunk, _text_verified_negatives
 from .pipeline_strategy import get_strategy, estimate_time_minutes
 from .synthesizer import run_synthesis, compute_quality_metrics
 from .report_html import generate_html
@@ -51,112 +51,144 @@ def _run_pipeline(job_id: str, csv_path: Path):
         df = load_reviews(str(csv_path))
         total_uploaded = len(df)
 
-        # Auto-select strategy — no user config needed
-        strategy = get_strategy(total_uploaded)
-        sample_n = strategy["sample_size"]
-        batch_size = strategy["batch_size"]
-        tier = strategy["tier"]
-
-        if sample_n < total_uploaded:
-            df = df.sample(n=sample_n, random_state=42)
-
-        rows = df.to_dict(orient="records")
-        total = len(rows)
-
-        est_time = estimate_time_minutes(total, batch_size)
-        _update_job(
-            job_id,
-            progress=5,
-            message=f"{strategy['label']} — estimated time: {est_time}",
-            total_reviews=total_uploaded,
-            analyzed_reviews=total,
-            tier=tier,
-        )
-
-        # Store rows for embedding
-        with _jobs_lock:
-            _jobs[job_id]["rows"] = rows
+        apps = detect_apps(df)
 
         run_dir = RUNS_DIR / f"{datetime.now().strftime('%Y%m%d_%H%M%S')}_{job_id[:8]}"
         run_dir.mkdir(parents=True, exist_ok=True)
-        chunks_dir = run_dir / "chunks"
-        chunks_dir.mkdir(exist_ok=True)
 
-        chunks = [rows[i:i + batch_size] for i in range(0, total, batch_size)]
-        negatives = [r for r in rows if int(r.get("label", 1)) == 0]
-        if len(negatives) >= 5:
-            chunks.append(negatives)
+        if apps:
+            _update_job(job_id, progress=4,
+                        message=f"Detected {len(apps)} apps — analyzing each separately...")
+            app_results = {}
+            all_rows = []
+            for app_idx, app_name in enumerate(apps):
+                app_df = df[df["app"] == app_name].copy()
+                app_result, app_rows = _process_app(
+                    job_id, app_name, app_df, run_dir,
+                    app_idx, len(apps),
+                )
+                app_results[app_name] = app_result
+                all_rows.extend(app_rows)
 
-        n_chunks = len(chunks)
-        chunk_results = []
-        failed = 0
+            with _jobs_lock:
+                _jobs[job_id]["rows"] = all_rows
 
-        progress_messages = [
-            "Identifying customer pain points...",
-            "Finding what customers love...",
-            "Extracting key themes...",
-            "Analyzing complaint patterns...",
-            "Spotting improvement opportunities...",
-            "Reviewing customer feedback...",
-        ]
+            _update_job(job_id, progress=93, message="Building your multi-app insights report...")
 
-        for i, chunk_rows in enumerate(chunks):
-            pct = 5 + int((i / n_chunks) * 72)
-            msg = progress_messages[i % len(progress_messages)]
-            _update_job(job_id, progress=pct, message=f"{msg} ({i + 1}/{n_chunks})")
-            result = process_chunk(chunk_rows, i, chunks_dir)
-            if result is None:
-                failed += 1
-            chunk_results.append(result)
+            html_path = run_dir / "report.html"
+            output_path = run_dir / "output.json"
+            with open(output_path, "w") as f:
+                json.dump({"apps": app_results, "multi_app": True}, f, indent=2)
 
-        _update_job(job_id, progress=78, message="Aggregating insights across all reviews...")
+            generate_html(
+                {"apps": app_results, "multi_app": True},
+                str(html_path),
+                data_path=str(csv_path),
+                job_id=job_id,
+            )
+        else:
+            # Single-app (or no app column) — original flow
+            strategy = get_strategy(total_uploaded)
+            sample_n = strategy["sample_size"]
+            batch_size = strategy["batch_size"]
+            tier = strategy["tier"]
 
-        n = len(rows)
-        pos = sum(1 for r in rows if int(r["label"]) == 1)
-        sentiment = {
-            "positive_rate": round(pos / n, 4),
-            "negative_rate": round((n - pos) / n, 4),
-            "n_reviews": n,
-        }
+            if sample_n < total_uploaded:
+                df = df.sample(n=sample_n, random_state=42)
 
-        top_strengths, top_complaints, summary_bullets = aggregate_chunks(chunk_results)
+            rows = df.to_dict(orient="records")
+            total = len(rows)
 
-        aggregated = {
-            "summary_bullets": summary_bullets,
-            "top_strengths": top_strengths,
-            "top_complaints": top_complaints,
-            "sentiment": sentiment,
-        }
+            est_time = estimate_time_minutes(total, batch_size)
+            _update_job(
+                job_id,
+                progress=5,
+                message=f"{strategy['label']} — estimated time: {est_time}",
+                total_reviews=total_uploaded,
+                analyzed_reviews=total,
+                tier=tier,
+            )
 
-        _update_job(job_id, progress=83, message="Generating executive summary and recommendations...")
-        synthesis = run_synthesis(aggregated)
+            with _jobs_lock:
+                _jobs[job_id]["rows"] = rows
 
-        _update_job(job_id, progress=88, message="Running quality checks...")
-        quality = compute_quality_metrics(chunk_results, aggregated)
+            chunks_dir = run_dir / "chunks"
+            chunks_dir.mkdir(exist_ok=True)
 
-        final = {
-            **aggregated,
-            **synthesis,
-            "unknowns": [],
-            "quality": quality,
-            "meta": {
-                "total_uploaded": total_uploaded,
-                "total_analyzed": total,
-                "tier": tier,
-                "chunks_processed": n_chunks - failed,
-                "chunks_failed": failed,
-                "batch_size": batch_size,
-            },
-        }
+            chunks = [rows[i:i + batch_size] for i in range(0, total, batch_size)]
+            negatives = _text_verified_negatives(rows)
+            if len(negatives) >= 5:
+                chunks.append(negatives)
 
-        output_path = run_dir / "output.json"
-        with open(output_path, "w") as f:
-            json.dump(final, f, indent=2)
+            n_chunks = len(chunks)
+            chunk_results = []
+            failed = 0
 
-        _update_job(job_id, progress=93, message="Building your insights report...")
+            progress_messages = [
+                "Identifying customer pain points...",
+                "Finding what customers love...",
+                "Extracting key themes...",
+                "Analyzing complaint patterns...",
+                "Spotting improvement opportunities...",
+                "Reviewing customer feedback...",
+            ]
 
-        html_path = run_dir / "report.html"
-        generate_html(final, str(html_path), data_path=str(csv_path), job_id=job_id)
+            for i, chunk_rows in enumerate(chunks):
+                pct = 5 + int((i / n_chunks) * 72)
+                msg = progress_messages[i % len(progress_messages)]
+                _update_job(job_id, progress=pct, message=f"{msg} ({i + 1}/{n_chunks})")
+                result = process_chunk(chunk_rows, i, chunks_dir)
+                if result is None:
+                    failed += 1
+                chunk_results.append(result)
+
+            _update_job(job_id, progress=78, message="Aggregating insights across all reviews...")
+
+            n = len(rows)
+            pos = sum(1 for r in rows if int(r["label"]) == 1)
+            sentiment = {
+                "positive_rate": round(pos / n, 4),
+                "negative_rate": round((n - pos) / n, 4),
+                "n_reviews": n,
+            }
+
+            top_strengths, top_complaints, summary_bullets = aggregate_chunks(chunk_results)
+            aggregated = {
+                "summary_bullets": summary_bullets,
+                "top_strengths": top_strengths,
+                "top_complaints": top_complaints,
+                "sentiment": sentiment,
+            }
+
+            _update_job(job_id, progress=83, message="Generating executive summary and recommendations...")
+            synthesis = run_synthesis(aggregated)
+
+            _update_job(job_id, progress=88, message="Running quality checks...")
+            quality = compute_quality_metrics(chunk_results, aggregated)
+
+            final = {
+                **aggregated,
+                **synthesis,
+                "unknowns": [],
+                "quality": quality,
+                "meta": {
+                    "total_uploaded": total_uploaded,
+                    "total_analyzed": total,
+                    "tier": tier,
+                    "chunks_processed": n_chunks - failed,
+                    "chunks_failed": failed,
+                    "batch_size": batch_size,
+                },
+            }
+
+            output_path = run_dir / "output.json"
+            with open(output_path, "w") as f:
+                json.dump(final, f, indent=2)
+
+            _update_job(job_id, progress=93, message="Building your insights report...")
+
+            html_path = run_dir / "report.html"
+            generate_html(final, str(html_path), data_path=str(csv_path), job_id=job_id)
 
         _update_job(
             job_id,
@@ -168,12 +200,97 @@ def _run_pipeline(job_id: str, csv_path: Path):
             embed_status="pending",
         )
 
-        # Start embedding in background
         t = threading.Thread(target=_run_embedding, args=(job_id,), daemon=True)
         t.start()
 
     except Exception as e:
         _update_job(job_id, status="error", error=str(e), message=f"Something went wrong: {e}")
+
+
+def _process_app(job_id, app_name, app_df, run_dir, app_idx, total_apps):
+    """Run the pipeline for a single app. Returns (final_dict, rows)."""
+    n_app = len(app_df)
+    strategy = get_strategy(n_app)
+    sample_n = strategy["sample_size"]
+    batch_size = strategy["batch_size"]
+    tier = strategy["tier"]
+
+    if sample_n < n_app:
+        app_df = app_df.sample(n=sample_n, random_state=42)
+
+    rows = app_df.to_dict(orient="records")
+    total = len(rows)
+
+    # Progress spans a slice of 5–90% divided by number of apps
+    base_pct = 5 + int((app_idx / total_apps) * 85)
+    end_pct = 5 + int(((app_idx + 1) / total_apps) * 85)
+
+    _update_job(
+        job_id,
+        progress=base_pct,
+        message=f"Analyzing {app_name} ({app_idx + 1}/{total_apps}) — {total} reviews...",
+    )
+
+    chunks_dir = run_dir / f"chunks_{app_name.replace(' ', '_').lower()}"
+    chunks_dir.mkdir(exist_ok=True)
+
+    chunks = [rows[i:i + batch_size] for i in range(0, total, batch_size)]
+    negatives = _text_verified_negatives(rows)
+    if len(negatives) >= 5:
+        chunks.append(negatives)
+
+    n_chunks = len(chunks)
+    chunk_results = []
+    failed = 0
+
+    for i, chunk_rows in enumerate(chunks):
+        pct = base_pct + int((i / n_chunks) * (end_pct - base_pct))
+        _update_job(job_id, progress=pct,
+                    message=f"Analyzing {app_name} — chunk {i + 1}/{n_chunks}...")
+        result = process_chunk(chunk_rows, i, chunks_dir)
+        if result is None:
+            failed += 1
+        chunk_results.append(result)
+
+    n = len(rows)
+    pos = sum(1 for r in rows if int(r["label"]) == 1)
+    sentiment = {
+        "positive_rate": round(pos / n, 4),
+        "negative_rate": round((n - pos) / n, 4),
+        "n_reviews": n,
+    }
+
+    top_strengths, top_complaints, summary_bullets = aggregate_chunks(chunk_results)
+    aggregated = {
+        "summary_bullets": summary_bullets,
+        "top_strengths": top_strengths,
+        "top_complaints": top_complaints,
+        "sentiment": sentiment,
+    }
+
+    _update_job(
+        job_id, progress=end_pct - 2,
+        message=f"Synthesizing insights for {app_name}...",
+    )
+    synthesis = run_synthesis(aggregated)
+    quality = compute_quality_metrics(chunk_results, aggregated)
+
+    final = {
+        **aggregated,
+        **synthesis,
+        "quality": quality,
+        "meta": {
+            "app": app_name,
+            "total_uploaded": n_app,
+            "total_analyzed": total,
+            "tier": tier,
+            "chunks_processed": n_chunks - failed,
+            "chunks_failed": failed,
+            "batch_size": batch_size,
+        },
+    }
+
+    return final, rows
 
 
 def _run_embedding(job_id: str):
@@ -301,7 +418,7 @@ def export_csv(job_id: str):
     buf = io.StringIO()
     writer = csv.writer(buf)
     writer.writerow([
-        "type", "theme", "review_count", "confidence", "priority",
+        "app", "type", "theme", "review_count", "confidence", "priority",
         "quote_1", "review_id_1", "quote_2", "review_id_2", "quote_3", "review_id_3"
     ])
 
@@ -310,23 +427,28 @@ def export_csv(job_id: str):
             return evidence[i].get("quote", ""), evidence[i].get("review_id", "")
         return "", ""
 
-    for item in data.get("top_complaints", []):
-        e = item.get("evidence", [])
-        writer.writerow(["complaint", item["theme"], item["review_count"], item["confidence"], "review",
-                         *ev(e,0), *ev(e,1), *ev(e,2)])
+    def write_app_rows(app_label, d):
+        for item in d.get("top_complaints", []):
+            e = item.get("evidence", [])
+            writer.writerow([app_label, "complaint", item["theme"], item["review_count"],
+                             item["confidence"], "review", *ev(e,0), *ev(e,1), *ev(e,2)])
+        for item in d.get("top_strengths", []):
+            e = item.get("evidence", [])
+            writer.writerow([app_label, "strength", item["theme"], item["review_count"],
+                             item["confidence"], "", *ev(e,0), *ev(e,1), *ev(e,2)])
+        for rec in d.get("improvement_recommendations", []):
+            writer.writerow([app_label, "improvement", rec.get("title",""), "",
+                             rec.get("priority",""), "action", rec.get("description",""), "",
+                             rec.get("business_impact",""), "", "", ""])
+        for rec in d.get("listing_recommendations", []):
+            writer.writerow([app_label, "listing_rec", rec.get("title",""), "", "", "listing",
+                             rec.get("description",""), "", rec.get("rationale",""), "", "", ""])
 
-    for item in data.get("top_strengths", []):
-        e = item.get("evidence", [])
-        writer.writerow(["strength", item["theme"], item["review_count"], item["confidence"], "",
-                         *ev(e,0), *ev(e,1), *ev(e,2)])
-
-    for rec in data.get("improvement_recommendations", []):
-        writer.writerow(["improvement", rec.get("title",""), "", rec.get("priority",""), "action",
-                         rec.get("description",""), "", rec.get("business_impact",""), "", "", ""])
-
-    for rec in data.get("listing_recommendations", []):
-        writer.writerow(["listing_rec", rec.get("title",""), "", "", "listing",
-                         rec.get("description",""), "", rec.get("rationale",""), "", "", ""])
+    if data.get("multi_app") and "apps" in data:
+        for app_name, app_data in data["apps"].items():
+            write_app_rows(app_name, app_data)
+    else:
+        write_app_rows("", data)
 
     buf.seek(0)
     return Response(
