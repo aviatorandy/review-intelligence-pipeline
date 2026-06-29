@@ -16,8 +16,8 @@ from pathlib import Path
 
 from flask import Flask, jsonify, render_template, request, send_file, Response
 
-from .ingest import load_reviews, detect_apps
-from .full_pipeline import aggregate_chunks, process_chunk, _text_verified_negatives
+from .ingest import load_reviews, detect_apps, is_enriched
+from .full_pipeline import aggregate_chunks, process_chunk, build_chunks
 from .pipeline_strategy import get_strategy, estimate_time_minutes
 from .synthesizer import run_synthesis, compute_quality_metrics
 from .report_html import generate_html
@@ -101,11 +101,13 @@ def _run_pipeline(job_id: str, csv_path: Path):
             rows = df.to_dict(orient="records")
             total = len(rows)
 
+            enriched = is_enriched(df)
             est_time = estimate_time_minutes(total, batch_size)
+            mode = "topic-grouped" if enriched else "sequential"
             _update_job(
                 job_id,
                 progress=5,
-                message=f"{strategy['label']} — estimated time: {est_time}",
+                message=f"{strategy['label']} ({mode} chunking) — estimated time: {est_time}",
                 total_reviews=total_uploaded,
                 analyzed_reviews=total,
                 tier=tier,
@@ -117,10 +119,7 @@ def _run_pipeline(job_id: str, csv_path: Path):
             chunks_dir = run_dir / "chunks"
             chunks_dir.mkdir(exist_ok=True)
 
-            chunks = [rows[i:i + batch_size] for i in range(0, total, batch_size)]
-            negatives = _text_verified_negatives(rows)
-            if len(negatives) >= 5:
-                chunks.append(negatives)
+            chunks = build_chunks(rows, batch_size)
 
             n_chunks = len(chunks)
             chunk_results = []
@@ -236,10 +235,7 @@ def _process_app(job_id, app_name, app_df, run_dir, app_idx, total_apps):
     chunks_dir = run_dir / f"chunks_{app_name.replace(' ', '_').lower()}"
     chunks_dir.mkdir(exist_ok=True)
 
-    chunks = [rows[i:i + batch_size] for i in range(0, total, batch_size)]
-    negatives = _text_verified_negatives(rows)
-    if len(negatives) >= 5:
-        chunks.append(negatives)
+    chunks = build_chunks(rows, batch_size)
 
     n_chunks = len(chunks)
     chunk_results = []

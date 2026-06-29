@@ -40,6 +40,67 @@ _NEGATIVE_SIGNALS = re.compile(
 )
 
 
+def build_chunks(rows: list, batch_size: int) -> list[list]:
+    """
+    Build chunks from rows.
+
+    If rows are enriched (have 'topic' field): group by topic so each chunk
+    gives the LLM focused, coherent signal. Within each topic, sort negatives
+    first (severity: high → medium → low) so complaints surface clearly.
+    Small topic groups (<5 reviews) are merged into an 'other' bucket to avoid
+    tiny noisy chunks.
+
+    Falls back to sequential chunking for plain (non-enriched) CSVs.
+    """
+    if not rows or "topic" not in rows[0]:
+        # Plain CSV — sequential chunks + negative chunk
+        chunks = [rows[i:i + batch_size] for i in range(0, len(rows), batch_size)]
+        negatives = _text_verified_negatives(rows)
+        if len(negatives) >= 5:
+            chunks.append(negatives)
+        return chunks
+
+    # ── Enriched path: group by topic ─────────────────────────────────────────
+    _SEV_ORDER = {"high": 0, "medium": 1, "low": 2}
+
+    from collections import defaultdict
+    buckets: dict[str, list] = defaultdict(list)
+    for row in rows:
+        buckets[row.get("topic", "general")].append(row)
+
+    # Merge small topic groups into 'other'
+    merged_other = list(buckets.pop("other", []))
+    for topic in list(buckets.keys()):
+        if len(buckets[topic]) < 5:
+            merged_other.extend(buckets.pop(topic))
+    if merged_other:
+        buckets["other"] = merged_other
+
+    chunks = []
+    for topic, topic_rows in buckets.items():
+        # Sort: negatives first, then by severity
+        topic_rows.sort(key=lambda r: (
+            0 if r.get("sentiment_text") == "negative" else 1,
+            _SEV_ORDER.get(r.get("severity", "low"), 2),
+        ))
+        # Split into batch_size chunks
+        for i in range(0, len(topic_rows), batch_size):
+            chunks.append(topic_rows[i:i + batch_size])
+
+    # Dedicated negative chunk using text-verified negatives (catches any missed)
+    if "sentiment_text" in rows[0]:
+        # Enriched: use sentiment_text field instead of regex scan
+        negatives = [r for r in rows if r.get("sentiment_text") == "negative"]
+    else:
+        negatives = _text_verified_negatives(rows)
+
+    if len(negatives) >= 5:
+        negatives.sort(key=lambda r: _SEV_ORDER.get(r.get("severity", "low"), 2))
+        chunks.append(negatives)
+
+    return chunks
+
+
 def _text_verified_negatives(rows: list) -> list:
     """
     Return label=0 rows where the review text itself contains negative language.
