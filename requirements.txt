@@ -4,3 +4,5 @@ jsonschema
 rapidfuzz
 flask
 anthropic
+chromadb
+sentence-transformers

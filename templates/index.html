@@ -26,13 +26,10 @@
     color: var(--text);
     font-family: 'DM Mono', monospace;
     min-height: 100vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
     padding: 40px 20px;
   }
 
-  .container { max-width: 680px; width: 100%; }
+  .container { max-width: 720px; margin: 0 auto; }
 
   header { text-align: center; margin-bottom: 48px; }
 
@@ -49,19 +46,9 @@
     margin-bottom: 12px;
   }
 
-  header p {
-    color: var(--muted);
-    font-size: 0.85rem;
-    line-height: 1.6;
-  }
+  header p { color: var(--muted); font-size: 0.85rem; line-height: 1.6; }
 
-  .badge-row {
-    display: flex;
-    justify-content: center;
-    gap: 10px;
-    margin-top: 14px;
-    flex-wrap: wrap;
-  }
+  .badge-row { display: flex; justify-content: center; gap: 10px; margin-top: 14px; flex-wrap: wrap; }
 
   .badge {
     font-size: 0.7rem;
@@ -71,7 +58,6 @@
     letter-spacing: 0.05em;
     text-transform: uppercase;
   }
-
   .badge-claude { background: #7c6af7; color: #fff; }
   .badge-ollama { background: #2a2a38; color: var(--muted); border: 1px solid var(--border); }
 
@@ -92,6 +78,7 @@
     margin-bottom: 20px;
   }
 
+  /* Upload / drop zone */
   .drop-zone {
     border: 2px dashed var(--border);
     border-radius: 12px;
@@ -101,25 +88,14 @@
     transition: border-color 0.2s, background 0.2s;
     margin-bottom: 20px;
   }
-
-  .drop-zone:hover, .drop-zone.drag-over {
-    border-color: var(--accent);
-    background: rgba(124, 106, 247, 0.05);
-  }
-
+  .drop-zone:hover, .drop-zone.drag-over { border-color: var(--accent); background: rgba(124,106,247,0.05); }
   .drop-zone .icon { font-size: 2rem; margin-bottom: 10px; }
   .drop-zone .label { color: var(--text); font-size: 0.9rem; }
   .drop-zone .sub { color: var(--muted); font-size: 0.78rem; margin-top: 6px; }
   .drop-zone .filename { color: var(--accent); font-size: 0.85rem; margin-top: 8px; font-weight: 500; }
-
   #file-input { display: none; }
 
-  .options-row {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 12px;
-    margin-bottom: 20px;
-  }
+  .options-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px; }
 
   .field label {
     display: block;
@@ -129,7 +105,6 @@
     letter-spacing: 0.1em;
     margin-bottom: 6px;
   }
-
   .field input[type="number"] {
     width: 100%;
     background: var(--surface2);
@@ -142,7 +117,6 @@
     outline: none;
     transition: border-color 0.2s;
   }
-
   .field input[type="number"]:focus { border-color: var(--accent); }
 
   .btn {
@@ -158,18 +132,23 @@
     cursor: pointer;
     transition: opacity 0.2s, transform 0.1s;
   }
-
   .btn:hover { opacity: 0.9; }
   .btn:active { transform: scale(0.98); }
   .btn:disabled { opacity: 0.45; cursor: not-allowed; }
 
-  .sample-link {
-    text-align: center;
-    margin-top: 12px;
-    font-size: 0.78rem;
-    color: var(--muted);
+  .btn-secondary {
+    background: var(--surface2);
+    color: var(--text);
+    border: 1px solid var(--border);
+    font-size: 0.85rem;
+    padding: 10px 16px;
+    width: auto;
   }
 
+  .btn-row { display: flex; gap: 10px; flex-wrap: wrap; }
+  .btn-row .btn { flex: 1; }
+
+  .sample-link { text-align: center; margin-top: 12px; font-size: 0.78rem; color: var(--muted); }
   .sample-link a { color: var(--accent); text-decoration: none; }
   .sample-link a:hover { text-decoration: underline; }
 
@@ -181,9 +160,8 @@
     background: var(--surface2);
     border-radius: 99px;
     overflow: hidden;
-    margin-bottom: 12px;
+    margin-bottom: 10px;
   }
-
   .progress-fill {
     height: 100%;
     background: linear-gradient(90deg, #7c6af7, #a78bfa);
@@ -191,19 +169,12 @@
     width: 0%;
     transition: width 0.5s ease;
   }
+  .progress-label { font-size: 0.72rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 6px; }
+  .progress-message { font-size: 0.82rem; color: var(--muted); margin-bottom: 20px; }
 
-  .progress-message {
-    font-size: 0.82rem;
-    color: var(--muted);
-    text-align: center;
-  }
-
-  .status-icon { font-size: 1.2rem; display: inline-block; margin-right: 6px; }
-
-  /* Error */
   .error-box {
-    background: rgba(239, 68, 68, 0.1);
-    border: 1px solid rgba(239, 68, 68, 0.3);
+    background: rgba(239,68,68,0.1);
+    border: 1px solid rgba(239,68,68,0.3);
     border-radius: 10px;
     padding: 16px 20px;
     color: var(--red);
@@ -212,6 +183,119 @@
     display: none;
   }
 
+  /* Report actions */
+  #report-section { display: none; }
+
+  .action-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+  .action-card {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+    text-decoration: none;
+    color: var(--text);
+    transition: border-color 0.2s;
+    cursor: pointer;
+  }
+  .action-card:hover { border-color: var(--accent); }
+  .action-card .ac-icon { font-size: 1.5rem; margin-bottom: 8px; }
+  .action-card .ac-title { font-family: 'Syne', sans-serif; font-size: 0.9rem; font-weight: 600; margin-bottom: 4px; }
+  .action-card .ac-sub { font-size: 0.75rem; color: var(--muted); }
+
+  /* Ask section */
+  #ask-section { display: none; }
+
+  .ask-input-row { display: flex; gap: 10px; margin-bottom: 16px; }
+
+  .ask-input {
+    flex: 1;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 12px 16px;
+    color: var(--text);
+    font-family: 'DM Mono', monospace;
+    font-size: 0.88rem;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .ask-input:focus { border-color: var(--accent); }
+  .ask-input::placeholder { color: var(--muted); }
+
+  .ask-btn {
+    background: var(--accent);
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    padding: 12px 20px;
+    font-family: 'Syne', sans-serif;
+    font-weight: 600;
+    font-size: 0.9rem;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: opacity 0.2s;
+  }
+  .ask-btn:hover { opacity: 0.9; }
+  .ask-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+  .embed-status {
+    font-size: 0.75rem;
+    color: var(--muted);
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .embed-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: var(--amber);
+    flex-shrink: 0;
+  }
+  .embed-dot.ready { background: var(--green); }
+  .embed-dot.error { background: var(--red); }
+
+  .suggested-questions { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; }
+  .sq-chip {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 99px;
+    padding: 6px 14px;
+    font-size: 0.75rem;
+    color: var(--muted);
+    cursor: pointer;
+    transition: border-color 0.2s, color 0.2s;
+  }
+  .sq-chip:hover { border-color: var(--accent); color: var(--text); }
+
+  .answer-box {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+    display: none;
+  }
+  .answer-box .q-label { font-size: 0.7rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 8px; }
+  .answer-box .q-text { font-size: 0.85rem; color: var(--accent); margin-bottom: 16px; }
+  .answer-box .answer-text { font-size: 0.85rem; line-height: 1.7; white-space: pre-wrap; }
+  .answer-box .sources-label { font-size: 0.7rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.1em; margin-top: 16px; margin-bottom: 8px; }
+
+  .source-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 99px;
+    padding: 4px 12px;
+    font-size: 0.72rem;
+    color: var(--muted);
+    margin: 3px;
+  }
+  .source-pill .pos { color: var(--green); }
+  .source-pill .neg { color: var(--red); }
+
   /* Format help */
   .format-help {
     background: var(--surface2);
@@ -219,27 +303,13 @@
     padding: 16px 20px;
     margin-top: 16px;
   }
+  .format-help p { font-size: 0.78rem; color: var(--muted); margin-bottom: 10px; }
+  .format-help pre { font-size: 0.75rem; color: var(--text); overflow-x: auto; }
 
-  .format-help p {
-    font-size: 0.78rem;
-    color: var(--muted);
-    margin-bottom: 10px;
-  }
-
-  .format-help pre {
-    font-size: 0.75rem;
-    color: var(--text);
-    overflow-x: auto;
-  }
-
-  @keyframes spin {
-    to { transform: rotate(360deg); }
-  }
-
+  @keyframes spin { to { transform: rotate(360deg); } }
   .spinner {
     display: inline-block;
-    width: 14px;
-    height: 14px;
+    width: 13px; height: 13px;
     border: 2px solid rgba(255,255,255,0.3);
     border-top-color: #fff;
     border-radius: 50%;
@@ -247,6 +317,9 @@
     vertical-align: middle;
     margin-right: 6px;
   }
+
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
+  .pulsing { animation: pulse 1.5s ease infinite; }
 </style>
 </head>
 <body>
@@ -254,16 +327,18 @@
 
   <header>
     <h1>Review Intelligence</h1>
-    <p>Upload a CSV of product reviews and get an AI-generated report<br>with sentiment analysis, key themes, and insights.</p>
+    <p>Upload Amazon review CSVs and get AI-generated insights —<br>themes, sentiment, evidence, and an interactive Q&amp;A.</p>
     <div class="badge-row">
       {% if using_claude %}
         <span class="badge badge-claude">⚡ Powered by Claude API</span>
       {% else %}
-        <span class="badge badge-ollama">🖥 Using local Ollama</span>
+        <span class="badge badge-ollama">🖥 Local Ollama</span>
+        <span class="badge badge-ollama">🔍 ChromaDB Vector Search</span>
       {% endif %}
     </div>
   </header>
 
+  <!-- ── Upload card ─────────────────────────────────────── -->
   <div class="card" id="upload-card">
     <h2>Upload Your Dataset</h2>
 
@@ -277,7 +352,7 @@
 
     <div class="options-row">
       <div class="field">
-        <label>Max Reviews</label>
+        <label>Max Reviews to Analyze</label>
         <input type="number" id="max-reviews" value="200" min="10" max="5000">
       </div>
       <div class="field">
@@ -291,25 +366,87 @@
     </button>
 
     <div class="sample-link">
-      No dataset? <a href="/sample" download>Download the sample CSV</a> to try it out.
+      No dataset? <a href="/sample" download>Download the Angry Birds sample CSV</a> to try it out.
     </div>
 
     <div class="format-help">
-      <p>Your CSV must have these two columns:</p>
+      <p>Your CSV must have exactly these two columns:</p>
       <pre>Text,label
 "Great app, love it!",1
 "Crashes constantly",0
 "Works fine for basic use",1</pre>
+      <p style="margin-top:10px">Supports any Amazon product review export. Labels: <strong>1</strong> = positive, <strong>0</strong> = negative.</p>
     </div>
   </div>
 
+  <!-- ── Progress card ──────────────────────────────────── -->
   <div class="card" id="progress-section">
     <h2>Processing</h2>
+
+    <div class="progress-label">Summarization</div>
     <div class="progress-track">
       <div class="progress-fill" id="progress-fill"></div>
     </div>
     <div class="progress-message" id="progress-message">Starting...</div>
+
+    <div id="embed-progress-wrap" style="display:none">
+      <div class="progress-label">Search Index</div>
+      <div class="progress-track">
+        <div class="progress-fill" id="embed-fill" style="background: linear-gradient(90deg,#22c55e,#4ade80)"></div>
+      </div>
+      <div class="progress-message" id="embed-message"></div>
+    </div>
+
     <div class="error-box" id="error-box"></div>
+  </div>
+
+  <!-- ── Report actions card ────────────────────────────── -->
+  <div class="card" id="report-section">
+    <h2>Your Report Is Ready</h2>
+    <div class="action-grid">
+      <a class="action-card" id="open-report-link" href="#" target="_blank">
+        <div class="ac-icon">📊</div>
+        <div class="ac-title">Open Report</div>
+        <div class="ac-sub">Full HTML report with themes &amp; evidence</div>
+      </a>
+      <a class="action-card" id="export-link" href="#">
+        <div class="ac-icon">📥</div>
+        <div class="ac-title">Export CSV</div>
+        <div class="ac-sub">Download themes as structured spreadsheet</div>
+      </a>
+    </div>
+  </div>
+
+  <!-- ── Ask section ────────────────────────────────────── -->
+  <div class="card" id="ask-section">
+    <h2>Ask the Reviews</h2>
+
+    <div class="embed-status">
+      <div class="embed-dot pulsing" id="embed-dot"></div>
+      <span id="embed-status-text">Building search index...</span>
+    </div>
+
+    <div class="suggested-questions">
+      <span class="sq-chip" onclick="setQuestion(this)">Why do users love this product?</span>
+      <span class="sq-chip" onclick="setQuestion(this)">What are the main complaints?</span>
+      <span class="sq-chip" onclick="setQuestion(this)">Is it good for kids?</span>
+      <span class="sq-chip" onclick="setQuestion(this)">What do people say about ads?</span>
+      <span class="sq-chip" onclick="setQuestion(this)">Does it work offline?</span>
+    </div>
+
+    <div class="ask-input-row">
+      <input class="ask-input" id="ask-input" type="text"
+        placeholder="e.g. Why do users uninstall the app?" disabled>
+      <button class="ask-btn" id="ask-btn" onclick="askQuestion()" disabled>Ask</button>
+    </div>
+
+    <div class="answer-box" id="answer-box">
+      <div class="q-label">Question</div>
+      <div class="q-text" id="answer-question"></div>
+      <div class="answer-text" id="answer-text"></div>
+      <div class="sources-label">Retrieved Reviews</div>
+      <div id="sources-list"></div>
+    </div>
   </div>
 
 </div>
@@ -317,23 +454,16 @@
 <script>
   let selectedFile = null;
   let pollInterval = null;
+  let embedPollInterval = null;
+  let currentJobId = null;
 
   const dropZone = document.getElementById('drop-zone');
   const fileInput = document.getElementById('file-input');
-  const fileName = document.getElementById('file-name');
-  const submitBtn = document.getElementById('submit-btn');
 
-  fileInput.addEventListener('change', e => {
-    if (e.target.files[0]) setFile(e.target.files[0]);
-  });
+  fileInput.addEventListener('change', e => { if (e.target.files[0]) setFile(e.target.files[0]); });
 
-  dropZone.addEventListener('dragover', e => {
-    e.preventDefault();
-    dropZone.classList.add('drag-over');
-  });
-
+  dropZone.addEventListener('dragover', e => { e.preventDefault(); dropZone.classList.add('drag-over'); });
   dropZone.addEventListener('dragleave', () => dropZone.classList.remove('drag-over'));
-
   dropZone.addEventListener('drop', e => {
     e.preventDefault();
     dropZone.classList.remove('drag-over');
@@ -341,13 +471,10 @@
   });
 
   function setFile(file) {
-    if (!file.name.endsWith('.csv')) {
-      alert('Please upload a .csv file');
-      return;
-    }
+    if (!file.name.endsWith('.csv')) { alert('Please upload a .csv file'); return; }
     selectedFile = file;
-    fileName.textContent = '✓ ' + file.name;
-    submitBtn.disabled = false;
+    document.getElementById('file-name').textContent = '✓ ' + file.name;
+    document.getElementById('submit-btn').disabled = false;
   }
 
   async function startJob() {
@@ -358,21 +485,23 @@
     formData.append('max_reviews', document.getElementById('max-reviews').value);
     formData.append('chunk_size', document.getElementById('chunk-size').value);
 
-    submitBtn.disabled = true;
-    submitBtn.innerHTML = '<span class="spinner"></span>Uploading...';
+    const btn = document.getElementById('submit-btn');
+    btn.disabled = true;
+    btn.innerHTML = '<span class="spinner"></span>Uploading...';
 
     try {
       const res = await fetch('/upload', { method: 'POST', body: formData });
       const data = await res.json();
       if (data.error) throw new Error(data.error);
 
+      currentJobId = data.job_id;
       document.getElementById('upload-card').style.display = 'none';
       document.getElementById('progress-section').style.display = 'block';
 
       pollStatus(data.job_id);
     } catch (err) {
-      submitBtn.disabled = false;
-      submitBtn.textContent = 'Analyze Reviews';
+      btn.disabled = false;
+      btn.textContent = 'Analyze Reviews';
       alert('Upload failed: ' + err.message);
     }
   }
@@ -389,8 +518,18 @@
         if (data.status === 'done') {
           clearInterval(pollInterval);
           document.getElementById('progress-fill').style.width = '100%';
-          document.getElementById('progress-message').innerHTML =
-            '✅ Report ready! <a href="/report/' + jobId + '" target="_blank" style="color:var(--accent)">Open report →</a>';
+          document.getElementById('progress-message').textContent = '✅ Report ready!';
+
+          // Show report actions
+          document.getElementById('open-report-link').href = '/report/' + jobId;
+          document.getElementById('export-link').href = '/export/' + jobId;
+          document.getElementById('report-section').style.display = 'block';
+          document.getElementById('ask-section').style.display = 'block';
+
+          // Show embed progress and start polling it
+          document.getElementById('embed-progress-wrap').style.display = 'block';
+          pollEmbedStatus(jobId);
+
         } else if (data.status === 'error') {
           clearInterval(pollInterval);
           const errBox = document.getElementById('error-box');
@@ -398,11 +537,103 @@
           errBox.style.display = 'block';
           document.getElementById('progress-message').textContent = 'Failed.';
         }
-      } catch (e) {
-        // network hiccup, keep polling
-      }
+
+        // Show embed progress mid-run if indexing started
+        if (data.embed_status === 'indexing') {
+          document.getElementById('embed-progress-wrap').style.display = 'block';
+          document.getElementById('embed-fill').style.width = (data.embed_progress || 0) + '%';
+          document.getElementById('embed-message').textContent = data.embed_message || '';
+        }
+      } catch (e) {}
     }, 2000);
   }
+
+  function pollEmbedStatus(jobId) {
+    embedPollInterval = setInterval(async () => {
+      try {
+        const res = await fetch('/status/' + jobId);
+        const data = await res.json();
+
+        const pct = data.embed_progress || 0;
+        document.getElementById('embed-fill').style.width = pct + '%';
+        document.getElementById('embed-message').textContent = data.embed_message || '';
+
+        const dot = document.getElementById('embed-dot');
+        const statusText = document.getElementById('embed-status-text');
+
+        if (data.embed_status === 'ready') {
+          clearInterval(embedPollInterval);
+          dot.classList.remove('pulsing');
+          dot.classList.add('ready');
+          statusText.textContent = 'Search index ready — ask anything about these reviews';
+          document.getElementById('ask-input').disabled = false;
+          document.getElementById('ask-btn').disabled = false;
+        } else if (data.embed_status === 'error') {
+          clearInterval(embedPollInterval);
+          dot.classList.remove('pulsing');
+          dot.classList.add('error');
+          statusText.textContent = 'Indexing failed: ' + (data.embed_message || '');
+        } else {
+          statusText.textContent = data.embed_message || 'Building search index...';
+        }
+      } catch (e) {}
+    }, 2000);
+  }
+
+  function setQuestion(el) {
+    const input = document.getElementById('ask-input');
+    input.value = el.textContent;
+    input.focus();
+  }
+
+  async function askQuestion() {
+    const question = document.getElementById('ask-input').value.trim();
+    if (!question || !currentJobId) return;
+
+    const btn = document.getElementById('ask-btn');
+    btn.disabled = true;
+    btn.innerHTML = '<span class="spinner"></span>';
+
+    try {
+      const res = await fetch('/ask/' + currentJobId, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ question }),
+      });
+      const data = await res.json();
+
+      if (data.error) throw new Error(data.error);
+
+      const box = document.getElementById('answer-box');
+      document.getElementById('answer-question').textContent = data.question;
+      document.getElementById('answer-text').textContent = data.answer;
+
+      // Sources
+      const sourcesList = document.getElementById('sources-list');
+      sourcesList.innerHTML = '';
+      (data.sources || []).forEach(s => {
+        const cls = s.sentiment === 'positive' ? 'pos' : 'neg';
+        const icon = s.sentiment === 'positive' ? '👍' : '👎';
+        sourcesList.innerHTML += `<span class="source-pill">
+          <span class="${cls}">${icon}</span>
+          Review #${s.review_id}
+          <span style="opacity:0.5">${(s.relevance*100).toFixed(0)}% match</span>
+        </span>`;
+      });
+
+      box.style.display = 'block';
+    } catch (err) {
+      alert('Error: ' + err.message);
+    } finally {
+      btn.disabled = false;
+      btn.textContent = 'Ask';
+    }
+  }
+
+  // Allow Enter key in ask input
+  document.getElementById('ask-input').addEventListener('keydown', e => {
+    if (e.key === 'Enter') askQuestion();
+  });
 </script>
 </body>
 </html>
