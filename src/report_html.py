@@ -10,49 +10,51 @@ import os
 
 def _ask_section(job_id: str) -> str:
     return f"""
-<div class="container" style="margin-top:48px;padding-bottom:60px">
-  <section class="section" id="ask-section">
-    <h2>💬 Ask the Reviews</h2>
+<div style="background:#fff;border-top:1px solid #e2e5ec;margin-top:48px;padding:48px 20px 64px">
+<div style="max-width:860px;margin:0 auto">
+  <h2 style="font-size:1rem;font-weight:700;color:#111827;margin-bottom:16px;display:flex;align-items:center;gap:8px">💬 Ask the Reviews</h2>
 
-    <div id="embed-status-row" style="font-size:0.78rem;color:var(--muted);margin-bottom:14px;display:flex;align-items:center;gap:8px">
-      <span id="embed-dot" style="width:8px;height:8px;border-radius:50%;background:var(--amber);display:inline-block;animation:pulse 1.5s ease infinite;flex-shrink:0"></span>
-      <span id="embed-status-text">Building search index...</span>
-    </div>
+  <div id="embed-status-row" style="font-size:0.8rem;color:#6b7280;margin-bottom:16px;display:flex;align-items:center;gap:8px;background:#f5f6fa;border:1px solid #e2e5ec;border-radius:8px;padding:10px 14px">
+    <span id="embed-dot" style="width:8px;height:8px;border-radius:50%;background:#d97706;display:inline-block;animation:pulse 1.5s ease infinite;flex-shrink:0"></span>
+    <span id="embed-status-text">Building search index — this takes a minute after the report loads...</span>
+  </div>
 
-    <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px" id="chips">
-      <span class="sq-chip" onclick="setQ(this)">Why do users love this product?</span>
-      <span class="sq-chip" onclick="setQ(this)">What are the main complaints?</span>
-      <span class="sq-chip" onclick="setQ(this)">Is it good for kids?</span>
-      <span class="sq-chip" onclick="setQ(this)">What do people say about ads?</span>
-      <span class="sq-chip" onclick="setQ(this)">Does it work offline?</span>
-    </div>
+  <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px">
+    <span class="sq-chip" onclick="setQ(this)">Why do users love this product?</span>
+    <span class="sq-chip" onclick="setQ(this)">What are the main complaints?</span>
+    <span class="sq-chip" onclick="setQ(this)">Is it good for kids?</span>
+    <span class="sq-chip" onclick="setQ(this)">What do people say about ads?</span>
+    <span class="sq-chip" onclick="setQ(this)">Does it work offline?</span>
+  </div>
 
-    <div style="display:flex;gap:10px;margin-bottom:16px">
-      <input id="ask-input" type="text" placeholder="e.g. Why do users uninstall the app?"
-        disabled style="flex:1;background:var(--surface2);border:1px solid var(--border);border-radius:10px;
-        padding:12px 16px;color:var(--text);font-family:'DM Mono',monospace;font-size:0.88rem;outline:none">
-      <button id="ask-btn" onclick="askQ()" disabled
-        style="background:var(--accent);color:#fff;border:none;border-radius:10px;padding:12px 22px;
-        font-family:'Syne',sans-serif;font-weight:600;font-size:0.9rem;cursor:pointer;opacity:0.45">Ask</button>
-    </div>
+  <div style="display:flex;gap:10px;margin-bottom:16px">
+    <input id="ask-input" type="text" placeholder="e.g. Why do users uninstall the app?"
+      disabled style="flex:1;background:#f5f6fa;border:1px solid #d0d5df;border-radius:10px;
+      padding:12px 16px;color:#111827;font-family:'Inter',sans-serif;font-size:0.9rem;outline:none;
+      transition:border-color 0.2s,box-shadow 0.2s">
+    <button id="ask-btn" onclick="askQ()" disabled
+      style="background:#4f46e5;color:#fff;border:none;border-radius:10px;padding:12px 24px;
+      font-family:'Inter',sans-serif;font-weight:600;font-size:0.9rem;cursor:pointer;opacity:0.4;
+      transition:opacity 0.2s,background 0.15s">Ask</button>
+  </div>
 
-    <div id="answer-box" style="display:none;background:var(--surface2);border:1px solid var(--border);
-      border-radius:12px;padding:20px">
-      <div style="font-size:0.7rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:6px">Question</div>
-      <div id="answer-q" style="font-size:0.85rem;color:var(--accent);margin-bottom:14px"></div>
-      <div id="answer-text" style="font-size:0.85rem;line-height:1.7;white-space:pre-wrap"></div>
-      <div id="sources-wrap" style="margin-top:14px"></div>
-    </div>
-  </section>
+  <div id="answer-box" style="display:none;background:#f5f6fa;border:1px solid #e2e5ec;border-radius:12px;padding:20px 24px">
+    <div style="font-size:0.7rem;font-weight:700;color:#6b7280;text-transform:uppercase;letter-spacing:0.1em;margin-bottom:6px">Question</div>
+    <div id="answer-q" style="font-size:0.88rem;color:#4f46e5;font-weight:500;margin-bottom:14px"></div>
+    <div id="answer-text" style="font-size:0.88rem;line-height:1.7;color:#111827;white-space:pre-wrap"></div>
+    <div id="sources-wrap" style="margin-top:14px"></div>
+  </div>
+</div>
 </div>
 
 <style>
   .sq-chip {{
-    background:var(--surface);border:1px solid var(--border);border-radius:99px;
-    padding:6px 14px;font-size:0.75rem;color:var(--muted);cursor:pointer;
-    transition:border-color 0.2s,color 0.2s;
+    background:#fff;border:1px solid #e2e5ec;border-radius:99px;
+    padding:6px 14px;font-size:0.78rem;color:#6b7280;cursor:pointer;
+    font-family:'Inter',sans-serif;
+    transition:border-color 0.15s,color 0.15s,background 0.15s;
   }}
-  .sq-chip:hover {{border-color:var(--accent);color:var(--text)}}
+  .sq-chip:hover {{border-color:#4f46e5;color:#4f46e5;background:#eef2ff}}
   @keyframes pulse {{0%,100%{{opacity:1}}50%{{opacity:0.4}}}}
   @keyframes spin {{to{{transform:rotate(360deg)}}}}
 </style>
@@ -85,8 +87,8 @@ async function askQ() {{
     sw.innerHTML = '<div style="font-size:0.7rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:8px">Retrieved Reviews</div>';
     (data.sources || []).forEach(s => {{
       const icon = s.sentiment === 'positive' ? '👍' : '👎';
-      const col = s.sentiment === 'positive' ? 'var(--green)' : 'var(--red)';
-      sw.innerHTML += `<span style="display:inline-flex;align-items:center;gap:6px;background:var(--surface);border:1px solid var(--border);border-radius:99px;padding:4px 12px;font-size:0.72rem;color:var(--muted);margin:3px">
+      const col = s.sentiment === 'positive' ? '#16a34a' : '#dc2626';
+      sw.innerHTML += `<span style="display:inline-flex;align-items:center;gap:6px;background:#fff;border:1px solid #e2e5ec;border-radius:99px;padding:4px 12px;font-size:0.72rem;color:#6b7280;margin:3px;font-family:'Inter',sans-serif">
         <span style="color:${{col}}">${{icon}}</span>Review #${{s.review_id}}
         <span style="opacity:0.5">${{(s.relevance*100).toFixed(0)}}% match</span></span>`;
     }});
@@ -143,9 +145,13 @@ def generate_html(obj, output_path, data_path=None, job_id=None):
         product_label = "PRODUCT"
 
     def confidence_badge(conf):
-        colors = {"high": "#22c55e", "medium": "#f59e0b", "low": "#ef4444"}
-        color = colors.get(conf, "#888")
-        return f'<span class="badge" style="background:{color}">{conf}</span>'
+        styles = {
+            "high":   "background:#dcfce7;color:#16a34a;border:1px solid #bbf7d0",
+            "medium": "background:#fef3c7;color:#d97706;border:1px solid #fde68a",
+            "low":    "background:#fee2e2;color:#dc2626;border:1px solid #fca5a5",
+        }
+        style = styles.get(conf, "background:#f3f4f6;color:#6b7280;border:1px solid #e5e7eb")
+        return f'<span class="badge" style="{style}">{conf}</span>'
 
     def evidence_html(evidence_list):
         items = ""
@@ -207,87 +213,89 @@ def generate_html(obj, output_path, data_path=None, job_id=None):
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Review Intelligence Report</title>
-<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
   *, *::before, *::after {{ box-sizing: border-box; margin: 0; padding: 0; }}
 
   :root {{
-    --bg: #0a0a0f;
-    --surface: #13131a;
-    --surface2: #1c1c26;
-    --border: #2a2a38;
-    --text: #e8e8f0;
-    --muted: #6b6b80;
-    --accent: #7c6af7;
-    --green: #22c55e;
-    --red: #ef4444;
-    --amber: #f59e0b;
+    --bg: #f5f6fa;
+    --surface: #ffffff;
+    --surface2: #f3f4f6;
+    --border: #e2e5ec;
+    --text: #111827;
+    --muted: #6b7280;
+    --accent: #4f46e5;
+    --accent-light: #eef2ff;
+    --green: #16a34a;
+    --green-light: #dcfce7;
+    --red: #dc2626;
+    --red-light: #fee2e2;
+    --amber: #d97706;
+    --amber-light: #fef3c7;
   }}
 
   body {{
     background: var(--bg);
     color: var(--text);
-    font-family: 'DM Mono', monospace;
+    font-family: 'Inter', sans-serif;
     min-height: 100vh;
-    padding: 40px 20px;
+    padding: 48px 20px;
+    font-size: 15px;
   }}
 
-  .container {{ max-width: 900px; margin: 0 auto; }}
+  .container {{ max-width: 860px; margin: 0 auto; }}
 
   header {{
     border-bottom: 1px solid var(--border);
-    padding-bottom: 32px;
-    margin-bottom: 48px;
-    animation: fadeUp 0.6s ease both;
+    padding-bottom: 28px;
+    margin-bottom: 40px;
   }}
 
   header h1 {{
-    font-family: 'Syne', sans-serif;
-    font-size: clamp(2rem, 5vw, 3.5rem);
+    font-size: clamp(1.8rem, 4vw, 2.6rem);
     font-weight: 800;
     letter-spacing: -0.03em;
-    background: linear-gradient(135deg, #e8e8f0 0%, #7c6af7 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    line-height: 1.1;
+    color: var(--text);
+    line-height: 1.15;
   }}
+
+  header h1 span {{ color: var(--accent); }}
 
   header .subtitle {{
     color: var(--muted);
-    font-size: 0.85rem;
-    margin-top: 8px;
-    letter-spacing: 0.05em;
+    font-size: 0.88rem;
+    margin-top: 6px;
   }}
 
   .sentiment-block {{
     background: var(--surface);
     border: 1px solid var(--border);
-    border-radius: 16px;
-    padding: 32px;
-    margin-bottom: 48px;
-    animation: fadeUp 0.6s 0.1s ease both;
+    border-radius: 14px;
+    padding: 28px 32px;
+    margin-bottom: 32px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
   }}
 
   .sentiment-block h2 {{
-    font-family: 'Syne', sans-serif;
-    font-size: 0.75rem;
-    letter-spacing: 0.15em;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
     text-transform: uppercase;
     color: var(--muted);
-    margin-bottom: 24px;
+    margin-bottom: 20px;
   }}
 
   .sentiment-row {{
     display: flex;
     align-items: center;
-    gap: 16px;
-    margin-bottom: 14px;
+    gap: 14px;
+    margin-bottom: 12px;
   }}
 
   .sentiment-label {{
-    width: 70px;
-    font-size: 0.8rem;
+    width: 72px;
+    font-size: 0.82rem;
+    font-weight: 500;
     color: var(--muted);
     flex-shrink: 0;
   }}
@@ -298,6 +306,7 @@ def generate_html(obj, output_path, data_path=None, job_id=None):
     background: var(--surface2);
     border-radius: 99px;
     overflow: hidden;
+    border: 1px solid var(--border);
   }}
 
   .bar-fill {{
@@ -310,75 +319,74 @@ def generate_html(obj, output_path, data_path=None, job_id=None):
     width: 48px;
     text-align: right;
     font-size: 0.9rem;
-    font-weight: 500;
+    font-weight: 600;
   }}
 
   .n-reviews {{
-    font-size: 0.75rem;
+    font-size: 0.78rem;
     color: var(--muted);
-    margin-top: 12px;
+    margin-top: 10px;
   }}
 
   .section {{
-    margin-bottom: 48px;
-    animation: fadeUp 0.6s 0.2s ease both;
+    margin-bottom: 40px;
   }}
 
   .section h2 {{
-    font-family: 'Syne', sans-serif;
-    font-size: 1.1rem;
+    font-size: 1rem;
     font-weight: 700;
-    margin-bottom: 20px;
+    margin-bottom: 16px;
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 8px;
+    color: var(--text);
   }}
 
   .card {{
     background: var(--surface);
     border: 1px solid var(--border);
     border-radius: 12px;
-    padding: 20px 24px;
-    margin-bottom: 12px;
-    transition: border-color 0.2s;
+    padding: 18px 22px;
+    margin-bottom: 10px;
+    transition: border-color 0.15s, box-shadow 0.15s;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.04);
   }}
 
-  .card:hover {{ border-color: var(--accent); }}
+  .card:hover {{ border-color: var(--accent); box-shadow: 0 2px 8px rgba(79,70,229,0.08); }}
 
   .card-header {{
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
-    gap: 16px;
-    margin-bottom: 14px;
+    gap: 14px;
+    margin-bottom: 12px;
     flex-wrap: wrap;
   }}
 
   .theme-name {{
-    font-family: 'Syne', sans-serif;
-    font-size: 1rem;
-    font-weight: 600;
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--text);
   }}
 
   .card-meta {{
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 8px;
     flex-shrink: 0;
   }}
 
   .review-count {{
     font-size: 0.8rem;
-    font-weight: 500;
+    font-weight: 600;
   }}
 
   .badge {{
-    font-size: 0.7rem;
+    font-size: 0.68rem;
     padding: 3px 10px;
     border-radius: 99px;
-    color: #000;
     font-weight: 600;
-    letter-spacing: 0.05em;
+    letter-spacing: 0.04em;
     text-transform: uppercase;
   }}
 
@@ -394,15 +402,16 @@ def generate_html(obj, output_path, data_path=None, job_id=None):
   .review-id {{
     font-size: 0.7rem;
     color: var(--muted);
+    font-weight: 600;
     display: block;
     margin-bottom: 4px;
-    letter-spacing: 0.05em;
+    letter-spacing: 0.04em;
   }}
 
   .quote {{
-    font-size: 0.82rem;
+    font-size: 0.84rem;
     color: var(--text);
-    line-height: 1.5;
+    line-height: 1.55;
     font-style: italic;
   }}
 
@@ -410,25 +419,27 @@ def generate_html(obj, output_path, data_path=None, job_id=None):
     background: var(--surface);
     border: 1px solid var(--border);
     border-radius: 12px;
-    padding: 18px 22px;
+    padding: 16px 20px;
     margin-bottom: 10px;
-    transition: border-color 0.2s;
+    transition: border-color 0.15s, box-shadow 0.15s;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.04);
   }}
 
-  .bullet-item:hover {{ border-color: var(--accent); }}
+  .bullet-item:hover {{ border-color: var(--accent); box-shadow: 0 2px 8px rgba(79,70,229,0.08); }}
 
   .bullet-header {{
     display: flex;
     align-items: flex-start;
     gap: 12px;
-    margin-bottom: 12px;
+    margin-bottom: 10px;
     flex-wrap: wrap;
   }}
 
   .bullet-claim {{
-    font-size: 0.92rem;
-    line-height: 1.5;
+    font-size: 0.9rem;
+    line-height: 1.55;
     flex: 1;
+    color: var(--text);
   }}
 
   .unknown-tags {{ display: flex; flex-wrap: wrap; gap: 8px; }}
@@ -437,14 +448,9 @@ def generate_html(obj, output_path, data_path=None, job_id=None):
     background: var(--surface);
     border: 1px solid var(--border);
     border-radius: 99px;
-    padding: 6px 16px;
+    padding: 5px 14px;
     font-size: 0.78rem;
     color: var(--muted);
-  }}
-
-  @keyframes fadeUp {{
-    from {{ opacity: 0; transform: translateY(16px); }}
-    to {{ opacity: 1; transform: translateY(0); }}
   }}
 </style>
 </head>
@@ -452,8 +458,8 @@ def generate_html(obj, output_path, data_path=None, job_id=None):
 <div class="container">
 
   <header>
-    <h1>Review Intelligence<br>Report</h1>
-    <p class="subtitle">{product_label} · AMAZON REVIEWS · {n} REVIEWS SAMPLED</p>
+    <h1>Review <span style="color:var(--accent)">Intelligence</span> Report</h1>
+    <p class="subtitle">{product_label} · Amazon Reviews · {n} reviews analyzed</p>
   </header>
 
   <div class="sentiment-block">

@@ -4,348 +4,253 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Review Intelligence</title>
-<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
   :root {
-    --bg: #0a0a0f;
-    --surface: #13131a;
-    --surface2: #1c1c26;
-    --border: #2a2a38;
-    --text: #e8e8f0;
-    --muted: #6b6b80;
-    --accent: #7c6af7;
-    --green: #22c55e;
-    --red: #ef4444;
-    --amber: #f59e0b;
+    --bg: #f5f6fa;
+    --surface: #ffffff;
+    --border: #e2e5ec;
+    --border2: #d0d5df;
+    --text: #111827;
+    --muted: #6b7280;
+    --accent: #4f46e5;
+    --accent-light: #eef2ff;
+    --green: #16a34a;
+    --green-light: #dcfce7;
+    --red: #dc2626;
+    --red-light: #fee2e2;
+    --amber: #d97706;
+    --amber-light: #fef3c7;
   }
 
   body {
     background: var(--bg);
     color: var(--text);
-    font-family: 'DM Mono', monospace;
+    font-family: 'Inter', sans-serif;
     min-height: 100vh;
-    padding: 40px 20px;
+    padding: 48px 20px;
+    font-size: 15px;
   }
 
-  .container { max-width: 720px; margin: 0 auto; }
+  .container { max-width: 680px; margin: 0 auto; }
 
-  header { text-align: center; margin-bottom: 48px; }
+  /* Header */
+  header { text-align: center; margin-bottom: 40px; }
 
   header h1 {
-    font-family: 'Syne', sans-serif;
-    font-size: clamp(2rem, 5vw, 3.2rem);
+    font-size: clamp(1.8rem, 4vw, 2.6rem);
     font-weight: 800;
+    color: var(--text);
     letter-spacing: -0.03em;
-    background: linear-gradient(135deg, #e8e8f0 0%, #7c6af7 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    line-height: 1.1;
-    margin-bottom: 12px;
+    margin-bottom: 10px;
   }
 
-  header p { color: var(--muted); font-size: 0.85rem; line-height: 1.6; }
+  header h1 span { color: var(--accent); }
 
-  .badge-row { display: flex; justify-content: center; gap: 10px; margin-top: 14px; flex-wrap: wrap; }
+  header p { color: var(--muted); font-size: 0.95rem; line-height: 1.6; }
+
+  .badge-row { display: flex; justify-content: center; gap: 8px; margin-top: 14px; flex-wrap: wrap; }
 
   .badge {
-    font-size: 0.7rem;
+    font-size: 0.72rem;
     padding: 4px 12px;
     border-radius: 99px;
     font-weight: 600;
-    letter-spacing: 0.05em;
-    text-transform: uppercase;
+    letter-spacing: 0.03em;
   }
-  .badge-claude { background: #7c6af7; color: #fff; }
-  .badge-ollama { background: #2a2a38; color: var(--muted); border: 1px solid var(--border); }
+  .badge-claude { background: var(--accent-light); color: var(--accent); border: 1px solid #c7d2fe; }
+  .badge-ollama { background: #f3f4f6; color: var(--muted); border: 1px solid var(--border); }
 
+  /* Card */
   .card {
     background: var(--surface);
     border: 1px solid var(--border);
     border-radius: 16px;
-    padding: 32px;
+    padding: 28px 32px;
     margin-bottom: 16px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.06);
   }
 
-  .card h2 {
-    font-family: 'Syne', sans-serif;
-    font-size: 0.75rem;
-    letter-spacing: 0.15em;
+  .card-title {
+    font-size: 0.7rem;
+    font-weight: 700;
     text-transform: uppercase;
+    letter-spacing: 0.1em;
     color: var(--muted);
-    margin-bottom: 20px;
+    margin-bottom: 18px;
   }
 
-  /* Upload / drop zone */
+  /* Drop zone */
   .drop-zone {
-    border: 2px dashed var(--border);
+    border: 2px dashed var(--border2);
     border-radius: 12px;
-    padding: 40px 20px;
+    padding: 36px 20px;
     text-align: center;
     cursor: pointer;
     transition: border-color 0.2s, background 0.2s;
     margin-bottom: 20px;
+    background: var(--bg);
   }
-  .drop-zone:hover, .drop-zone.drag-over { border-color: var(--accent); background: rgba(124,106,247,0.05); }
+  .drop-zone:hover, .drop-zone.drag-over {
+    border-color: var(--accent);
+    background: var(--accent-light);
+  }
   .drop-zone .icon { font-size: 2rem; margin-bottom: 10px; }
-  .drop-zone .label { color: var(--text); font-size: 0.9rem; }
-  .drop-zone .sub { color: var(--muted); font-size: 0.78rem; margin-top: 6px; }
-  .drop-zone .filename { color: var(--accent); font-size: 0.85rem; margin-top: 8px; font-weight: 500; }
+  .drop-zone .label { font-weight: 600; color: var(--text); font-size: 0.95rem; }
+  .drop-zone .sub { color: var(--muted); font-size: 0.82rem; margin-top: 5px; }
+  .drop-zone .filename { color: var(--accent); font-size: 0.85rem; margin-top: 8px; font-weight: 600; }
   #file-input { display: none; }
 
+  /* Options */
   .options-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px; }
 
   .field label {
     display: block;
-    font-size: 0.72rem;
+    font-size: 0.78rem;
+    font-weight: 600;
     color: var(--muted);
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
     margin-bottom: 6px;
   }
   .field input[type="number"] {
     width: 100%;
-    background: var(--surface2);
-    border: 1px solid var(--border);
+    background: var(--bg);
+    border: 1px solid var(--border2);
     border-radius: 8px;
     padding: 10px 14px;
     color: var(--text);
-    font-family: 'DM Mono', monospace;
+    font-family: 'Inter', sans-serif;
     font-size: 0.9rem;
     outline: none;
-    transition: border-color 0.2s;
+    transition: border-color 0.2s, box-shadow 0.2s;
   }
-  .field input[type="number"]:focus { border-color: var(--accent); }
+  .field input[type="number"]:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(79,70,229,0.1);
+  }
 
+  /* Buttons */
   .btn {
     width: 100%;
     background: var(--accent);
     color: #fff;
     border: none;
     border-radius: 10px;
-    padding: 14px 20px;
-    font-family: 'Syne', sans-serif;
-    font-size: 1rem;
+    padding: 13px 20px;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.95rem;
     font-weight: 600;
     cursor: pointer;
-    transition: opacity 0.2s, transform 0.1s;
+    transition: background 0.15s, transform 0.1s, box-shadow 0.15s;
+    box-shadow: 0 1px 3px rgba(79,70,229,0.3);
   }
-  .btn:hover { opacity: 0.9; }
+  .btn:hover { background: #4338ca; box-shadow: 0 4px 12px rgba(79,70,229,0.3); }
   .btn:active { transform: scale(0.98); }
-  .btn:disabled { opacity: 0.45; cursor: not-allowed; }
+  .btn:disabled { background: #a5b4fc; box-shadow: none; cursor: not-allowed; }
 
-  .btn-secondary {
-    background: var(--surface2);
-    color: var(--text);
-    border: 1px solid var(--border);
-    font-size: 0.85rem;
-    padding: 10px 16px;
-    width: auto;
-  }
-
-  .btn-row { display: flex; gap: 10px; flex-wrap: wrap; }
-  .btn-row .btn { flex: 1; }
-
-  .sample-link { text-align: center; margin-top: 12px; font-size: 0.78rem; color: var(--muted); }
-  .sample-link a { color: var(--accent); text-decoration: none; }
+  .sample-link { text-align: center; margin-top: 14px; font-size: 0.82rem; color: var(--muted); }
+  .sample-link a { color: var(--accent); text-decoration: none; font-weight: 500; }
   .sample-link a:hover { text-decoration: underline; }
+
+  /* Format help */
+  .format-help {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 14px 18px;
+    margin-top: 18px;
+  }
+  .format-help p { font-size: 0.8rem; color: var(--muted); margin-bottom: 8px; }
+  .format-help pre {
+    font-size: 0.78rem;
+    color: var(--text);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 10px 14px;
+    overflow-x: auto;
+  }
 
   /* Progress */
   #progress-section { display: none; }
 
+  .progress-label {
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--muted);
+    margin-bottom: 6px;
+  }
+
   .progress-track {
-    height: 6px;
-    background: var(--surface2);
+    height: 8px;
+    background: var(--bg);
     border-radius: 99px;
     overflow: hidden;
-    margin-bottom: 10px;
+    margin-bottom: 8px;
+    border: 1px solid var(--border);
   }
   .progress-fill {
     height: 100%;
-    background: linear-gradient(90deg, #7c6af7, #a78bfa);
+    background: var(--accent);
     border-radius: 99px;
     width: 0%;
     transition: width 0.5s ease;
   }
-  .progress-label { font-size: 0.72rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 6px; }
-  .progress-message { font-size: 0.82rem; color: var(--muted); margin-bottom: 20px; }
+  .progress-fill.green { background: var(--green); }
+
+  .progress-message { font-size: 0.85rem; color: var(--muted); margin-bottom: 20px; }
 
   .error-box {
-    background: rgba(239,68,68,0.1);
-    border: 1px solid rgba(239,68,68,0.3);
+    background: var(--red-light);
+    border: 1px solid #fca5a5;
     border-radius: 10px;
-    padding: 16px 20px;
+    padding: 14px 18px;
     color: var(--red);
-    font-size: 0.82rem;
-    margin-top: 12px;
+    font-size: 0.85rem;
+    margin-top: 10px;
     display: none;
   }
-
-  /* Report actions */
-  #report-section { display: none; }
-
-  .action-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-
-  .action-card {
-    background: var(--surface2);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 20px;
-    text-decoration: none;
-    color: var(--text);
-    transition: border-color 0.2s;
-    cursor: pointer;
-  }
-  .action-card:hover { border-color: var(--accent); }
-  .action-card .ac-icon { font-size: 1.5rem; margin-bottom: 8px; }
-  .action-card .ac-title { font-family: 'Syne', sans-serif; font-size: 0.9rem; font-weight: 600; margin-bottom: 4px; }
-  .action-card .ac-sub { font-size: 0.75rem; color: var(--muted); }
-
-  /* Ask section */
-  #ask-section { display: none; }
-
-  .ask-input-row { display: flex; gap: 10px; margin-bottom: 16px; }
-
-  .ask-input {
-    flex: 1;
-    background: var(--surface2);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    padding: 12px 16px;
-    color: var(--text);
-    font-family: 'DM Mono', monospace;
-    font-size: 0.88rem;
-    outline: none;
-    transition: border-color 0.2s;
-  }
-  .ask-input:focus { border-color: var(--accent); }
-  .ask-input::placeholder { color: var(--muted); }
-
-  .ask-btn {
-    background: var(--accent);
-    color: #fff;
-    border: none;
-    border-radius: 10px;
-    padding: 12px 20px;
-    font-family: 'Syne', sans-serif;
-    font-weight: 600;
-    font-size: 0.9rem;
-    cursor: pointer;
-    white-space: nowrap;
-    transition: opacity 0.2s;
-  }
-  .ask-btn:hover { opacity: 0.9; }
-  .ask-btn:disabled { opacity: 0.4; cursor: not-allowed; }
-
-  .embed-status {
-    font-size: 0.75rem;
-    color: var(--muted);
-    margin-bottom: 14px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-  .embed-dot {
-    width: 8px; height: 8px;
-    border-radius: 50%;
-    background: var(--amber);
-    flex-shrink: 0;
-  }
-  .embed-dot.ready { background: var(--green); }
-  .embed-dot.error { background: var(--red); }
-
-  .suggested-questions { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; }
-  .sq-chip {
-    background: var(--surface2);
-    border: 1px solid var(--border);
-    border-radius: 99px;
-    padding: 6px 14px;
-    font-size: 0.75rem;
-    color: var(--muted);
-    cursor: pointer;
-    transition: border-color 0.2s, color 0.2s;
-  }
-  .sq-chip:hover { border-color: var(--accent); color: var(--text); }
-
-  .answer-box {
-    background: var(--surface2);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 20px;
-    display: none;
-  }
-  .answer-box .q-label { font-size: 0.7rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 8px; }
-  .answer-box .q-text { font-size: 0.85rem; color: var(--accent); margin-bottom: 16px; }
-  .answer-box .answer-text { font-size: 0.85rem; line-height: 1.7; white-space: pre-wrap; }
-  .answer-box .sources-label { font-size: 0.7rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.1em; margin-top: 16px; margin-bottom: 8px; }
-
-  .source-pill {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 99px;
-    padding: 4px 12px;
-    font-size: 0.72rem;
-    color: var(--muted);
-    margin: 3px;
-  }
-  .source-pill .pos { color: var(--green); }
-  .source-pill .neg { color: var(--red); }
-
-  /* Format help */
-  .format-help {
-    background: var(--surface2);
-    border-radius: 10px;
-    padding: 16px 20px;
-    margin-top: 16px;
-  }
-  .format-help p { font-size: 0.78rem; color: var(--muted); margin-bottom: 10px; }
-  .format-help pre { font-size: 0.75rem; color: var(--text); overflow-x: auto; }
 
   @keyframes spin { to { transform: rotate(360deg); } }
   .spinner {
     display: inline-block;
     width: 13px; height: 13px;
-    border: 2px solid rgba(255,255,255,0.3);
+    border: 2px solid rgba(255,255,255,0.4);
     border-top-color: #fff;
     border-radius: 50%;
     animation: spin 0.8s linear infinite;
     vertical-align: middle;
     margin-right: 6px;
   }
-
-  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
-  .pulsing { animation: pulse 1.5s ease infinite; }
 </style>
 </head>
 <body>
 <div class="container">
 
   <header>
-    <h1>Review Intelligence</h1>
+    <h1>Review <span>Intelligence</span></h1>
     <p>Upload Amazon review CSVs and get AI-generated insights —<br>themes, sentiment, evidence, and an interactive Q&amp;A.</p>
     <div class="badge-row">
       {% if using_claude %}
-        <span class="badge badge-claude">⚡ Powered by Claude API</span>
+        <span class="badge badge-claude">⚡ Claude API</span>
       {% else %}
         <span class="badge badge-ollama">🖥 Local Ollama</span>
-        <span class="badge badge-ollama">🔍 ChromaDB Vector Search</span>
+        <span class="badge badge-ollama">🔍 ChromaDB Search</span>
       {% endif %}
     </div>
   </header>
 
-  <!-- ── Upload card ─────────────────────────────────────── -->
+  <!-- Upload -->
   <div class="card" id="upload-card">
-    <h2>Upload Your Dataset</h2>
+    <div class="card-title">Upload Your Dataset</div>
 
     <div class="drop-zone" id="drop-zone" onclick="document.getElementById('file-input').click()">
       <div class="icon">📂</div>
       <div class="label">Drop your CSV here or click to browse</div>
-      <div class="sub">Required columns: <code>Text</code> and <code>label</code> (1=positive, 0=negative)</div>
+      <div class="sub">Columns required: <code>Text</code> and <code>label</code> (1 = positive, 0 = negative)</div>
       <div class="filename" id="file-name"></div>
     </div>
     <input type="file" id="file-input" accept=".csv">
@@ -366,22 +271,20 @@
     </button>
 
     <div class="sample-link">
-      No dataset? <a href="/sample" download>Download the Angry Birds sample CSV</a> to try it out.
+      No dataset? <a href="/sample" download>Download the sample CSV</a> to try it out.
     </div>
 
     <div class="format-help">
       <p>Your CSV must have exactly these two columns:</p>
       <pre>Text,label
 "Great app, love it!",1
-"Crashes constantly",0
-"Works fine for basic use",1</pre>
-      <p style="margin-top:10px">Supports any Amazon product review export. Labels: <strong>1</strong> = positive, <strong>0</strong> = negative.</p>
+"Crashes constantly",0</pre>
     </div>
   </div>
 
-  <!-- ── Progress card ──────────────────────────────────── -->
+  <!-- Progress -->
   <div class="card" id="progress-section">
-    <h2>Processing</h2>
+    <div class="card-title">Processing</div>
 
     <div class="progress-label">Summarization</div>
     <div class="progress-track">
@@ -392,7 +295,7 @@
     <div id="embed-progress-wrap" style="display:none">
       <div class="progress-label">Search Index</div>
       <div class="progress-track">
-        <div class="progress-fill" id="embed-fill" style="background: linear-gradient(90deg,#22c55e,#4ade80)"></div>
+        <div class="progress-fill green" id="embed-fill"></div>
       </div>
       <div class="progress-message" id="embed-message"></div>
     </div>
@@ -400,73 +303,20 @@
     <div class="error-box" id="error-box"></div>
   </div>
 
-  <!-- ── Report actions card ────────────────────────────── -->
-  <div class="card" id="report-section">
-    <h2>Your Report Is Ready</h2>
-    <div class="action-grid">
-      <a class="action-card" id="open-report-link" href="#" target="_blank">
-        <div class="ac-icon">📊</div>
-        <div class="ac-title">Open Report</div>
-        <div class="ac-sub">Full HTML report with themes &amp; evidence</div>
-      </a>
-      <a class="action-card" id="export-link" href="#">
-        <div class="ac-icon">📥</div>
-        <div class="ac-title">Export CSV</div>
-        <div class="ac-sub">Download themes as structured spreadsheet</div>
-      </a>
-    </div>
-  </div>
-
-  <!-- ── Ask section ────────────────────────────────────── -->
-  <div class="card" id="ask-section">
-    <h2>Ask the Reviews</h2>
-
-    <div class="embed-status">
-      <div class="embed-dot pulsing" id="embed-dot"></div>
-      <span id="embed-status-text">Building search index...</span>
-    </div>
-
-    <div class="suggested-questions">
-      <span class="sq-chip" onclick="setQuestion(this)">Why do users love this product?</span>
-      <span class="sq-chip" onclick="setQuestion(this)">What are the main complaints?</span>
-      <span class="sq-chip" onclick="setQuestion(this)">Is it good for kids?</span>
-      <span class="sq-chip" onclick="setQuestion(this)">What do people say about ads?</span>
-      <span class="sq-chip" onclick="setQuestion(this)">Does it work offline?</span>
-    </div>
-
-    <div class="ask-input-row">
-      <input class="ask-input" id="ask-input" type="text"
-        placeholder="e.g. Why do users uninstall the app?" disabled>
-      <button class="ask-btn" id="ask-btn" onclick="askQuestion()" disabled>Ask</button>
-    </div>
-
-    <div class="answer-box" id="answer-box">
-      <div class="q-label">Question</div>
-      <div class="q-text" id="answer-question"></div>
-      <div class="answer-text" id="answer-text"></div>
-      <div class="sources-label">Retrieved Reviews</div>
-      <div id="sources-list"></div>
-    </div>
-  </div>
-
 </div>
 
 <script>
   let selectedFile = null;
   let pollInterval = null;
-  let embedPollInterval = null;
-  let currentJobId = null;
 
   const dropZone = document.getElementById('drop-zone');
   const fileInput = document.getElementById('file-input');
 
   fileInput.addEventListener('change', e => { if (e.target.files[0]) setFile(e.target.files[0]); });
-
   dropZone.addEventListener('dragover', e => { e.preventDefault(); dropZone.classList.add('drag-over'); });
   dropZone.addEventListener('dragleave', () => dropZone.classList.remove('drag-over'));
   dropZone.addEventListener('drop', e => {
-    e.preventDefault();
-    dropZone.classList.remove('drag-over');
+    e.preventDefault(); dropZone.classList.remove('drag-over');
     if (e.dataTransfer.files[0]) setFile(e.dataTransfer.files[0]);
   });
 
@@ -479,7 +329,6 @@
 
   async function startJob() {
     if (!selectedFile) return;
-
     const formData = new FormData();
     formData.append('file', selectedFile);
     formData.append('max_reviews', document.getElementById('max-reviews').value);
@@ -493,11 +342,8 @@
       const res = await fetch('/upload', { method: 'POST', body: formData });
       const data = await res.json();
       if (data.error) throw new Error(data.error);
-
-      currentJobId = data.job_id;
       document.getElementById('upload-card').style.display = 'none';
       document.getElementById('progress-section').style.display = 'block';
-
       pollStatus(data.job_id);
     } catch (err) {
       btn.disabled = false;
@@ -511,17 +357,20 @@
       try {
         const res = await fetch('/status/' + jobId);
         const data = await res.json();
-
         document.getElementById('progress-fill').style.width = (data.progress || 0) + '%';
         document.getElementById('progress-message').textContent = data.message || '...';
+
+        if (data.embed_status === 'indexing') {
+          document.getElementById('embed-progress-wrap').style.display = 'block';
+          document.getElementById('embed-fill').style.width = (data.embed_progress || 0) + '%';
+          document.getElementById('embed-message').textContent = data.embed_message || '';
+        }
 
         if (data.status === 'done') {
           clearInterval(pollInterval);
           document.getElementById('progress-fill').style.width = '100%';
           document.getElementById('progress-message').textContent = '✅ Report ready! Loading...';
-          // Redirect to the report page (Ask section is embedded in it)
           setTimeout(() => { window.location.href = '/report/' + jobId; }, 800);
-
         } else if (data.status === 'error') {
           clearInterval(pollInterval);
           const errBox = document.getElementById('error-box');
@@ -529,103 +378,9 @@
           errBox.style.display = 'block';
           document.getElementById('progress-message').textContent = 'Failed.';
         }
-
-        // Show embed progress mid-run if indexing started
-        if (data.embed_status === 'indexing') {
-          document.getElementById('embed-progress-wrap').style.display = 'block';
-          document.getElementById('embed-fill').style.width = (data.embed_progress || 0) + '%';
-          document.getElementById('embed-message').textContent = data.embed_message || '';
-        }
-      } catch (e) {}
+      } catch(e) {}
     }, 2000);
   }
-
-  function pollEmbedStatus(jobId) {
-    embedPollInterval = setInterval(async () => {
-      try {
-        const res = await fetch('/status/' + jobId);
-        const data = await res.json();
-
-        const pct = data.embed_progress || 0;
-        document.getElementById('embed-fill').style.width = pct + '%';
-        document.getElementById('embed-message').textContent = data.embed_message || '';
-
-        const dot = document.getElementById('embed-dot');
-        const statusText = document.getElementById('embed-status-text');
-
-        if (data.embed_status === 'ready') {
-          clearInterval(embedPollInterval);
-          dot.classList.remove('pulsing');
-          dot.classList.add('ready');
-          statusText.textContent = 'Search index ready — ask anything about these reviews';
-          document.getElementById('ask-input').disabled = false;
-          document.getElementById('ask-btn').disabled = false;
-        } else if (data.embed_status === 'error') {
-          clearInterval(embedPollInterval);
-          dot.classList.remove('pulsing');
-          dot.classList.add('error');
-          statusText.textContent = 'Indexing failed: ' + (data.embed_message || '');
-        } else {
-          statusText.textContent = data.embed_message || 'Building search index...';
-        }
-      } catch (e) {}
-    }, 2000);
-  }
-
-  function setQuestion(el) {
-    const input = document.getElementById('ask-input');
-    input.value = el.textContent;
-    input.focus();
-  }
-
-  async function askQuestion() {
-    const question = document.getElementById('ask-input').value.trim();
-    if (!question || !currentJobId) return;
-
-    const btn = document.getElementById('ask-btn');
-    btn.disabled = true;
-    btn.innerHTML = '<span class="spinner"></span>';
-
-    try {
-      const res = await fetch('/ask/' + currentJobId, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ question }),
-      });
-      const data = await res.json();
-
-      if (data.error) throw new Error(data.error);
-
-      const box = document.getElementById('answer-box');
-      document.getElementById('answer-question').textContent = data.question;
-      document.getElementById('answer-text').textContent = data.answer;
-
-      // Sources
-      const sourcesList = document.getElementById('sources-list');
-      sourcesList.innerHTML = '';
-      (data.sources || []).forEach(s => {
-        const cls = s.sentiment === 'positive' ? 'pos' : 'neg';
-        const icon = s.sentiment === 'positive' ? '👍' : '👎';
-        sourcesList.innerHTML += `<span class="source-pill">
-          <span class="${cls}">${icon}</span>
-          Review #${s.review_id}
-          <span style="opacity:0.5">${(s.relevance*100).toFixed(0)}% match</span>
-        </span>`;
-      });
-
-      box.style.display = 'block';
-    } catch (err) {
-      alert('Error: ' + err.message);
-    } finally {
-      btn.disabled = false;
-      btn.textContent = 'Ask';
-    }
-  }
-
-  // Allow Enter key in ask input
-  document.getElementById('ask-input').addEventListener('keydown', e => {
-    if (e.key === 'Enter') askQuestion();
-  });
 </script>
 </body>
 </html>
