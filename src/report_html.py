@@ -305,6 +305,9 @@ def _app_section_html(app_name: str, obj: dict, job_id: str | None) -> str:
 
     def theme_cards(items, is_complaint=False):
         accent = "#ef4444" if is_complaint else "#22c55e"
+        if not items:
+            msg = "No recurring complaint themes found in this dataset." if is_complaint else "No recurring themes found."
+            return f'<p style="color:#9ca3af;font-size:0.88rem;padding:12px 0">{msg}</p>'
         cards = ""
         for item in items:
             theme = item.get("theme", "")
@@ -480,8 +483,11 @@ def generate_html(obj, output_path, data_path=None, job_id=None):
         return items
 
     def theme_cards(items, is_complaint=False):
-        cards = ""
         accent = "#ef4444" if is_complaint else "#22c55e"
+        if not items:
+            msg = "No recurring complaint themes found in this dataset." if is_complaint else "No recurring themes found."
+            return f'<p style="color:#9ca3af;font-size:0.88rem;padding:12px 0">{msg}</p>'
+        cards = ""
         for item in items:
             theme = item.get("theme", item.get("claim", ""))
             count = item.get("review_count", "?")
@@ -919,7 +925,7 @@ def generate_html(obj, output_path, data_path=None, job_id=None):
   {"" if not listing_recs else f'''
   <!-- Listing Recommendations -->
   <section class="section">
-    <h2>🛒 Amazon Listing Recommendations</h2>
+    <h2>🛒 Listing Recommendations</h2>
     {listing_cards(listing_recs)}
   </section>'''}
 

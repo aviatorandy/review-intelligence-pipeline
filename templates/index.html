@@ -167,26 +167,6 @@
   .sample-link a { color: var(--accent); text-decoration: none; font-weight: 500; }
   .sample-link a:hover { text-decoration: underline; }
 
-  /* Advanced settings accordion */
-  .advanced-toggle {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    font-size: 0.78rem;
-    color: var(--muted);
-    cursor: pointer;
-    margin-bottom: 0;
-    user-select: none;
-    padding: 10px 0 0;
-  }
-  .advanced-toggle:hover { color: var(--accent); }
-  .advanced-toggle .arrow { transition: transform 0.2s; font-size: 0.65rem; }
-  .advanced-toggle.open .arrow { transform: rotate(90deg); }
-
-  .advanced-body {
-    display: none;
-    padding-top: 14px;
-  }
   .advanced-body.open { display: block; }
 
   .options-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
@@ -331,23 +311,6 @@
       No dataset yet? <a href="/sample" download>Download our sample CSV</a> to try it out.
     </div>
 
-    <!-- Advanced settings accordion -->
-    <div class="advanced-toggle" id="adv-toggle" onclick="toggleAdvanced()">
-      <span class="arrow">▶</span> Advanced settings
-    </div>
-    <div class="advanced-body" id="adv-body">
-      <div class="options-row">
-        <div class="field">
-          <label>Max Reviews to Analyze</label>
-          <input type="number" id="max-reviews" value="200" min="10" max="5000">
-        </div>
-        <div class="field">
-          <label>Batch Size</label>
-          <input type="number" id="chunk-size" value="50" min="10" max="200">
-        </div>
-      </div>
-    </div>
-
     <div class="format-help">
       <p>Required CSV format:</p>
       <pre>Text,label
@@ -401,22 +364,10 @@
     document.getElementById('submit-btn').disabled = false;
   }
 
-  function toggleAdvanced() {
-    const toggle = document.getElementById('adv-toggle');
-    const body = document.getElementById('adv-body');
-    toggle.classList.toggle('open');
-    body.classList.toggle('open');
-  }
-
   async function startJob() {
     if (!selectedFile) return;
     const formData = new FormData();
     formData.append('file', selectedFile);
-    // Only send if advanced settings are visible (optional)
-    const maxR = document.getElementById('max-reviews').value;
-    const chunkS = document.getElementById('chunk-size').value;
-    if (maxR) formData.append('max_reviews', maxR);
-    if (chunkS) formData.append('chunk_size', chunkS);
 
     const btn = document.getElementById('submit-btn');
     btn.disabled = true;

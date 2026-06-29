@@ -30,8 +30,8 @@ Return this exact JSON structure:
   "listing_recommendations": [
     {{
       "title": "Short title",
-      "description": "Specific change to make to the Amazon listing, title, bullets, or images.",
-      "rationale": "Why this change would convert better or reduce negative reviews."
+      "description": "Specific change to make to the product listing, title, bullets, description, or images. Must reference actual themes found in the reviews — do NOT give generic advice like 'add high-quality images'.",
+      "rationale": "Which specific complaint or strength from the data justifies this change."
     }}
   ],
   "top_marketing_quotes": [
@@ -45,7 +45,7 @@ Return this exact JSON structure:
 
 Rules:
 - improvement_recommendations: 3-5 items, ranked by priority (high/medium/low)
-- listing_recommendations: 2-4 items
+- listing_recommendations: 2-4 items, each grounded in a specific theme from top_complaints or top_strengths — cite the theme name
 - top_marketing_quotes: 2-3 of the best quotes from top_strengths evidence
 - Write for a non-technical audience. No jargon.
 - Every recommendation must connect back to specific themes in the data."""
