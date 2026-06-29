@@ -163,10 +163,31 @@ def _run_pipeline(job_id: str, csv_path: Path):
             }
 
             top_strengths, top_complaints, summary_bullets = aggregate_chunks(chunk_results)
+
+            # If few complaint themes surfaced, surface individual high-severity negatives
+            notable_negatives = []
+            if len(top_complaints) < 3:
+                _sev_order = {"high": 0, "medium": 1, "low": 2}
+                candidates = [
+                    r for r in rows
+                    if r.get("sentiment_text") == "negative" or int(r.get("label", 1)) == 0
+                ]
+                candidates.sort(key=lambda r: _sev_order.get(r.get("severity", "low"), 2))
+                for r in candidates[:8]:
+                    text = r.get("text", "").strip()
+                    if len(text) > 20:
+                        notable_negatives.append({
+                            "text": text[:300] + ("..." if len(text) > 300 else ""),
+                            "severity": r.get("severity", "low"),
+                            "topic": r.get("topic", ""),
+                            "review_id": r.get("review_id", ""),
+                        })
+
             aggregated = {
                 "summary_bullets": summary_bullets,
                 "top_strengths": top_strengths,
                 "top_complaints": top_complaints,
+                "notable_negatives": notable_negatives,
                 "sentiment": sentiment,
             }
 
@@ -290,10 +311,30 @@ def _process_app(job_id, app_name, app_df, run_dir, app_idx, total_apps):
     }
 
     top_strengths, top_complaints, summary_bullets = aggregate_chunks(chunk_results)
+
+    notable_negatives = []
+    if len(top_complaints) < 3:
+        _sev_order = {"high": 0, "medium": 1, "low": 2}
+        candidates = [
+            r for r in rows
+            if r.get("sentiment_text") == "negative" or int(r.get("label", 1)) == 0
+        ]
+        candidates.sort(key=lambda r: _sev_order.get(r.get("severity", "low"), 2))
+        for r in candidates[:8]:
+            text = r.get("text", "").strip()
+            if len(text) > 20:
+                notable_negatives.append({
+                    "text": text[:300] + ("..." if len(text) > 300 else ""),
+                    "severity": r.get("severity", "low"),
+                    "topic": r.get("topic", ""),
+                    "review_id": r.get("review_id", ""),
+                })
+
     aggregated = {
         "summary_bullets": summary_bullets,
         "top_strengths": top_strengths,
         "top_complaints": top_complaints,
+        "notable_negatives": notable_negatives,
         "sentiment": sentiment,
     }
 

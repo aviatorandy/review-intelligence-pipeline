@@ -8,131 +8,6 @@ import json
 import os
 
 
-def _ask_section(job_id: str) -> str:
-    return f"""
-<div style="background:#fff;border-top:1px solid #e2e5ec;margin-top:48px;padding:48px 20px 64px">
-<div style="max-width:860px;margin:0 auto">
-  <h2 style="font-size:1.1rem;font-weight:700;color:#111827;margin-bottom:6px">Ask the Reviews</h2>
-  <p style="font-size:0.85rem;color:#6b7280;margin-bottom:20px">Get plain-English answers grounded in what your customers actually said.</p>
-
-  <div id="embed-status-row" style="font-size:0.8rem;color:#6b7280;margin-bottom:16px;display:flex;align-items:center;gap:8px;background:#f5f6fa;border:1px solid #e2e5ec;border-radius:8px;padding:10px 14px">
-    <span id="embed-dot" style="width:8px;height:8px;border-radius:50%;background:#d97706;display:inline-block;animation:pulse 1.5s ease infinite;flex-shrink:0"></span>
-    <span id="embed-status-text">Building search index — ready in about a minute after the report loads...</span>
-  </div>
-
-  <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px">
-    <span class="sq-chip" onclick="setQ(this)">What should we fix first?</span>
-    <span class="sq-chip" onclick="setQ(this)">Why are customers leaving negative reviews?</span>
-    <span class="sq-chip" onclick="setQ(this)">What do customers love most?</span>
-    <span class="sq-chip" onclick="setQ(this)">What should we change in the Amazon listing?</span>
-    <span class="sq-chip" onclick="setQ(this)">What are the best customer quotes for marketing?</span>
-    <span class="sq-chip" onclick="setQ(this)">Compare 5-star and 1-star reviews.</span>
-    <span class="sq-chip" onclick="setQ(this)">What are the top roadmap recommendations?</span>
-  </div>
-
-  <div style="display:flex;gap:10px;margin-bottom:16px">
-    <input id="ask-input" type="text" placeholder="Ask anything about your customers..."
-      disabled style="flex:1;background:#f5f6fa;border:1px solid #d0d5df;border-radius:10px;
-      padding:12px 16px;color:#111827;font-family:'Inter',sans-serif;font-size:0.9rem;outline:none;
-      transition:border-color 0.2s,box-shadow 0.2s">
-    <button id="ask-btn" onclick="askQ()" disabled
-      style="background:#4f46e5;color:#fff;border:none;border-radius:10px;padding:12px 24px;
-      font-family:'Inter',sans-serif;font-weight:600;font-size:0.9rem;cursor:pointer;opacity:0.4;
-      transition:opacity 0.2s,background 0.15s;white-space:nowrap">Ask</button>
-  </div>
-
-  <div id="answer-box" style="display:none;background:#f5f6fa;border:1px solid #e2e5ec;border-radius:12px;padding:20px 24px">
-    <div style="font-size:0.7rem;font-weight:700;color:#6b7280;text-transform:uppercase;letter-spacing:0.1em;margin-bottom:6px">Question</div>
-    <div id="answer-q" style="font-size:0.88rem;color:#4f46e5;font-weight:500;margin-bottom:14px"></div>
-    <div id="answer-text" style="font-size:0.92rem;line-height:1.75;color:#111827"></div>
-    <div id="sources-wrap" style="margin-top:14px"></div>
-  </div>
-</div>
-</div>
-
-<style>
-  .sq-chip {{
-    background:#fff;border:1px solid #e2e5ec;border-radius:99px;
-    padding:6px 14px;font-size:0.78rem;color:#6b7280;cursor:pointer;
-    font-family:'Inter',sans-serif;
-    transition:border-color 0.15s,color 0.15s,background 0.15s;
-  }}
-  .sq-chip:hover {{border-color:#4f46e5;color:#4f46e5;background:#eef2ff}}
-  @keyframes pulse {{0%,100%{{opacity:1}}50%{{opacity:0.4}}}}
-  @keyframes spin {{to{{transform:rotate(360deg)}}}}
-</style>
-
-<script>
-const JOB_ID = "{job_id}";
-let embedReady = false;
-
-function setQ(el) {{
-  document.getElementById('ask-input').value = el.textContent;
-}}
-
-async function askQ() {{
-  const q = document.getElementById('ask-input').value.trim();
-  if (!q || !embedReady) return;
-  const btn = document.getElementById('ask-btn');
-  btn.disabled = true;
-  btn.innerHTML = '<span style="display:inline-block;width:12px;height:12px;border:2px solid rgba(255,255,255,0.3);border-top-color:#fff;border-radius:50%;animation:spin 0.8s linear infinite;vertical-align:middle"></span>';
-  try {{
-    const res = await fetch('/ask/' + JOB_ID, {{
-      method: 'POST',
-      headers: {{'Content-Type': 'application/json'}},
-      body: JSON.stringify({{question: q}})
-    }});
-    const data = await res.json();
-    if (data.error) throw new Error(data.error);
-    document.getElementById('answer-q').textContent = data.question;
-    document.getElementById('answer-text').textContent = data.answer;
-    const sw = document.getElementById('sources-wrap');
-    sw.innerHTML = '<div style="font-size:0.7rem;color:#6b7280;text-transform:uppercase;letter-spacing:0.1em;margin-bottom:8px">Source Reviews</div>';
-    (data.sources || []).forEach(s => {{
-      const icon = s.sentiment === 'positive' ? '👍' : '👎';
-      const col = s.sentiment === 'positive' ? '#16a34a' : '#dc2626';
-      sw.innerHTML += `<span style="display:inline-flex;align-items:center;gap:6px;background:#fff;border:1px solid #e2e5ec;border-radius:99px;padding:4px 12px;font-size:0.72rem;color:#6b7280;margin:3px;font-family:'Inter',sans-serif">
-        <span style="color:${{col}}">${{icon}}</span>Review #${{s.review_id}}
-        <span style="opacity:0.5">${{(s.relevance*100).toFixed(0)}}% match</span></span>`;
-    }});
-    document.getElementById('answer-box').style.display = 'block';
-  }} catch(e) {{ alert('Error: ' + e.message); }}
-  finally {{
-    btn.disabled = false;
-    btn.textContent = 'Ask';
-    if (embedReady) btn.style.opacity = '1';
-  }}
-}}
-
-document.getElementById('ask-input').addEventListener('keydown', e => {{
-  if (e.key === 'Enter') askQ();
-}});
-
-(function pollEmbed() {{
-  fetch('/status/' + JOB_ID).then(r => r.json()).then(data => {{
-    const dot = document.getElementById('embed-dot');
-    const txt = document.getElementById('embed-status-text');
-    if (data.embed_status === 'ready') {{
-      embedReady = true;
-      dot.style.animation = 'none';
-      dot.style.background = '#16a34a';
-      txt.textContent = 'Search index ready — ask anything about your customers';
-      document.getElementById('ask-input').disabled = false;
-      const btn = document.getElementById('ask-btn');
-      btn.disabled = false;
-      btn.style.opacity = '1';
-    }} else if (data.embed_status === 'error') {{
-      dot.style.animation = 'none';
-      dot.style.background = '#dc2626';
-      txt.textContent = 'Indexing failed: ' + (data.embed_message || '');
-    }} else {{
-      if (data.embed_message) txt.textContent = data.embed_message;
-      setTimeout(pollEmbed, 2500);
-    }}
-  }}).catch(() => setTimeout(pollEmbed, 3000));
-}})();
-</script>"""
-
 
 def _app_tab_report(apps: dict, output_path: str, data_path: str | None, job_id: str | None):
     """Render a tabbed multi-app report."""
@@ -154,7 +29,6 @@ def _app_tab_report(apps: dict, output_path: str, data_path: str | None, job_id:
             panels += "</div>\n"
         return panels
 
-    ask_section_html = _ask_section(job_id) if job_id else ""
 
     html = f"""<!DOCTYPE html>
 <html lang="en">
@@ -241,7 +115,6 @@ def _app_tab_report(apps: dict, output_path: str, data_path: str | None, job_id:
   {tab_panels()}
 </div>
 
-{ask_section_html}
 
 <script>
 function showApp(idx) {{
@@ -306,7 +179,7 @@ def _app_section_html(app_name: str, obj: dict, job_id: str | None) -> str:
     def theme_cards(items, is_complaint=False):
         accent = "#ef4444" if is_complaint else "#22c55e"
         if not items:
-            msg = "No recurring complaint themes found in this dataset." if is_complaint else "No recurring themes found."
+            msg = "" if is_complaint else "No recurring themes found."
             return f'<p style="color:#9ca3af;font-size:0.88rem;padding:12px 0">{msg}</p>'
         cards = ""
         for item in items:
@@ -322,6 +195,24 @@ def _app_section_html(app_name: str, obj: dict, job_id: str | None) -> str:
                     </div>
                 </div>
                 <div class="evidence-list">{evidence_html(item.get("evidence", []))}</div>
+            </div>'''
+        return cards
+
+    def notable_negatives_html(items):
+        if not items:
+            return ""
+        _sev_color = {"high": "#dc2626", "medium": "#d97706", "low": "#6b7280"}
+        cards = '<p style="font-size:0.75rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:#9ca3af;margin:14px 0 8px">Individual Complaints</p>'
+        for item in items:
+            sev = item.get("severity", "low")
+            col = _sev_color.get(sev, "#6b7280")
+            topic = item.get("topic", "")
+            topic_tag = f'<span style="font-size:0.65rem;background:#f3f4f6;border:1px solid #e2e5ec;border-radius:99px;padding:2px 8px;color:#6b7280;margin-left:6px">{topic}</span>' if topic else ""
+            cards += f'''<div style="background:#fff8f8;border:1px solid #fee2e2;border-left:3px solid {col};border-radius:0 8px 8px 0;padding:10px 14px;margin-bottom:6px">
+                <div style="display:flex;align-items:center;gap:6px;margin-bottom:4px">
+                    <span style="font-size:0.65rem;font-weight:700;text-transform:uppercase;color:{col}">{sev}</span>{topic_tag}
+                </div>
+                <p style="font-size:0.83rem;color:#374151;line-height:1.55;font-style:italic">"{item.get("text","")}"</p>
             </div>'''
         return cards
 
@@ -372,7 +263,7 @@ def _app_section_html(app_name: str, obj: dict, job_id: str | None) -> str:
 </div>
 
 {"" if not improvement_recs else f'<section class="section"><h2>🛠 Improvement Opportunities</h2>{improvement_cards(improvement_recs)}</section>'}
-<section class="section"><h2>❌ Top Complaints</h2>{theme_cards(obj.get("top_complaints",[]), is_complaint=True)}</section>
+<section class="section"><h2>❌ Top Complaints</h2>{theme_cards(obj.get("top_complaints",[]), is_complaint=True)}{notable_negatives_html(obj.get("notable_negatives",[]))}</section>
 <section class="section"><h2>✅ What Customers Love</h2>{theme_cards(obj.get("top_strengths",[]), is_complaint=False)}</section>
 
 {_listing_section(listing_recs)}
@@ -486,7 +377,7 @@ def generate_html(obj, output_path, data_path=None, job_id=None):
     def theme_cards(items, is_complaint=False):
         accent = "#ef4444" if is_complaint else "#22c55e"
         if not items:
-            msg = "No recurring complaint themes found in this dataset." if is_complaint else "No recurring themes found."
+            msg = "" if is_complaint else "No recurring themes found."
             return f'<p style="color:#9ca3af;font-size:0.88rem;padding:12px 0">{msg}</p>'
         cards = ""
         for item in items:
@@ -504,6 +395,24 @@ def generate_html(obj, output_path, data_path=None, job_id=None):
                     </div>
                 </div>
                 <div class="evidence-list">{evidence_html(evidence)}</div>
+            </div>'''
+        return cards
+
+    def notable_negatives_html(items):
+        if not items:
+            return ""
+        _sev_color = {"high": "#dc2626", "medium": "#d97706", "low": "#6b7280"}
+        cards = '<p style="font-size:0.75rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:#9ca3af;margin:14px 0 8px">Individual Complaints</p>'
+        for item in items:
+            sev = item.get("severity", "low")
+            col = _sev_color.get(sev, "#6b7280")
+            topic = item.get("topic", "")
+            topic_tag = f'<span style="font-size:0.65rem;background:#f3f4f6;border:1px solid #e2e5ec;border-radius:99px;padding:2px 8px;color:#6b7280;margin-left:6px">{topic}</span>' if topic else ""
+            cards += f'''<div style="background:#fff8f8;border:1px solid #fee2e2;border-left:3px solid {col};border-radius:0 8px 8px 0;padding:10px 14px;margin-bottom:6px">
+                <div style="display:flex;align-items:center;gap:6px;margin-bottom:4px">
+                    <span style="font-size:0.65rem;font-weight:700;text-transform:uppercase;color:{col}">{sev}</span>{topic_tag}
+                </div>
+                <p style="font-size:0.83rem;color:#374151;line-height:1.55;font-style:italic">"{item.get("text","")}"</p>
             </div>'''
         return cards
 
@@ -564,7 +473,6 @@ def generate_html(obj, output_path, data_path=None, job_id=None):
     q_color = "#16a34a" if q_pct >= 80 else "#d97706" if q_pct >= 60 else "#dc2626"
     q_label = "Excellent" if q_pct >= 80 else "Good" if q_pct >= 60 else "Partial"
 
-    ask_section_html = _ask_section(job_id) if job_id else ""
 
     # Stat cards
     tier_display = {"small": "Full Dataset", "medium": "Smart Sample", "large": "Large Dataset"}.get(tier, tier.title() if tier else "")
@@ -916,6 +824,7 @@ def generate_html(obj, output_path, data_path=None, job_id=None):
   <section class="section">
     <h2>❌ Top Customer Complaints</h2>
     {theme_cards(obj.get("top_complaints", []), is_complaint=True)}
+    {notable_negatives_html(obj.get("notable_negatives", []))}
   </section>
 
   <section class="section">
@@ -939,7 +848,6 @@ def generate_html(obj, output_path, data_path=None, job_id=None):
 
 </div>
 
-{ask_section_html}
 
 {"" if not elapsed_str else f'<div style="text-align:center;font-size:0.75rem;color:#9ca3af;padding:24px 0 8px">Generated in {elapsed_str}</div>'}
 
