@@ -47,6 +47,8 @@ def _update_job(job_id: str, **kwargs):
 def _run_pipeline(job_id: str, csv_path: Path):
     try:
         _update_job(job_id, status="running", progress=2, message="Reading your reviews...")
+        with _jobs_lock:
+            original_filename = _jobs[job_id].get("original_filename", "")
 
         df = load_reviews(str(csv_path))
         total_uploaded = len(df)
@@ -83,7 +85,7 @@ def _run_pipeline(job_id: str, csv_path: Path):
             generate_html(
                 {"apps": app_results, "multi_app": True},
                 str(html_path),
-                data_path=str(csv_path),
+                data_path=original_filename or str(csv_path),
                 job_id=job_id,
             )
         else:
@@ -188,7 +190,7 @@ def _run_pipeline(job_id: str, csv_path: Path):
             _update_job(job_id, progress=93, message="Building your insights report...")
 
             html_path = run_dir / "report.html"
-            generate_html(final, str(html_path), data_path=str(csv_path), job_id=job_id)
+            generate_html(final, str(html_path), data_path=original_filename or str(csv_path), job_id=job_id)
 
         _update_job(
             job_id,
@@ -342,11 +344,14 @@ def upload():
     csv_path = UPLOAD_DIR / f"{job_id}.csv"
     f.save(str(csv_path))
 
+    original_name = f.filename
+
     with _jobs_lock:
         _jobs[job_id] = {
             "status": "queued",
             "progress": 0,
             "message": "Starting analysis...",
+            "original_filename": original_name,
             "embed_status": "waiting",
             "embed_progress": 0,
             "embed_message": "",

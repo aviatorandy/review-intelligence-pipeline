@@ -425,9 +425,15 @@ def generate_html(obj, output_path, data_path=None, job_id=None):
     n = sentiment.get("n_reviews", 0)
 
     if data_path:
-        product_label = os.path.splitext(os.path.basename(data_path))[0].replace("_", " ").title()
+        raw = os.path.splitext(os.path.basename(data_path))[0]
+        # Hide UUIDs (hex-dash pattern) — fall back to generic label
+        import re as _re
+        if _re.fullmatch(r"[0-9a-f\-]{32,}", raw, _re.I):
+            product_label = "Your Product"
+        else:
+            product_label = raw.replace("_", " ").replace("-", " ").title()
     else:
-        product_label = "Product"
+        product_label = "Your Product"
 
     meta = obj.get("meta", {})
     total_uploaded = meta.get("total_uploaded", n)
