@@ -22,8 +22,10 @@ from .report_html import generate_html
 
 app = Flask(__name__, template_folder=str(Path(__file__).parent.parent / "templates"))
 
-UPLOAD_DIR = Path("results/uploads")
-RUNS_DIR = Path("results/runs")
+# Always resolve relative to project root, not CWD
+PROJECT_ROOT = Path(__file__).parent.parent
+UPLOAD_DIR = PROJECT_ROOT / "results" / "uploads"
+RUNS_DIR = PROJECT_ROOT / "results" / "runs"
 ALLOWED_EXTENSIONS = {"csv"}
 
 # In-memory job store: job_id -> status dict
@@ -115,7 +117,7 @@ def _run_pipeline(job_id: str, csv_path: Path, max_reviews: int, chunk_size: int
         _update_job(job_id, progress=88, message="Generating HTML report...")
 
         html_path = run_dir / "report.html"
-        generate_html(final, str(html_path), data_path=str(csv_path))
+        generate_html(final, str(html_path), data_path=str(csv_path), job_id=job_id)
 
         _update_job(
             job_id,

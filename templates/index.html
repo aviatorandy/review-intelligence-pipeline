@@ -518,17 +518,9 @@
         if (data.status === 'done') {
           clearInterval(pollInterval);
           document.getElementById('progress-fill').style.width = '100%';
-          document.getElementById('progress-message').textContent = '✅ Report ready!';
-
-          // Show report actions
-          document.getElementById('open-report-link').href = '/report/' + jobId;
-          document.getElementById('export-link').href = '/export/' + jobId;
-          document.getElementById('report-section').style.display = 'block';
-          document.getElementById('ask-section').style.display = 'block';
-
-          // Show embed progress and start polling it
-          document.getElementById('embed-progress-wrap').style.display = 'block';
-          pollEmbedStatus(jobId);
+          document.getElementById('progress-message').textContent = '✅ Report ready! Loading...';
+          // Redirect to the report page (Ask section is embedded in it)
+          setTimeout(() => { window.location.href = '/report/' + jobId; }, 800);
 
         } else if (data.status === 'error') {
           clearInterval(pollInterval);

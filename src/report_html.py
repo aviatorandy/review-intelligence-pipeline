@@ -8,7 +8,128 @@ import json
 import os
 
 
-def generate_html(obj, output_path, data_path=None):
+def _ask_section(job_id: str) -> str:
+    return f"""
+<div class="container" style="margin-top:48px;padding-bottom:60px">
+  <section class="section" id="ask-section">
+    <h2>💬 Ask the Reviews</h2>
+
+    <div id="embed-status-row" style="font-size:0.78rem;color:var(--muted);margin-bottom:14px;display:flex;align-items:center;gap:8px">
+      <span id="embed-dot" style="width:8px;height:8px;border-radius:50%;background:var(--amber);display:inline-block;animation:pulse 1.5s ease infinite;flex-shrink:0"></span>
+      <span id="embed-status-text">Building search index...</span>
+    </div>
+
+    <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px" id="chips">
+      <span class="sq-chip" onclick="setQ(this)">Why do users love this product?</span>
+      <span class="sq-chip" onclick="setQ(this)">What are the main complaints?</span>
+      <span class="sq-chip" onclick="setQ(this)">Is it good for kids?</span>
+      <span class="sq-chip" onclick="setQ(this)">What do people say about ads?</span>
+      <span class="sq-chip" onclick="setQ(this)">Does it work offline?</span>
+    </div>
+
+    <div style="display:flex;gap:10px;margin-bottom:16px">
+      <input id="ask-input" type="text" placeholder="e.g. Why do users uninstall the app?"
+        disabled style="flex:1;background:var(--surface2);border:1px solid var(--border);border-radius:10px;
+        padding:12px 16px;color:var(--text);font-family:'DM Mono',monospace;font-size:0.88rem;outline:none">
+      <button id="ask-btn" onclick="askQ()" disabled
+        style="background:var(--accent);color:#fff;border:none;border-radius:10px;padding:12px 22px;
+        font-family:'Syne',sans-serif;font-weight:600;font-size:0.9rem;cursor:pointer;opacity:0.45">Ask</button>
+    </div>
+
+    <div id="answer-box" style="display:none;background:var(--surface2);border:1px solid var(--border);
+      border-radius:12px;padding:20px">
+      <div style="font-size:0.7rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:6px">Question</div>
+      <div id="answer-q" style="font-size:0.85rem;color:var(--accent);margin-bottom:14px"></div>
+      <div id="answer-text" style="font-size:0.85rem;line-height:1.7;white-space:pre-wrap"></div>
+      <div id="sources-wrap" style="margin-top:14px"></div>
+    </div>
+  </section>
+</div>
+
+<style>
+  .sq-chip {{
+    background:var(--surface);border:1px solid var(--border);border-radius:99px;
+    padding:6px 14px;font-size:0.75rem;color:var(--muted);cursor:pointer;
+    transition:border-color 0.2s,color 0.2s;
+  }}
+  .sq-chip:hover {{border-color:var(--accent);color:var(--text)}}
+  @keyframes pulse {{0%,100%{{opacity:1}}50%{{opacity:0.4}}}}
+  @keyframes spin {{to{{transform:rotate(360deg)}}}}
+</style>
+
+<script>
+const JOB_ID = "{job_id}";
+let embedReady = false;
+
+function setQ(el) {{
+  document.getElementById('ask-input').value = el.textContent;
+}}
+
+async function askQ() {{
+  const q = document.getElementById('ask-input').value.trim();
+  if (!q || !embedReady) return;
+  const btn = document.getElementById('ask-btn');
+  btn.disabled = true;
+  btn.innerHTML = '<span style="display:inline-block;width:12px;height:12px;border:2px solid rgba(255,255,255,0.3);border-top-color:#fff;border-radius:50%;animation:spin 0.8s linear infinite;vertical-align:middle"></span>';
+  try {{
+    const res = await fetch('/ask/' + JOB_ID, {{
+      method: 'POST',
+      headers: {{'Content-Type': 'application/json'}},
+      body: JSON.stringify({{question: q}})
+    }});
+    const data = await res.json();
+    if (data.error) throw new Error(data.error);
+    document.getElementById('answer-q').textContent = data.question;
+    document.getElementById('answer-text').textContent = data.answer;
+    const sw = document.getElementById('sources-wrap');
+    sw.innerHTML = '<div style="font-size:0.7rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:8px">Retrieved Reviews</div>';
+    (data.sources || []).forEach(s => {{
+      const icon = s.sentiment === 'positive' ? '👍' : '👎';
+      const col = s.sentiment === 'positive' ? 'var(--green)' : 'var(--red)';
+      sw.innerHTML += `<span style="display:inline-flex;align-items:center;gap:6px;background:var(--surface);border:1px solid var(--border);border-radius:99px;padding:4px 12px;font-size:0.72rem;color:var(--muted);margin:3px">
+        <span style="color:${{col}}">${{icon}}</span>Review #${{s.review_id}}
+        <span style="opacity:0.5">${{(s.relevance*100).toFixed(0)}}% match</span></span>`;
+    }});
+    document.getElementById('answer-box').style.display = 'block';
+  }} catch(e) {{ alert('Error: ' + e.message); }}
+  finally {{
+    btn.disabled = false;
+    btn.textContent = 'Ask';
+    if (embedReady) btn.style.opacity = '1';
+  }}
+}}
+
+document.getElementById('ask-input').addEventListener('keydown', e => {{
+  if (e.key === 'Enter') askQ();
+}});
+
+(function pollEmbed() {{
+  fetch('/status/' + JOB_ID).then(r => r.json()).then(data => {{
+    const dot = document.getElementById('embed-dot');
+    const txt = document.getElementById('embed-status-text');
+    if (data.embed_status === 'ready') {{
+      embedReady = true;
+      dot.style.animation = 'none';
+      dot.style.background = 'var(--green)';
+      txt.textContent = 'Search index ready — ask anything about these reviews';
+      document.getElementById('ask-input').disabled = false;
+      const btn = document.getElementById('ask-btn');
+      btn.disabled = false;
+      btn.style.opacity = '1';
+    }} else if (data.embed_status === 'error') {{
+      dot.style.animation = 'none';
+      dot.style.background = 'var(--red)';
+      txt.textContent = 'Indexing failed: ' + (data.embed_message || '');
+    }} else {{
+      if (data.embed_message) txt.textContent = data.embed_message;
+      setTimeout(pollEmbed, 2500);
+    }}
+  }}).catch(() => setTimeout(pollEmbed, 3000));
+}})();
+</script>"""
+
+
+def generate_html(obj, output_path, data_path=None, job_id=None):
     sentiment = obj.get("sentiment", {})
     pos = sentiment.get("positive_rate", 0)
     neg = sentiment.get("negative_rate", 0)
@@ -77,6 +198,8 @@ def generate_html(obj, output_path, data_path=None):
     if unknowns:
         tags = "".join(f'<span class="unknown-tag">{u}</span>' for u in unknowns)
         unknowns_html = f'<section class="section"><h2>❓ Unknowns</h2><div class="unknown-tags">{tags}</div></section>'
+
+    ask_section_html = _ask_section(job_id) if job_id else ""
 
     html = f"""<!DOCTYPE html>
 <html lang="en">
@@ -370,6 +493,9 @@ def generate_html(obj, output_path, data_path=None):
   {unknowns_html}
 
 </div>
+
+{ask_section_html}
+
 </body>
 </html>"""
 
