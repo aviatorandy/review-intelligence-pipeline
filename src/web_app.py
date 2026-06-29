@@ -5,8 +5,6 @@ Usage:
     ANTHROPIC_API_KEY=sk-... python -m src.web_app   # cloud / Claude API
     python -m src.web_app                             # local Ollama
 """
-import csv
-import io
 import json
 import os
 import threading
@@ -14,7 +12,7 @@ import uuid
 from datetime import datetime
 from pathlib import Path
 
-from flask import Flask, jsonify, render_template, request, send_file, Response
+from flask import Flask, jsonify, render_template, request, send_file
 
 from .ingest import load_reviews, detect_apps, is_enriched
 from scripts.enrich_reviews import enrich_dataframe
@@ -260,18 +258,39 @@ def _run_pipeline(job_id: str, csv_path: Path):
         # Append to run log
         log_path = PROJECT_ROOT / "results" / "run_log.jsonl"
         log_path.parent.mkdir(parents=True, exist_ok=True)
-        h = final.get("quality", {}).get("hallucination", {}) if not apps else {}
+        _q = final.get("quality", {}) if not apps else {}
+        _h = _q.get("hallucination", {})
+        _sent = final.get("sentiment", {}) if not apps else {}
+        _meta = final.get("meta", {}) if not apps else {}
         with open(log_path, "a") as lf:
             lf.write(json.dumps({
                 "timestamp": datetime.now().isoformat(),
                 "job_id": job_id,
                 "filename": original_filename,
+                # Timing
                 "elapsed_seconds": elapsed,
                 "elapsed_str": elapsed_str,
-                "total_reviews": total_uploaded,
-                "hallucination_rate": h.get("rate", None),
-                "unverified_quotes": h.get("unverified_quotes", None),
-                "label_mismatches": h.get("label_mismatches", None),
+                # Data processed
+                "total_uploaded": total_uploaded,
+                "total_analyzed": _meta.get("total_analyzed", total_uploaded),
+                "n_chunks": _meta.get("chunks_processed", 0) + _meta.get("chunks_failed", 0),
+                "chunks_passed": _meta.get("chunks_processed", 0),
+                "chunks_failed": _meta.get("chunks_failed", 0),
+                "batch_size": _meta.get("batch_size"),
+                "tier": _meta.get("tier"),
+                # Sentiment
+                "positive_rate": _sent.get("positive_rate"),
+                "negative_rate": _sent.get("negative_rate"),
+                # Schema validation
+                "schema_pass_rate": _q.get("schema_pass_rate"),
+                "evidence_coverage": _q.get("evidence_coverage"),
+                # Hallucination
+                "hallucination_rate": _h.get("rate"),
+                "unverified_quotes": _h.get("unverified_quotes"),
+                "label_mismatches": _h.get("label_mismatches"),
+                "inflated_counts": _h.get("inflated_counts"),
+                "chunks_with_flags": _h.get("chunks_with_flags"),
+                "total_evidence_checked": _h.get("total_evidence_checked"),
             }) + "\n")
 
         t = threading.Thread(target=_run_embedding, args=(job_id,), daemon=True)
@@ -477,63 +496,6 @@ def ask(job_id: str):
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
-
-@app.route("/export/csv/<job_id>")
-def export_csv(job_id: str):
-    """Download enriched insights as CSV."""
-    with _jobs_lock:
-        job = _jobs.get(job_id)
-    if not job or job.get("status") != "done":
-        return "Report not ready", 404
-
-    output_path = job.get("output_path", "")
-    if not output_path or not Path(output_path).exists():
-        return "Output data missing", 404
-
-    with open(output_path) as f:
-        data = json.load(f)
-
-    buf = io.StringIO()
-    writer = csv.writer(buf)
-    writer.writerow([
-        "app", "type", "theme", "review_count", "confidence", "priority",
-        "quote_1", "review_id_1", "quote_2", "review_id_2", "quote_3", "review_id_3"
-    ])
-
-    def ev(evidence, i):
-        if i < len(evidence):
-            return evidence[i].get("quote", ""), evidence[i].get("review_id", "")
-        return "", ""
-
-    def write_app_rows(app_label, d):
-        for item in d.get("top_complaints", []):
-            e = item.get("evidence", [])
-            writer.writerow([app_label, "complaint", item["theme"], item["review_count"],
-                             item["confidence"], "review", *ev(e,0), *ev(e,1), *ev(e,2)])
-        for item in d.get("top_strengths", []):
-            e = item.get("evidence", [])
-            writer.writerow([app_label, "strength", item["theme"], item["review_count"],
-                             item["confidence"], "", *ev(e,0), *ev(e,1), *ev(e,2)])
-        for rec in d.get("improvement_recommendations", []):
-            writer.writerow([app_label, "improvement", rec.get("title",""), "",
-                             rec.get("priority",""), "action", rec.get("description",""), "",
-                             rec.get("business_impact",""), "", "", ""])
-        for rec in d.get("listing_recommendations", []):
-            writer.writerow([app_label, "listing_rec", rec.get("title",""), "", "", "listing",
-                             rec.get("description",""), "", rec.get("rationale",""), "", "", ""])
-
-    if data.get("multi_app") and "apps" in data:
-        for app_name, app_data in data["apps"].items():
-            write_app_rows(app_name, app_data)
-    else:
-        write_app_rows("", data)
-
-    buf.seek(0)
-    return Response(
-        buf.getvalue(),
-        mimetype="text/csv",
-        headers={"Content-Disposition": "attachment; filename=review_insights.csv"},
-    )
 
 
 @app.route("/export/report/<job_id>")

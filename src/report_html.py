@@ -95,6 +95,7 @@ def _app_tab_report(apps: dict, output_path: str, data_path: str | None, job_id:
   .export-row {{ display:flex; gap:8px; margin-bottom:24px; flex-wrap:wrap; }}
   .export-btn {{ font-size:0.78rem; font-weight:600; padding:6px 14px; border-radius:8px; border:1px solid var(--border); background:var(--surface); color:var(--muted); cursor:pointer; text-decoration:none; font-family:'Inter',sans-serif; transition:border-color 0.15s,color 0.15s; }}
   .export-btn:hover {{ border-color:var(--accent); color:var(--accent); }}
+
 </style>
 </head>
 <body>
@@ -111,7 +112,7 @@ def _app_tab_report(apps: dict, output_path: str, data_path: str | None, job_id:
 </div>
 
 <div class="container">
-  {"" if not job_id else f'<div class="export-row"><a class="export-btn" href="/export/csv/{job_id}" download>⬇ Export CSV</a><a class="export-btn" href="/export/report/{job_id}" download>⬇ Download Report</a></div>'}
+  {"" if not job_id else f'<div class="export-row"><a class="export-btn" href="/export/report/{job_id}" download>⬇ Download Report</a></div>'}
   {tab_panels()}
 </div>
 
@@ -139,16 +140,6 @@ def _app_section_html(app_name: str, obj: dict, job_id: str | None) -> str:
     meta = obj.get("meta", {})
     total_analyzed = meta.get("total_analyzed", n)
     total_uploaded = meta.get("total_uploaded", n)
-    quality = obj.get("quality", {})
-    q_pct = int(quality.get("schema_pass_rate", 1.0) * 100)
-    q_color = "#16a34a" if q_pct >= 80 else "#d97706" if q_pct >= 60 else "#dc2626"
-    q_label = "Excellent" if q_pct >= 80 else "Good" if q_pct >= 60 else "Partial"
-    hallucination = quality.get("hallucination", {})
-    h_rate = hallucination.get("rate", 0)
-    h_unverified = hallucination.get("unverified_quotes", 0)
-    h_label_mismatch = hallucination.get("label_mismatches", 0)
-    h_inflated = hallucination.get("inflated_counts", 0)
-    h_color = "#16a34a" if h_rate == 0 else "#d97706" if h_rate < 0.2 else "#dc2626"
     executive_summary = obj.get("executive_summary", "")
     improvement_recs = obj.get("improvement_recommendations", [])
     marketing_quotes = obj.get("top_marketing_quotes", [])
@@ -240,17 +231,16 @@ def _app_section_html(app_name: str, obj: dict, job_id: str | None) -> str:
             </div>'''
         return cards
 
+    n_pos = int(round(pos * n))
+    n_neg = n - n_pos
     out = f"""
 <div style="margin-bottom:24px;padding-top:4px">
   <div style="font-size:0.7rem;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:var(--muted);margin-bottom:4px">{total_uploaded:,} reviews uploaded</div>
   <div class="stat-grid">
     <div class="stat-card"><div class="stat-label">Analyzed</div><div class="stat-value" style="color:var(--accent)">{total_analyzed:,}</div><div class="stat-sub">reviews</div></div>
-    <div class="stat-card"><div class="stat-label">Positive</div><div class="stat-value" style="color:var(--green)">{pos*100:.0f}%</div><div class="stat-sub">{int(pos*n):,} customers</div></div>
-    <div class="stat-card"><div class="stat-label">Negative</div><div class="stat-value" style="color:var(--red)">{neg*100:.0f}%</div><div class="stat-sub">{int(neg*n):,} customers</div></div>
-    <div class="stat-card"><div class="stat-label">Data Quality</div><div class="stat-value" style="color:{q_color}">{q_pct}%</div><div class="stat-sub">{q_label}</div></div>
-    <div class="stat-card"><div class="stat-label">Hallucination</div><div class="stat-value" style="color:{h_color}">{int(h_rate*100)}%</div><div class="stat-sub">{h_unverified} unverified quotes</div></div>
+    <div class="stat-card"><div class="stat-label">Positive</div><div class="stat-value" style="color:var(--green)">{pos*100:.0f}%</div><div class="stat-sub">{n_pos:,} satisfied customers</div></div>
+    <div class="stat-card"><div class="stat-label">Negative</div><div class="stat-value" style="color:var(--red)">{neg*100:.0f}%</div><div class="stat-sub">{n_neg:,} customers with issues</div></div>
   </div>
-  {"" if not hallucination else f'<div style="font-size:0.72rem;color:#9ca3af;margin-top:-8px;margin-bottom:12px">Hallucination checks: {h_unverified} quotes unverified · {h_label_mismatch} label mismatches · {h_inflated} inflated counts</div>'}
 </div>
 
 {"" if not executive_summary else f'<div class="exec-summary"><div class="label">Executive Summary</div><p>{executive_summary}</p></div>'}
@@ -325,15 +315,6 @@ def generate_html(obj, output_path, data_path=None, job_id=None):
     chunks_processed = meta.get("chunks_processed", 0)
     chunks_failed = meta.get("chunks_failed", 0)
     elapsed_str = meta.get("elapsed_str", "")
-
-    quality = obj.get("quality", {})
-    schema_pass_rate = quality.get("schema_pass_rate", 1.0)
-    hallucination = quality.get("hallucination", {})
-    h_rate = hallucination.get("rate", 0)
-    h_unverified = hallucination.get("unverified_quotes", 0)
-    h_label_mismatch = hallucination.get("label_mismatches", 0)
-    h_inflated = hallucination.get("inflated_counts", 0)
-    h_color = "#16a34a" if h_rate == 0 else "#d97706" if h_rate < 0.2 else "#dc2626"
 
     executive_summary = obj.get("executive_summary", "")
     improvement_recs = obj.get("improvement_recommendations", [])
@@ -446,12 +427,6 @@ def generate_html(obj, output_path, data_path=None, job_id=None):
                 {"" if not theme else f'<div style="font-size:0.75rem;color:#6b7280;text-transform:uppercase;letter-spacing:0.07em;font-weight:600">{theme}</div>'}
             </div>'''
         return cards
-
-    # Quality indicator
-    q_pct = int(schema_pass_rate * 100)
-    q_color = "#16a34a" if q_pct >= 80 else "#d97706" if q_pct >= 60 else "#dc2626"
-    q_label = "Excellent" if q_pct >= 80 else "Good" if q_pct >= 60 else "Partial"
-
 
     # Stat cards
     tier_display = {"small": "Full Dataset", "medium": "Smart Sample", "large": "Large Dataset"}.get(tier, tier.title() if tier else "")
@@ -738,9 +713,7 @@ def generate_html(obj, output_path, data_path=None, job_id=None):
     <div style="font-size:0.72rem;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:var(--muted);margin-bottom:6px">Product Insights Report</div>
     <h1>{product_label}</h1>
     <p class="subtitle">{total_analyzed:,} reviews analyzed · {tier_display}</p>
-    <div class="export-row">
-      {"" if not job_id else f'<a class="export-btn" href="/export/csv/{job_id}" download>⬇ Export CSV</a><a class="export-btn" href="/export/report/{job_id}" download>⬇ Download Report</a>'}
-    </div>
+    {"" if not job_id else f'<div class="export-row"><a class="export-btn" href="/export/report/{job_id}" download>⬇ Download Report</a></div>'}
   </header>
 
   <!-- Dashboard stat cards -->
@@ -753,25 +726,14 @@ def generate_html(obj, output_path, data_path=None, job_id=None):
     <div class="stat-card">
       <div class="stat-label">Positive Sentiment</div>
       <div class="stat-value" style="color:var(--green)">{pos*100:.0f}%</div>
-      <div class="stat-sub">{int(pos * n):,} satisfied customers</div>
+      <div class="stat-sub">{round(pos * n):,} satisfied customers</div>
     </div>
     <div class="stat-card">
       <div class="stat-label">Negative Sentiment</div>
       <div class="stat-value" style="color:var(--red)">{neg*100:.0f}%</div>
-      <div class="stat-sub">{int(neg * n):,} customers with issues</div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-label">Data Quality</div>
-      <div class="stat-value" style="color:{q_color}">{q_pct}%</div>
-      <div class="stat-sub">{q_label} · {chunks_processed} chunks passed</div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-label">Hallucination</div>
-      <div class="stat-value" style="color:{h_color}">{int(h_rate*100)}%</div>
-      <div class="stat-sub">{h_unverified} unverified · {h_label_mismatch} label mismatches</div>
+      <div class="stat-sub">{round(neg * n):,} customers with issues</div>
     </div>
   </div>
-  {"" if not hallucination else f'<div style="font-size:0.72rem;color:#9ca3af;margin-top:-16px;margin-bottom:20px;padding:0 4px">{h_unverified} quotes not found in source text · {h_label_mismatch} positive reviews cited as complaints · {h_inflated} inflated counts</div>'}
 
   {"" if not executive_summary else f'''
   <!-- Executive Summary -->
