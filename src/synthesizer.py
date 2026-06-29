@@ -1,13 +1,14 @@
 """
-Post-aggregation synthesis: generates executive summary, improvement recommendations,
-and listing recommendations from the aggregated themes in one LLM call.
+Post-aggregation synthesis: generates executive summary and improvement
+recommendations from aggregated themes. Marketing quotes are pulled
+directly from top_strengths evidence (real quotes, no hallucination).
+Listing recommendations removed — too prone to generic/hallucinated output.
 """
 import json
 from .llm_client import call_llm
 
-SYNTH_SYSTEM = """You are a senior product strategist analyzing Amazon customer reviews.
-You will receive aggregated insight data extracted from customer reviews.
-Your job is to synthesize this into actionable business recommendations.
+SYNTH_SYSTEM = """You are a senior product analyst summarizing customer review data.
+You will receive aggregated themes and evidence extracted from real customer reviews.
 Output only valid JSON. No markdown, no extra text."""
 
 SYNTH_PROMPT = """Based on the following aggregated review insights, generate a synthesis report.
@@ -17,38 +18,39 @@ AGGREGATED DATA:
 
 Return this exact JSON structure:
 {{
-  "executive_summary": "2-3 sentence plain-English summary of overall customer sentiment and the single most important finding. Write for a business owner or product manager.",
+  "executive_summary": "2-3 sentence plain-English summary of the overall sentiment and the single most important finding. Write for a product manager or business owner. Be specific to the actual themes in the data.",
   "improvement_recommendations": [
     {{
       "title": "Short action-oriented title",
-      "description": "What to fix and why it matters to the business. 1-2 sentences.",
+      "description": "What to fix and why it matters. 1-2 sentences. Must be grounded in a specific theme from the data above.",
       "priority": "high",
-      "business_impact": "What improving this would do for ratings, retention, or revenue.",
-      "supporting_theme": "The complaint or pattern this is based on"
-    }}
-  ],
-  "listing_recommendations": [
-    {{
-      "title": "Short title",
-      "description": "Specific change to make to the product listing, title, bullets, description, or images. Must reference actual themes found in the reviews — do NOT give generic advice like 'add high-quality images'.",
-      "rationale": "Which specific complaint or strength from the data justifies this change."
-    }}
-  ],
-  "top_marketing_quotes": [
-    {{
-      "quote": "Exact customer quote that would work in marketing",
-      "review_id": 0,
-      "theme": "What strength this illustrates"
+      "business_impact": "Concrete effect on ratings, retention, or revenue if this is addressed.",
+      "supporting_theme": "Exact theme name from top_complaints or top_strengths this is based on"
     }}
   ]
 }}
 
 Rules:
 - improvement_recommendations: 3-5 items, ranked by priority (high/medium/low)
-- listing_recommendations: 2-4 items, each grounded in a specific theme from top_complaints or top_strengths — cite the theme name
-- top_marketing_quotes: 2-3 of the best quotes from top_strengths evidence
-- Write for a non-technical audience. No jargon.
-- Every recommendation must connect back to specific themes in the data."""
+- Every recommendation MUST reference a real theme name from the data above — do not invent issues
+- executive_summary must mention specific themes, not generic statements
+- Write for a non-technical audience"""
+
+
+def _extract_marketing_quotes(aggregated: dict) -> list:
+    """Pull real verbatim quotes from top_strengths evidence. No LLM involved."""
+    quotes = []
+    seen = set()
+    for strength in aggregated.get("top_strengths", []):
+        theme = strength.get("theme", "")
+        for ev in strength.get("evidence", []):
+            q = ev.get("quote", "").strip()
+            if q and q not in seen and len(q) > 20:
+                quotes.append({"quote": q, "theme": theme})
+                seen.add(q)
+            if len(quotes) >= 3:
+                return quotes
+    return quotes
 
 
 def run_synthesis(aggregated: dict) -> dict:
@@ -56,7 +58,6 @@ def run_synthesis(aggregated: dict) -> dict:
     Takes aggregated pipeline output and returns enriched synthesis fields.
     Falls back gracefully if LLM call fails.
     """
-    # Prepare a condensed version of the data for the prompt
     condensed = {
         "top_strengths": [
             {
@@ -84,7 +85,6 @@ def run_synthesis(aggregated: dict) -> dict:
 
     try:
         raw = call_llm(SYNTH_SYSTEM, prompt)
-        # Strip markdown fences if present
         raw = raw.strip()
         if raw.startswith("```"):
             raw = raw.split("\n", 1)[1].rsplit("```", 1)[0]
@@ -92,16 +92,15 @@ def run_synthesis(aggregated: dict) -> dict:
         return {
             "executive_summary": result.get("executive_summary", ""),
             "improvement_recommendations": result.get("improvement_recommendations", []),
-            "listing_recommendations": result.get("listing_recommendations", []),
-            "top_marketing_quotes": result.get("top_marketing_quotes", []),
+            "listing_recommendations": [],
+            "top_marketing_quotes": _extract_marketing_quotes(aggregated),
         }
     except Exception as e:
-        # Graceful fallback — report still works without synthesis
         return {
             "executive_summary": "",
             "improvement_recommendations": [],
             "listing_recommendations": [],
-            "top_marketing_quotes": [],
+            "top_marketing_quotes": _extract_marketing_quotes(aggregated),
             "_synthesis_error": str(e),
         }
 

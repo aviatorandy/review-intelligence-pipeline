@@ -145,7 +145,6 @@ def _app_section_html(app_name: str, obj: dict, job_id: str | None) -> str:
     q_label = "Excellent" if q_pct >= 80 else "Good" if q_pct >= 60 else "Partial"
     executive_summary = obj.get("executive_summary", "")
     improvement_recs = obj.get("improvement_recommendations", [])
-    listing_recs = obj.get("listing_recommendations", [])
     marketing_quotes = obj.get("top_marketing_quotes", [])
 
     def confidence_badge(conf):
@@ -266,28 +265,10 @@ def _app_section_html(app_name: str, obj: dict, job_id: str | None) -> str:
 <section class="section"><h2>❌ Top Complaints</h2>{theme_cards(obj.get("top_complaints",[]), is_complaint=True)}{notable_negatives_html(obj.get("notable_negatives",[]))}</section>
 <section class="section"><h2>✅ What Customers Love</h2>{theme_cards(obj.get("top_strengths",[]), is_complaint=False)}</section>
 
-{_listing_section(listing_recs)}
+
 {_quote_section(marketing_quotes)}
 """
     return out
-
-
-def _listing_section(recs: list) -> str:
-    if not recs:
-        return ""
-    cards = ""
-    for r in recs:
-        rationale_html = (
-            f'<div style="font-size:0.78rem;color:#6b7280;font-style:italic">{r.get("rationale","")}</div>'
-            if r.get("rationale") else ""
-        )
-        cards += (
-            f'<div class="card">'
-            f'<div class="card-header"><span class="theme-name">{r.get("title","")}</span></div>'
-            f'<p style="font-size:0.86rem;color:#374151;line-height:1.65;margin-bottom:6px">{r.get("description","")}</p>'
-            f'{rationale_html}</div>'
-        )
-    return f'<section class="section"><h2>🛒 Listing Recommendations</h2>{cards}</section>'
 
 
 def _quote_section(quotes: list) -> str:
@@ -342,7 +323,6 @@ def generate_html(obj, output_path, data_path=None, job_id=None):
 
     executive_summary = obj.get("executive_summary", "")
     improvement_recs = obj.get("improvement_recommendations", [])
-    listing_recs = obj.get("listing_recommendations", [])
     marketing_quotes = obj.get("top_marketing_quotes", [])
 
     def confidence_badge(conf):
@@ -440,21 +420,6 @@ def generate_html(obj, output_path, data_path=None, job_id=None):
             </div>'''
         return cards
 
-    def listing_cards(recs):
-        cards = ""
-        for rec in recs:
-            title = rec.get("title", "")
-            desc = rec.get("description", "")
-            rationale = rec.get("rationale", "")
-            cards += f'''
-            <div class="card">
-                <div class="card-header">
-                    <span class="theme-name">{title}</span>
-                </div>
-                <p style="font-size:0.88rem;color:#374151;line-height:1.65;margin-bottom:10px">{desc}</p>
-                {"" if not rationale else f'<div style="font-size:0.8rem;color:#6b7280;font-style:italic">{rationale}</div>'}
-            </div>'''
-        return cards
 
     def marketing_quote_cards(quotes):
         cards = ""
@@ -831,13 +796,6 @@ def generate_html(obj, output_path, data_path=None, job_id=None):
     <h2>✅ What Customers Love</h2>
     {theme_cards(obj.get("top_strengths", []), is_complaint=False)}
   </section>
-
-  {"" if not listing_recs else f'''
-  <!-- Listing Recommendations -->
-  <section class="section">
-    <h2>🛒 Listing Recommendations</h2>
-    {listing_cards(listing_recs)}
-  </section>'''}
 
   {"" if not marketing_quotes else f'''
   <!-- Marketing Quotes -->
