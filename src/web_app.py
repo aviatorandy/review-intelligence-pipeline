@@ -38,6 +38,40 @@ def _allowed(filename: str) -> bool:
     return "." in filename and filename.rsplit(".", 1)[1].lower() in ALLOWED_EXTENSIONS
 
 
+def _has_weak_grouping(top_complaints: list) -> bool:
+    """True when complaint themes lack enough signal to stand alone."""
+    if len(top_complaints) < 3:
+        return True
+    # All themes have only 1-2 supporting reviews — not really a pattern
+    if all(t.get("review_count", 1) <= 2 for t in top_complaints):
+        return True
+    # No high-confidence themes at all
+    if not any(t.get("confidence") in ("high", "medium") for t in top_complaints):
+        return True
+    return False
+
+
+def _build_notable_negatives(rows: list) -> list:
+    """Top 8 high-severity negative reviews as individual quotes."""
+    _sev_order = {"high": 0, "medium": 1, "low": 2}
+    candidates = [
+        r for r in rows
+        if r.get("sentiment_text") == "negative" or int(r.get("label", 1)) == 0
+    ]
+    candidates.sort(key=lambda r: _sev_order.get(r.get("severity", "low"), 2))
+    result = []
+    for r in candidates[:8]:
+        text = r.get("text", "").strip()
+        if len(text) > 20:
+            result.append({
+                "text": text[:300] + ("..." if len(text) > 300 else ""),
+                "severity": r.get("severity", "low"),
+                "topic": r.get("topic", ""),
+                "review_id": r.get("review_id", ""),
+            })
+    return result
+
+
 def _update_job(job_id: str, **kwargs):
     with _jobs_lock:
         for k, v in kwargs.items():
@@ -164,24 +198,7 @@ def _run_pipeline(job_id: str, csv_path: Path):
 
             top_strengths, top_complaints, summary_bullets = aggregate_chunks(chunk_results)
 
-            # If few complaint themes surfaced, surface individual high-severity negatives
-            notable_negatives = []
-            if len(top_complaints) < 3:
-                _sev_order = {"high": 0, "medium": 1, "low": 2}
-                candidates = [
-                    r for r in rows
-                    if r.get("sentiment_text") == "negative" or int(r.get("label", 1)) == 0
-                ]
-                candidates.sort(key=lambda r: _sev_order.get(r.get("severity", "low"), 2))
-                for r in candidates[:8]:
-                    text = r.get("text", "").strip()
-                    if len(text) > 20:
-                        notable_negatives.append({
-                            "text": text[:300] + ("..." if len(text) > 300 else ""),
-                            "severity": r.get("severity", "low"),
-                            "topic": r.get("topic", ""),
-                            "review_id": r.get("review_id", ""),
-                        })
+            notable_negatives = _build_notable_negatives(rows) if _has_weak_grouping(top_complaints) else []
 
             aggregated = {
                 "summary_bullets": summary_bullets,
@@ -312,23 +329,7 @@ def _process_app(job_id, app_name, app_df, run_dir, app_idx, total_apps):
 
     top_strengths, top_complaints, summary_bullets = aggregate_chunks(chunk_results)
 
-    notable_negatives = []
-    if len(top_complaints) < 3:
-        _sev_order = {"high": 0, "medium": 1, "low": 2}
-        candidates = [
-            r for r in rows
-            if r.get("sentiment_text") == "negative" or int(r.get("label", 1)) == 0
-        ]
-        candidates.sort(key=lambda r: _sev_order.get(r.get("severity", "low"), 2))
-        for r in candidates[:8]:
-            text = r.get("text", "").strip()
-            if len(text) > 20:
-                notable_negatives.append({
-                    "text": text[:300] + ("..." if len(text) > 300 else ""),
-                    "severity": r.get("severity", "low"),
-                    "topic": r.get("topic", ""),
-                    "review_id": r.get("review_id", ""),
-                })
+    notable_negatives = _build_notable_negatives(rows) if _has_weak_grouping(top_complaints) else []
 
     aggregated = {
         "summary_bullets": summary_bullets,
