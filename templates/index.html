@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Review Intelligence — Product Insights from Customer Reviews</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #f5f6fa;
+    --surface: #ffffff;
+    --border: #e2e5ec;
+    --border2: #d0d5df;
+    --text: #111827;
+    --muted: #6b7280;
+    --accent: #4f46e5;
+    --accent-light: #eef2ff;
+    --green: #16a34a;
+    --red: #dc2626;
+    --amber: #d97706;
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Inter', sans-serif;
+    min-height: 100vh;
+    padding: 56px 20px;
+    font-size: 15px;
+  }
+
+  .container { max-width: 640px; margin: 0 auto; }
+
+  header { text-align: center; margin-bottom: 40px; }
+
+  .logo {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 20px;
+  }
+
+  .logo-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: var(--accent);
+  }
+
+  header h1 {
+    font-size: clamp(1.9rem, 5vw, 2.8rem);
+    font-weight: 800;
+    color: var(--text);
+    letter-spacing: -0.04em;
+    line-height: 1.1;
+    margin-bottom: 14px;
+  }
+
+  header h1 span { color: var(--accent); }
+
+  header p {
+    color: var(--muted);
+    font-size: 1rem;
+    line-height: 1.65;
+    max-width: 480px;
+    margin: 0 auto;
+  }
+
+  .mode-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 16px;
+    font-size: 0.75rem;
+    padding: 5px 14px;
+    border-radius: 99px;
+    font-weight: 600;
+    letter-spacing: 0.03em;
+  }
+  .badge-claude { background: var(--accent-light); color: var(--accent); border: 1px solid #c7d2fe; }
+  .badge-ollama { background: #f3f4f6; color: var(--muted); border: 1px solid var(--border); }
+
+  /* Features row */
+  .features {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    flex-wrap: wrap;
+    margin: 24px 0 36px;
+  }
+  .feature {
+    font-size: 0.8rem;
+    color: var(--muted);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .feature-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); opacity: 0.5; }
+
+  /* Card */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 28px 32px;
+    margin-bottom: 14px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+  }
+
+  .card-title {
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--muted);
+    margin-bottom: 18px;
+  }
+
+  /* Drop zone */
+  .drop-zone {
+    border: 2px dashed var(--border2);
+    border-radius: 12px;
+    padding: 40px 24px;
+    text-align: center;
+    cursor: pointer;
+    transition: border-color 0.2s, background 0.2s;
+    margin-bottom: 22px;
+    background: var(--bg);
+  }
+  .drop-zone:hover, .drop-zone.drag-over {
+    border-color: var(--accent);
+    background: var(--accent-light);
+  }
+  .drop-zone .icon { font-size: 2.2rem; margin-bottom: 12px; }
+  .drop-zone .label { font-weight: 600; color: var(--text); font-size: 1rem; }
+  .drop-zone .sub { color: var(--muted); font-size: 0.82rem; margin-top: 6px; line-height: 1.5; }
+  .drop-zone .filename { color: var(--accent); font-size: 0.85rem; margin-top: 10px; font-weight: 600; }
+  #file-input { display: none; }
+
+  /* Primary button */
+  .btn {
+    width: 100%;
+    background: var(--accent);
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    padding: 14px 20px;
+    font-family: 'Inter', sans-serif;
+    font-size: 1rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background 0.15s, transform 0.1s, box-shadow 0.15s;
+    box-shadow: 0 1px 4px rgba(79,70,229,0.3);
+    letter-spacing: -0.01em;
+  }
+  .btn:hover { background: #4338ca; box-shadow: 0 4px 14px rgba(79,70,229,0.3); }
+  .btn:active { transform: scale(0.98); }
+  .btn:disabled { background: #a5b4fc; box-shadow: none; cursor: not-allowed; }
+
+  .sample-link { text-align: center; margin-top: 14px; font-size: 0.82rem; color: var(--muted); }
+  .sample-link a { color: var(--accent); text-decoration: none; font-weight: 500; }
+  .sample-link a:hover { text-decoration: underline; }
+
+  .advanced-body.open { display: block; }
+
+  .options-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+  .field label {
+    display: block;
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: var(--muted);
+    margin-bottom: 6px;
+  }
+  .field input[type="number"] {
+    width: 100%;
+    background: var(--bg);
+    border: 1px solid var(--border2);
+    border-radius: 8px;
+    padding: 10px 14px;
+    color: var(--text);
+    font-family: 'Inter', sans-serif;
+    font-size: 0.9rem;
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+  .field input[type="number"]:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(79,70,229,0.1);
+  }
+
+  /* Progress */
+  #progress-section { display: none; }
+
+  .progress-label {
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--muted);
+    margin-bottom: 6px;
+  }
+
+  .progress-track {
+    height: 8px;
+    background: var(--bg);
+    border-radius: 99px;
+    overflow: hidden;
+    margin-bottom: 8px;
+    border: 1px solid var(--border);
+  }
+  .progress-fill {
+    height: 100%;
+    background: var(--accent);
+    border-radius: 99px;
+    width: 0%;
+    transition: width 0.5s ease;
+  }
+  .progress-fill.green { background: var(--green); }
+
+  .progress-message { font-size: 0.85rem; color: var(--muted); margin-bottom: 20px; min-height: 20px; }
+
+  .error-box {
+    background: #fee2e2;
+    border: 1px solid #fca5a5;
+    border-radius: 10px;
+    padding: 14px 18px;
+    color: var(--red);
+    font-size: 0.85rem;
+    margin-top: 10px;
+    display: none;
+  }
+
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .spinner {
+    display: inline-block;
+    width: 13px; height: 13px;
+    border: 2px solid rgba(255,255,255,0.4);
+    border-top-color: #fff;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+    vertical-align: middle;
+    margin-right: 6px;
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <header>
+    <div class="logo"><span class="logo-dot"></span>Review Intelligence</div>
+    <h1>Find out what your<br><span>customers really think</span></h1>
+    <p>Upload your Amazon review CSV and get a full product insights report — complaints ranked by frequency, strengths, improvement recommendations, and an AI Q&amp;A.</p>
+
+    {% if using_claude %}
+      <div class="mode-badge badge-claude">⚡ Powered by Claude AI</div>
+    {% else %}
+      <div class="mode-badge badge-ollama">🖥 Running locally with Ollama</div>
+    {% endif %}
+  </header>
+
+  <div class="features">
+    <span class="feature"><span class="feature-dot"></span>Top complaint themes</span>
+    <span class="feature"><span class="feature-dot"></span>Improvement roadmap</span>
+    <span class="feature"><span class="feature-dot"></span>Listing recommendations</span>
+    <span class="feature"><span class="feature-dot"></span>AI Q&amp;A</span>
+  </div>
+
+  <!-- Upload card -->
+  <div class="card" id="upload-card">
+    <div class="card-title">Upload Your Reviews</div>
+
+    <div class="drop-zone" id="drop-zone" onclick="document.getElementById('file-input').click()">
+      <div class="icon">📂</div>
+      <div class="label">Drop your CSV here or click to browse</div>
+      <div class="sub">Needs two columns: <code>Text</code> (review text) and <code>label</code> (1 = positive, 0 = negative)</div>
+      <div class="filename" id="file-name"></div>
+    </div>
+    <input type="file" id="file-input" accept=".csv">
+
+    <button class="btn" id="submit-btn" onclick="startJob()" disabled>
+      Generate Product Insights
+    </button>
+
+    <div class="sample-link">
+      No dataset yet? <a href="/sample" download>Download our sample CSV</a> to try it out.
+    </div>
+
+  </div>
+
+  <!-- Progress card -->
+  <div class="card" id="progress-section">
+    <div class="card-title">Analyzing Your Reviews</div>
+
+    <div class="progress-label">Progress</div>
+    <div class="progress-track">
+      <div class="progress-fill" id="progress-fill"></div>
+    </div>
+    <div class="progress-message" id="progress-message">Starting analysis...</div>
+
+    <div id="embed-progress-wrap" style="display:none">
+      <div class="progress-label">Building Search Index</div>
+      <div class="progress-track">
+        <div class="progress-fill green" id="embed-fill"></div>
+      </div>
+      <div class="progress-message" id="embed-message"></div>
+    </div>
+
+    <div class="error-box" id="error-box"></div>
+  </div>
+
+</div>
+
+<script>
+  let selectedFile = null;
+  let pollInterval = null;
+
+  const dropZone = document.getElementById('drop-zone');
+  const fileInput = document.getElementById('file-input');
+
+  fileInput.addEventListener('change', e => { if (e.target.files[0]) setFile(e.target.files[0]); });
+  dropZone.addEventListener('dragover', e => { e.preventDefault(); dropZone.classList.add('drag-over'); });
+  dropZone.addEventListener('dragleave', () => dropZone.classList.remove('drag-over'));
+  dropZone.addEventListener('drop', e => {
+    e.preventDefault(); dropZone.classList.remove('drag-over');
+    if (e.dataTransfer.files[0]) setFile(e.dataTransfer.files[0]);
+  });
+
+  function setFile(file) {
+    if (!file.name.endsWith('.csv')) { alert('Please upload a .csv file'); return; }
+    selectedFile = file;
+    document.getElementById('file-name').textContent = '✓ ' + file.name;
+    document.getElementById('submit-btn').disabled = false;
+  }
+
+  async function startJob() {
+    if (!selectedFile) return;
+    const formData = new FormData();
+    formData.append('file', selectedFile);
+
+    const btn = document.getElementById('submit-btn');
+    btn.disabled = true;
+    btn.innerHTML = '<span class="spinner"></span>Uploading...';
+
+    try {
+      const res = await fetch('/upload', { method: 'POST', body: formData });
+      const data = await res.json();
+      if (data.error) throw new Error(data.error);
+      document.getElementById('upload-card').style.display = 'none';
+      document.getElementById('progress-section').style.display = 'block';
+      pollStatus(data.job_id);
+    } catch (err) {
+      btn.disabled = false;
+      btn.textContent = 'Generate Product Insights';
+      alert('Upload failed: ' + err.message);
+    }
+  }
+
+  function pollStatus(jobId) {
+    pollInterval = setInterval(async () => {
+      try {
+        const res = await fetch('/status/' + jobId);
+        const data = await res.json();
+        document.getElementById('progress-fill').style.width = (data.progress || 0) + '%';
+        document.getElementById('progress-message').textContent = data.message || '...';
+
+        if (data.embed_status === 'indexing') {
+          document.getElementById('embed-progress-wrap').style.display = 'block';
+          document.getElementById('embed-fill').style.width = (data.embed_progress || 0) + '%';
+          document.getElementById('embed-message').textContent = data.embed_message || '';
+        }
+
+        if (data.status === 'done') {
+          clearInterval(pollInterval);
+          document.getElementById('progress-fill').style.width = '100%';
+          document.getElementById('progress-message').textContent = '✅ Your insights report is ready! Loading...';
+          setTimeout(() => { window.location.href = '/report/' + jobId; }, 800);
+        } else if (data.status === 'error') {
+          clearInterval(pollInterval);
+          const errBox = document.getElementById('error-box');
+          errBox.textContent = '❌ ' + (data.error || 'Unknown error');
+          errBox.style.display = 'block';
+          document.getElementById('progress-message').textContent = 'Analysis failed.';
+        }
+      } catch(e) {}
+    }, 2000);
+  }
+</script>
+</body>
+</html>

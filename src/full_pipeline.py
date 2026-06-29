@@ -27,6 +27,92 @@ from .report_html import generate_html
 
 # ─── Progress bar ────────────────────────────────────────────────────────────
 
+import re
+
+_NEGATIVE_SIGNALS = re.compile(
+    r"\b(bad|terrible|awful|hate|hated|worst|broken|crash(es|ing|ed)?|bug(gy|s)?|"
+    r"useless|disappoint(ing|ed|ment)?|annoy(ing|ed)?|frustrat(ing|ed|ion)?|"
+    r"problem(s)?|issue(s)?|doesn.t work|won.t|slow|lag(gy)?|freez(e|ing|es)?|"
+    r"ruin(s|ed)?|terrible|horrible|waste|scam|fake|mislead|glitch(y|es)?|"
+    r"uninstall|remove(d)?|not worth|never again|poor|keep(s)? crash|stopped working|"
+    r"can.t|cannot|no longer|used to|unfortunately|unfortunately)\b",
+    re.IGNORECASE,
+)
+
+
+def build_chunks(rows: list, batch_size: int) -> list[list]:
+    """
+    Build chunks from rows.
+
+    If rows are enriched (have 'topic' field): group by topic so each chunk
+    gives the LLM focused, coherent signal. Within each topic, sort negatives
+    first (severity: high → medium → low) so complaints surface clearly.
+    Small topic groups (<5 reviews) are merged into an 'other' bucket to avoid
+    tiny noisy chunks.
+
+    Falls back to sequential chunking for plain (non-enriched) CSVs.
+    """
+    if not rows or "topic" not in rows[0]:
+        # Plain CSV — sequential chunks + negative chunk
+        chunks = [rows[i:i + batch_size] for i in range(0, len(rows), batch_size)]
+        negatives = _text_verified_negatives(rows)
+        if len(negatives) >= 5:
+            chunks.append(negatives)
+        return chunks
+
+    # ── Enriched path: group by topic ─────────────────────────────────────────
+    _SEV_ORDER = {"high": 0, "medium": 1, "low": 2}
+
+    from collections import defaultdict
+    buckets: dict[str, list] = defaultdict(list)
+    for row in rows:
+        buckets[row.get("topic", "general")].append(row)
+
+    # Merge small topic groups into 'other'
+    merged_other = list(buckets.pop("other", []))
+    for topic in list(buckets.keys()):
+        if len(buckets[topic]) < 5:
+            merged_other.extend(buckets.pop(topic))
+    if merged_other:
+        buckets["other"] = merged_other
+
+    chunks = []
+    for topic, topic_rows in buckets.items():
+        # Sort: negatives first, then by severity
+        topic_rows.sort(key=lambda r: (
+            0 if r.get("sentiment_text") == "negative" else 1,
+            _SEV_ORDER.get(r.get("severity", "low"), 2),
+        ))
+        # Split into batch_size chunks
+        for i in range(0, len(topic_rows), batch_size):
+            chunks.append(topic_rows[i:i + batch_size])
+
+    # Dedicated negative chunk using text-verified negatives (catches any missed)
+    if "sentiment_text" in rows[0]:
+        # Enriched: use sentiment_text field instead of regex scan
+        negatives = [r for r in rows if r.get("sentiment_text") == "negative"]
+    else:
+        negatives = _text_verified_negatives(rows)
+
+    if len(negatives) >= 5:
+        negatives.sort(key=lambda r: _SEV_ORDER.get(r.get("severity", "low"), 2))
+        chunks.append(negatives)
+
+    return chunks
+
+
+def _text_verified_negatives(rows: list) -> list:
+    """
+    Return label=0 rows where the review text itself contains negative language.
+    Filters out mislabeled reviews (positive text, wrong label) that would otherwise
+    cause the LLM to hallucinate complaint themes.
+    """
+    return [
+        r for r in rows
+        if int(r.get("label", 1)) == 0 and bool(_NEGATIVE_SIGNALS.search(r.get("text", "")))
+    ]
+
+
 def progress_bar(current, total, start_time, width=40):
     pct = current / total
     filled = int(pct * width)
@@ -38,6 +124,48 @@ def progress_bar(current, total, start_time, width=40):
 
 
 # ─── Chunk processing ─────────────────────────────────────────────────────────
+
+def audit_chunk_hallucinations(obj: dict, chunk_rows: list) -> dict:
+    """
+    Cross-reference LLM output against source rows to detect hallucinations.
+    Returns a hallucination audit dict attached to the chunk result.
+    """
+    texts = [r.get("text", "").lower() for r in chunk_rows]
+    positive_ids = {r.get("review_id") for r in chunk_rows if int(r.get("label", 1)) == 1}
+    chunk_size = len(chunk_rows)
+
+    unverified_quotes = 0
+    label_mismatches = 0
+    total_evidence = 0
+    inflated_counts = 0
+
+    all_themes = obj.get("top_complaints", []) + obj.get("top_strengths", [])
+    for theme in all_themes:
+        claimed_count = theme.get("review_count", 0)
+        if claimed_count > chunk_size:
+            inflated_counts += 1
+
+        for ev in theme.get("evidence", []):
+            total_evidence += 1
+            quote = ev.get("quote", "").lower().strip()
+            review_id = ev.get("review_id")
+
+            # Check if quote text appears in any source review
+            if quote and not any(quote[:60] in t for t in texts):
+                unverified_quotes += 1
+
+            # Check if a positive review was cited as complaint evidence
+            if theme in obj.get("top_complaints", []) and review_id in positive_ids:
+                label_mismatches += 1
+
+    return {
+        "total_evidence": total_evidence,
+        "unverified_quotes": unverified_quotes,
+        "label_mismatches": label_mismatches,
+        "inflated_counts": inflated_counts,
+        "hallucination_flags": unverified_quotes + label_mismatches + inflated_counts,
+    }
+
 
 def process_chunk(chunk_rows, chunk_id, chunks_dir):
     """Process one chunk. Returns parsed obj or None on failure."""
@@ -56,6 +184,8 @@ def process_chunk(chunk_rows, chunk_id, chunks_dir):
                 f"Error: {err}\n\nRaw output:\n{output_str}"
             )
             return None
+
+        obj["_audit"] = audit_chunk_hallucinations(obj, chunk_rows)
 
         with open(chunk_file, "w") as f:
             json.dump(obj, f)
@@ -250,12 +380,13 @@ def main():
     # Split into chunks
     chunks = [rows[i:i + args.chunk_size] for i in range(0, total, args.chunk_size)]
 
-    # Add a dedicated negative-only chunk if there are enough negatives
-    # This guarantees complaints surface even when negatives are sparse (< 5 per chunk)
-    negatives = [r for r in rows if int(r.get("label", 1)) == 0]
+    # Add a dedicated negative-only chunk using TEXT-verified negatives.
+    # We filter by text content, not just label, to avoid mislabeled reviews
+    # generating hallucinated complaints.
+    negatives = _text_verified_negatives(rows)
     if len(negatives) >= 5:
         chunks.append(negatives)
-        print(f"Adding dedicated negative chunk ({len(negatives)} reviews) to surface complaints")
+        print(f"Adding dedicated negative chunk ({len(negatives)} text-verified negatives)")
 
     n_chunks = len(chunks)
 
