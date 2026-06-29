@@ -2,3 +2,5 @@ pandas
 requests
 jsonschema
 rapidfuzz
+flask
+anthropic

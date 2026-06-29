@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Review Intelligence</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #0a0a0f;
+    --surface: #13131a;
+    --surface2: #1c1c26;
+    --border: #2a2a38;
+    --text: #e8e8f0;
+    --muted: #6b6b80;
+    --accent: #7c6af7;
+    --green: #22c55e;
+    --red: #ef4444;
+    --amber: #f59e0b;
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Mono', monospace;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 20px;
+  }
+
+  .container { max-width: 680px; width: 100%; }
+
+  header { text-align: center; margin-bottom: 48px; }
+
+  header h1 {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(2rem, 5vw, 3.2rem);
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    background: linear-gradient(135deg, #e8e8f0 0%, #7c6af7 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    line-height: 1.1;
+    margin-bottom: 12px;
+  }
+
+  header p {
+    color: var(--muted);
+    font-size: 0.85rem;
+    line-height: 1.6;
+  }
+
+  .badge-row {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 14px;
+    flex-wrap: wrap;
+  }
+
+  .badge {
+    font-size: 0.7rem;
+    padding: 4px 12px;
+    border-radius: 99px;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+
+  .badge-claude { background: #7c6af7; color: #fff; }
+  .badge-ollama { background: #2a2a38; color: var(--muted); border: 1px solid var(--border); }
+
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 32px;
+    margin-bottom: 16px;
+  }
+
+  .card h2 {
+    font-family: 'Syne', sans-serif;
+    font-size: 0.75rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 20px;
+  }
+
+  .drop-zone {
+    border: 2px dashed var(--border);
+    border-radius: 12px;
+    padding: 40px 20px;
+    text-align: center;
+    cursor: pointer;
+    transition: border-color 0.2s, background 0.2s;
+    margin-bottom: 20px;
+  }
+
+  .drop-zone:hover, .drop-zone.drag-over {
+    border-color: var(--accent);
+    background: rgba(124, 106, 247, 0.05);
+  }
+
+  .drop-zone .icon { font-size: 2rem; margin-bottom: 10px; }
+  .drop-zone .label { color: var(--text); font-size: 0.9rem; }
+  .drop-zone .sub { color: var(--muted); font-size: 0.78rem; margin-top: 6px; }
+  .drop-zone .filename { color: var(--accent); font-size: 0.85rem; margin-top: 8px; font-weight: 500; }
+
+  #file-input { display: none; }
+
+  .options-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+
+  .field label {
+    display: block;
+    font-size: 0.72rem;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: 6px;
+  }
+
+  .field input[type="number"] {
+    width: 100%;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 10px 14px;
+    color: var(--text);
+    font-family: 'DM Mono', monospace;
+    font-size: 0.9rem;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+
+  .field input[type="number"]:focus { border-color: var(--accent); }
+
+  .btn {
+    width: 100%;
+    background: var(--accent);
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    padding: 14px 20px;
+    font-family: 'Syne', sans-serif;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: opacity 0.2s, transform 0.1s;
+  }
+
+  .btn:hover { opacity: 0.9; }
+  .btn:active { transform: scale(0.98); }
+  .btn:disabled { opacity: 0.45; cursor: not-allowed; }
+
+  .sample-link {
+    text-align: center;
+    margin-top: 12px;
+    font-size: 0.78rem;
+    color: var(--muted);
+  }
+
+  .sample-link a { color: var(--accent); text-decoration: none; }
+  .sample-link a:hover { text-decoration: underline; }
+
+  /* Progress */
+  #progress-section { display: none; }
+
+  .progress-track {
+    height: 6px;
+    background: var(--surface2);
+    border-radius: 99px;
+    overflow: hidden;
+    margin-bottom: 12px;
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #7c6af7, #a78bfa);
+    border-radius: 99px;
+    width: 0%;
+    transition: width 0.5s ease;
+  }
+
+  .progress-message {
+    font-size: 0.82rem;
+    color: var(--muted);
+    text-align: center;
+  }
+
+  .status-icon { font-size: 1.2rem; display: inline-block; margin-right: 6px; }
+
+  /* Error */
+  .error-box {
+    background: rgba(239, 68, 68, 0.1);
+    border: 1px solid rgba(239, 68, 68, 0.3);
+    border-radius: 10px;
+    padding: 16px 20px;
+    color: var(--red);
+    font-size: 0.82rem;
+    margin-top: 12px;
+    display: none;
+  }
+
+  /* Format help */
+  .format-help {
+    background: var(--surface2);
+    border-radius: 10px;
+    padding: 16px 20px;
+    margin-top: 16px;
+  }
+
+  .format-help p {
+    font-size: 0.78rem;
+    color: var(--muted);
+    margin-bottom: 10px;
+  }
+
+  .format-help pre {
+    font-size: 0.75rem;
+    color: var(--text);
+    overflow-x: auto;
+  }
+
+  @keyframes spin {
+    to { transform: rotate(360deg); }
+  }
+
+  .spinner {
+    display: inline-block;
+    width: 14px;
+    height: 14px;
+    border: 2px solid rgba(255,255,255,0.3);
+    border-top-color: #fff;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+    vertical-align: middle;
+    margin-right: 6px;
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <header>
+    <h1>Review Intelligence</h1>
+    <p>Upload a CSV of product reviews and get an AI-generated report<br>with sentiment analysis, key themes, and insights.</p>
+    <div class="badge-row">
+      {% if using_claude %}
+        <span class="badge badge-claude">⚡ Powered by Claude API</span>
+      {% else %}
+        <span class="badge badge-ollama">🖥 Using local Ollama</span>
+      {% endif %}
+    </div>
+  </header>
+
+  <div class="card" id="upload-card">
+    <h2>Upload Your Dataset</h2>
+
+    <div class="drop-zone" id="drop-zone" onclick="document.getElementById('file-input').click()">
+      <div class="icon">📂</div>
+      <div class="label">Drop your CSV here or click to browse</div>
+      <div class="sub">Required columns: <code>Text</code> and <code>label</code> (1=positive, 0=negative)</div>
+      <div class="filename" id="file-name"></div>
+    </div>
+    <input type="file" id="file-input" accept=".csv">
+
+    <div class="options-row">
+      <div class="field">
+        <label>Max Reviews</label>
+        <input type="number" id="max-reviews" value="200" min="10" max="5000">
+      </div>
+      <div class="field">
+        <label>Chunk Size</label>
+        <input type="number" id="chunk-size" value="50" min="10" max="200">
+      </div>
+    </div>
+
+    <button class="btn" id="submit-btn" onclick="startJob()" disabled>
+      Analyze Reviews
+    </button>
+
+    <div class="sample-link">
+      No dataset? <a href="/sample" download>Download the sample CSV</a> to try it out.
+    </div>
+
+    <div class="format-help">
+      <p>Your CSV must have these two columns:</p>
+      <pre>Text,label
+"Great app, love it!",1
+"Crashes constantly",0
+"Works fine for basic use",1</pre>
+    </div>
+  </div>
+
+  <div class="card" id="progress-section">
+    <h2>Processing</h2>
+    <div class="progress-track">
+      <div class="progress-fill" id="progress-fill"></div>
+    </div>
+    <div class="progress-message" id="progress-message">Starting...</div>
+    <div class="error-box" id="error-box"></div>
+  </div>
+
+</div>
+
+<script>
+  let selectedFile = null;
+  let pollInterval = null;
+
+  const dropZone = document.getElementById('drop-zone');
+  const fileInput = document.getElementById('file-input');
+  const fileName = document.getElementById('file-name');
+  const submitBtn = document.getElementById('submit-btn');
+
+  fileInput.addEventListener('change', e => {
+    if (e.target.files[0]) setFile(e.target.files[0]);
+  });
+
+  dropZone.addEventListener('dragover', e => {
+    e.preventDefault();
+    dropZone.classList.add('drag-over');
+  });
+
+  dropZone.addEventListener('dragleave', () => dropZone.classList.remove('drag-over'));
+
+  dropZone.addEventListener('drop', e => {
+    e.preventDefault();
+    dropZone.classList.remove('drag-over');
+    if (e.dataTransfer.files[0]) setFile(e.dataTransfer.files[0]);
+  });
+
+  function setFile(file) {
+    if (!file.name.endsWith('.csv')) {
+      alert('Please upload a .csv file');
+      return;
+    }
+    selectedFile = file;
+    fileName.textContent = '✓ ' + file.name;
+    submitBtn.disabled = false;
+  }
+
+  async function startJob() {
+    if (!selectedFile) return;
+
+    const formData = new FormData();
+    formData.append('file', selectedFile);
+    formData.append('max_reviews', document.getElementById('max-reviews').value);
+    formData.append('chunk_size', document.getElementById('chunk-size').value);
+
+    submitBtn.disabled = true;
+    submitBtn.innerHTML = '<span class="spinner"></span>Uploading...';
+
+    try {
+      const res = await fetch('/upload', { method: 'POST', body: formData });
+      const data = await res.json();
+      if (data.error) throw new Error(data.error);
+
+      document.getElementById('upload-card').style.display = 'none';
+      document.getElementById('progress-section').style.display = 'block';
+
+      pollStatus(data.job_id);
+    } catch (err) {
+      submitBtn.disabled = false;
+      submitBtn.textContent = 'Analyze Reviews';
+      alert('Upload failed: ' + err.message);
+    }
+  }
+
+  function pollStatus(jobId) {
+    pollInterval = setInterval(async () => {
+      try {
+        const res = await fetch('/status/' + jobId);
+        const data = await res.json();
+
+        document.getElementById('progress-fill').style.width = (data.progress || 0) + '%';
+        document.getElementById('progress-message').textContent = data.message || '...';
+
+        if (data.status === 'done') {
+          clearInterval(pollInterval);
+          document.getElementById('progress-fill').style.width = '100%';
+          document.getElementById('progress-message').innerHTML =
+            '✅ Report ready! <a href="/report/' + jobId + '" target="_blank" style="color:var(--accent)">Open report →</a>';
+        } else if (data.status === 'error') {
+          clearInterval(pollInterval);
+          const errBox = document.getElementById('error-box');
+          errBox.textContent = '❌ ' + (data.error || 'Unknown error');
+          errBox.style.display = 'block';
+          document.getElementById('progress-message').textContent = 'Failed.';
+        }
+      } catch (e) {
+        // network hiccup, keep polling
+      }
+    }, 2000);
+  }
+</script>
+</body>
+</html>
