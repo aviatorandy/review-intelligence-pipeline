@@ -46,6 +46,8 @@ def _update_job(job_id: str, **kwargs):
 
 
 def _run_pipeline(job_id: str, csv_path: Path):
+    import time as _time
+    pipeline_start = _time.time()
     try:
         _update_job(job_id, status="running", progress=2, message="Reading your reviews...")
         with _jobs_lock:
@@ -193,20 +195,42 @@ def _run_pipeline(job_id: str, csv_path: Path):
             with open(output_path, "w") as f:
                 json.dump(final, f, indent=2)
 
+            elapsed = round(_time.time() - pipeline_start)
+            elapsed_str = f"{elapsed // 60}m {elapsed % 60:02d}s" if elapsed >= 60 else f"{elapsed}s"
+            final["meta"]["elapsed_seconds"] = elapsed
+            final["meta"]["elapsed_str"] = elapsed_str
+
             _update_job(job_id, progress=93, message="Building your insights report...")
 
             html_path = run_dir / "report.html"
             generate_html(final, str(html_path), data_path=original_filename or str(csv_path), job_id=job_id)
 
+        elapsed = round(_time.time() - pipeline_start)
+        elapsed_str = f"{elapsed // 60}m {elapsed % 60:02d}s" if elapsed >= 60 else f"{elapsed}s"
+
         _update_job(
             job_id,
             status="done",
             progress=100,
-            message="Your insights report is ready!",
+            message=f"Your insights report is ready! (generated in {elapsed_str})",
             report_path=str(html_path),
             output_path=str(output_path),
             embed_status="pending",
+            elapsed_seconds=elapsed,
         )
+
+        # Append to run log
+        log_path = PROJECT_ROOT / "results" / "run_log.jsonl"
+        log_path.parent.mkdir(parents=True, exist_ok=True)
+        with open(log_path, "a") as lf:
+            lf.write(json.dumps({
+                "timestamp": datetime.now().isoformat(),
+                "job_id": job_id,
+                "filename": original_filename,
+                "elapsed_seconds": elapsed,
+                "elapsed_str": elapsed_str,
+                "total_reviews": total_uploaded,
+            }) + "\n")
 
         t = threading.Thread(target=_run_embedding, args=(job_id,), daemon=True)
         t.start()

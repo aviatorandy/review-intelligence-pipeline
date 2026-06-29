@@ -444,6 +444,7 @@ def generate_html(obj, output_path, data_path=None, job_id=None):
     tier = meta.get("tier", "")
     chunks_processed = meta.get("chunks_processed", 0)
     chunks_failed = meta.get("chunks_failed", 0)
+    elapsed_str = meta.get("elapsed_str", "")
 
     quality = obj.get("quality", {})
     schema_pass_rate = quality.get("schema_pass_rate", 1.0)
@@ -939,6 +940,8 @@ def generate_html(obj, output_path, data_path=None, job_id=None):
 </div>
 
 {ask_section_html}
+
+{"" if not elapsed_str else f'<div style="text-align:center;font-size:0.75rem;color:#9ca3af;padding:24px 0 8px">Generated in {elapsed_str}</div>'}
 
 </body>
 </html>"""
