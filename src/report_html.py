@@ -41,7 +41,7 @@ def _ask_section(job_id: str) -> str:
   <div id="answer-box" style="display:none;background:#f5f6fa;border:1px solid #e2e5ec;border-radius:12px;padding:20px 24px">
     <div style="font-size:0.7rem;font-weight:700;color:#6b7280;text-transform:uppercase;letter-spacing:0.1em;margin-bottom:6px">Question</div>
     <div id="answer-q" style="font-size:0.88rem;color:#4f46e5;font-weight:500;margin-bottom:14px"></div>
-    <div id="answer-text" style="font-size:0.88rem;line-height:1.7;color:#111827;white-space:pre-wrap"></div>
+    <div id="answer-text" style="font-size:0.92rem;line-height:1.75;color:#111827"></div>
     <div id="sources-wrap" style="margin-top:14px"></div>
   </div>
 </div>

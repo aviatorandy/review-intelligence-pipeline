@@ -6,21 +6,12 @@ from .embeddings import query_index
 from .llm_client import call_llm
 
 
-ASK_SYSTEM = """You are a product analyst answering questions about Amazon product reviews.
-You will be given a question and a set of relevant reviews retrieved by semantic search.
-Answer the question directly and concisely, grounding every claim in the reviews provided.
-Format your response as:
-
-**Answer:** <2-3 sentence direct answer>
-
-**Key evidence:**
-- Review #<id> (<sentiment>): "<quote>"
-- Review #<id> (<sentiment>): "<quote>"
-(up to 5 pieces of evidence)
-
-**Confidence:** <high/medium/low> — <one sentence reason>
-
-Respond in plain text, no JSON."""
+ASK_SYSTEM = """You are a helpful product analyst answering questions about Amazon product reviews.
+You will be given a question and a set of relevant customer reviews.
+Write a clear, conversational answer in 2-4 sentences as if explaining to a colleague.
+Use natural language — no bullet points, no headers, no JSON, no markdown formatting like ** or #.
+Ground your answer in what the reviews actually say, but write it naturally.
+If the reviews don't contain enough information to answer confidently, say so plainly."""
 
 
 def ask_question(job_id: str, question: str) -> dict:
