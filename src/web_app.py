@@ -260,6 +260,7 @@ def _run_pipeline(job_id: str, csv_path: Path):
         # Append to run log
         log_path = PROJECT_ROOT / "results" / "run_log.jsonl"
         log_path.parent.mkdir(parents=True, exist_ok=True)
+        h = final.get("quality", {}).get("hallucination", {}) if not apps else {}
         with open(log_path, "a") as lf:
             lf.write(json.dumps({
                 "timestamp": datetime.now().isoformat(),
@@ -268,6 +269,9 @@ def _run_pipeline(job_id: str, csv_path: Path):
                 "elapsed_seconds": elapsed,
                 "elapsed_str": elapsed_str,
                 "total_reviews": total_uploaded,
+                "hallucination_rate": h.get("rate", None),
+                "unverified_quotes": h.get("unverified_quotes", None),
+                "label_mismatches": h.get("label_mismatches", None),
             }) + "\n")
 
         t = threading.Thread(target=_run_embedding, args=(job_id,), daemon=True)

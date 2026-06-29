@@ -106,7 +106,7 @@ def run_synthesis(aggregated: dict) -> dict:
 
 
 def compute_quality_metrics(chunk_results: list, final: dict) -> dict:
-    """Lightweight quality checks on pipeline output."""
+    """Quality checks and hallucination audit aggregated across all chunks."""
     total_chunks = len(chunk_results)
     valid_chunks = sum(1 for r in chunk_results if r is not None)
 
@@ -114,16 +114,37 @@ def compute_quality_metrics(chunk_results: list, final: dict) -> dict:
     themes_with_evidence = sum(1 for t in all_themes if t.get("evidence"))
     evidence_coverage = round(themes_with_evidence / len(all_themes), 2) if all_themes else 1.0
 
-    bullets_with_evidence = sum(
-        1 for b in final.get("summary_bullets", []) if b.get("evidence")
-    )
-    total_bullets = len(final.get("summary_bullets", []))
+    # Aggregate hallucination audit across chunks
+    total_evidence = 0
+    unverified_quotes = 0
+    label_mismatches = 0
+    inflated_counts = 0
+    chunks_with_flags = 0
+
+    for r in chunk_results:
+        if r is None:
+            continue
+        audit = r.get("_audit", {})
+        total_evidence += audit.get("total_evidence", 0)
+        unverified_quotes += audit.get("unverified_quotes", 0)
+        label_mismatches += audit.get("label_mismatches", 0)
+        inflated_counts += audit.get("inflated_counts", 0)
+        if audit.get("hallucination_flags", 0) > 0:
+            chunks_with_flags += 1
+
+    hallucination_rate = round(unverified_quotes / total_evidence, 3) if total_evidence > 0 else 0.0
 
     return {
         "schema_pass_rate": round(valid_chunks / total_chunks, 2) if total_chunks else 1.0,
         "evidence_coverage": evidence_coverage,
-        "bullets_with_evidence": bullets_with_evidence,
-        "total_bullets": total_bullets,
         "chunks_succeeded": valid_chunks,
         "chunks_total": total_chunks,
+        "hallucination": {
+            "rate": hallucination_rate,
+            "unverified_quotes": unverified_quotes,
+            "label_mismatches": label_mismatches,
+            "inflated_counts": inflated_counts,
+            "chunks_with_flags": chunks_with_flags,
+            "total_evidence_checked": total_evidence,
+        },
     }

@@ -125,6 +125,48 @@ def progress_bar(current, total, start_time, width=40):
 
 # ─── Chunk processing ─────────────────────────────────────────────────────────
 
+def audit_chunk_hallucinations(obj: dict, chunk_rows: list) -> dict:
+    """
+    Cross-reference LLM output against source rows to detect hallucinations.
+    Returns a hallucination audit dict attached to the chunk result.
+    """
+    texts = [r.get("text", "").lower() for r in chunk_rows]
+    positive_ids = {r.get("review_id") for r in chunk_rows if int(r.get("label", 1)) == 1}
+    chunk_size = len(chunk_rows)
+
+    unverified_quotes = 0
+    label_mismatches = 0
+    total_evidence = 0
+    inflated_counts = 0
+
+    all_themes = obj.get("top_complaints", []) + obj.get("top_strengths", [])
+    for theme in all_themes:
+        claimed_count = theme.get("review_count", 0)
+        if claimed_count > chunk_size:
+            inflated_counts += 1
+
+        for ev in theme.get("evidence", []):
+            total_evidence += 1
+            quote = ev.get("quote", "").lower().strip()
+            review_id = ev.get("review_id")
+
+            # Check if quote text appears in any source review
+            if quote and not any(quote[:60] in t for t in texts):
+                unverified_quotes += 1
+
+            # Check if a positive review was cited as complaint evidence
+            if theme in obj.get("top_complaints", []) and review_id in positive_ids:
+                label_mismatches += 1
+
+    return {
+        "total_evidence": total_evidence,
+        "unverified_quotes": unverified_quotes,
+        "label_mismatches": label_mismatches,
+        "inflated_counts": inflated_counts,
+        "hallucination_flags": unverified_quotes + label_mismatches + inflated_counts,
+    }
+
+
 def process_chunk(chunk_rows, chunk_id, chunks_dir):
     """Process one chunk. Returns parsed obj or None on failure."""
     chunk_file = chunks_dir / f"chunk_{chunk_id:04d}.json"
@@ -142,6 +184,8 @@ def process_chunk(chunk_rows, chunk_id, chunks_dir):
                 f"Error: {err}\n\nRaw output:\n{output_str}"
             )
             return None
+
+        obj["_audit"] = audit_chunk_hallucinations(obj, chunk_rows)
 
         with open(chunk_file, "w") as f:
             json.dump(obj, f)
