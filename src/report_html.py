@@ -12,30 +12,33 @@ def _ask_section(job_id: str) -> str:
     return f"""
 <div style="background:#fff;border-top:1px solid #e2e5ec;margin-top:48px;padding:48px 20px 64px">
 <div style="max-width:860px;margin:0 auto">
-  <h2 style="font-size:1rem;font-weight:700;color:#111827;margin-bottom:16px;display:flex;align-items:center;gap:8px">💬 Ask the Reviews</h2>
+  <h2 style="font-size:1.1rem;font-weight:700;color:#111827;margin-bottom:6px">Ask the Reviews</h2>
+  <p style="font-size:0.85rem;color:#6b7280;margin-bottom:20px">Get plain-English answers grounded in what your customers actually said.</p>
 
   <div id="embed-status-row" style="font-size:0.8rem;color:#6b7280;margin-bottom:16px;display:flex;align-items:center;gap:8px;background:#f5f6fa;border:1px solid #e2e5ec;border-radius:8px;padding:10px 14px">
     <span id="embed-dot" style="width:8px;height:8px;border-radius:50%;background:#d97706;display:inline-block;animation:pulse 1.5s ease infinite;flex-shrink:0"></span>
-    <span id="embed-status-text">Building search index — this takes a minute after the report loads...</span>
+    <span id="embed-status-text">Building search index — ready in about a minute after the report loads...</span>
   </div>
 
   <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px">
-    <span class="sq-chip" onclick="setQ(this)">Why do users love this product?</span>
-    <span class="sq-chip" onclick="setQ(this)">What are the main complaints?</span>
-    <span class="sq-chip" onclick="setQ(this)">Is it good for kids?</span>
-    <span class="sq-chip" onclick="setQ(this)">What do people say about ads?</span>
-    <span class="sq-chip" onclick="setQ(this)">Does it work offline?</span>
+    <span class="sq-chip" onclick="setQ(this)">What should we fix first?</span>
+    <span class="sq-chip" onclick="setQ(this)">Why are customers leaving negative reviews?</span>
+    <span class="sq-chip" onclick="setQ(this)">What do customers love most?</span>
+    <span class="sq-chip" onclick="setQ(this)">What should we change in the Amazon listing?</span>
+    <span class="sq-chip" onclick="setQ(this)">What are the best customer quotes for marketing?</span>
+    <span class="sq-chip" onclick="setQ(this)">Compare 5-star and 1-star reviews.</span>
+    <span class="sq-chip" onclick="setQ(this)">What are the top roadmap recommendations?</span>
   </div>
 
   <div style="display:flex;gap:10px;margin-bottom:16px">
-    <input id="ask-input" type="text" placeholder="e.g. Why do users uninstall the app?"
+    <input id="ask-input" type="text" placeholder="Ask anything about your customers..."
       disabled style="flex:1;background:#f5f6fa;border:1px solid #d0d5df;border-radius:10px;
       padding:12px 16px;color:#111827;font-family:'Inter',sans-serif;font-size:0.9rem;outline:none;
       transition:border-color 0.2s,box-shadow 0.2s">
     <button id="ask-btn" onclick="askQ()" disabled
       style="background:#4f46e5;color:#fff;border:none;border-radius:10px;padding:12px 24px;
       font-family:'Inter',sans-serif;font-weight:600;font-size:0.9rem;cursor:pointer;opacity:0.4;
-      transition:opacity 0.2s,background 0.15s">Ask</button>
+      transition:opacity 0.2s,background 0.15s;white-space:nowrap">Ask</button>
   </div>
 
   <div id="answer-box" style="display:none;background:#f5f6fa;border:1px solid #e2e5ec;border-radius:12px;padding:20px 24px">
@@ -84,7 +87,7 @@ async function askQ() {{
     document.getElementById('answer-q').textContent = data.question;
     document.getElementById('answer-text').textContent = data.answer;
     const sw = document.getElementById('sources-wrap');
-    sw.innerHTML = '<div style="font-size:0.7rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:8px">Retrieved Reviews</div>';
+    sw.innerHTML = '<div style="font-size:0.7rem;color:#6b7280;text-transform:uppercase;letter-spacing:0.1em;margin-bottom:8px">Source Reviews</div>';
     (data.sources || []).forEach(s => {{
       const icon = s.sentiment === 'positive' ? '👍' : '👎';
       const col = s.sentiment === 'positive' ? '#16a34a' : '#dc2626';
@@ -112,15 +115,15 @@ document.getElementById('ask-input').addEventListener('keydown', e => {{
     if (data.embed_status === 'ready') {{
       embedReady = true;
       dot.style.animation = 'none';
-      dot.style.background = 'var(--green)';
-      txt.textContent = 'Search index ready — ask anything about these reviews';
+      dot.style.background = '#16a34a';
+      txt.textContent = 'Search index ready — ask anything about your customers';
       document.getElementById('ask-input').disabled = false;
       const btn = document.getElementById('ask-btn');
       btn.disabled = false;
       btn.style.opacity = '1';
     }} else if (data.embed_status === 'error') {{
       dot.style.animation = 'none';
-      dot.style.background = 'var(--red)';
+      dot.style.background = '#dc2626';
       txt.textContent = 'Indexing failed: ' + (data.embed_message || '');
     }} else {{
       if (data.embed_message) txt.textContent = data.embed_message;
@@ -137,12 +140,25 @@ def generate_html(obj, output_path, data_path=None, job_id=None):
     neg = sentiment.get("negative_rate", 0)
     n = sentiment.get("n_reviews", 0)
 
-    # Derive product label from data file path (e.g. "angry_birds.csv" → "ANGRY BIRDS")
     if data_path:
-        import os
-        product_label = os.path.splitext(os.path.basename(data_path))[0].replace("_", " ").upper()
+        product_label = os.path.splitext(os.path.basename(data_path))[0].replace("_", " ").title()
     else:
-        product_label = "PRODUCT"
+        product_label = "Product"
+
+    meta = obj.get("meta", {})
+    total_uploaded = meta.get("total_uploaded", n)
+    total_analyzed = meta.get("total_analyzed", n)
+    tier = meta.get("tier", "")
+    chunks_processed = meta.get("chunks_processed", 0)
+    chunks_failed = meta.get("chunks_failed", 0)
+
+    quality = obj.get("quality", {})
+    schema_pass_rate = quality.get("schema_pass_rate", 1.0)
+
+    executive_summary = obj.get("executive_summary", "")
+    improvement_recs = obj.get("improvement_recommendations", [])
+    listing_recs = obj.get("listing_recommendations", [])
+    marketing_quotes = obj.get("top_marketing_quotes", [])
 
     def confidence_badge(conf):
         styles = {
@@ -153,24 +169,34 @@ def generate_html(obj, output_path, data_path=None, job_id=None):
         style = styles.get(conf, "background:#f3f4f6;color:#6b7280;border:1px solid #e5e7eb")
         return f'<span class="badge" style="{style}">{conf}</span>'
 
+    def priority_badge(priority):
+        styles = {
+            "high":   "background:#fee2e2;color:#dc2626;border:1px solid #fca5a5",
+            "medium": "background:#fef3c7;color:#d97706;border:1px solid #fde68a",
+            "low":    "background:#f3f4f6;color:#6b7280;border:1px solid #e5e7eb",
+        }
+        style = styles.get(priority, "background:#f3f4f6;color:#6b7280;border:1px solid #e5e7eb")
+        label = {"high": "High Priority", "medium": "Medium", "low": "Low"}.get(priority, priority)
+        return f'<span class="badge" style="{style}">{label}</span>'
+
     def evidence_html(evidence_list):
         items = ""
-        for ev in evidence_list:
+        for ev in evidence_list[:3]:
             items += f'''
             <div class="evidence-item">
-                <span class="review-id">Review #{ev["review_id"]}</span>
-                <span class="quote">"{ev["quote"]}"</span>
+                <span class="review-id">Review #{ev.get("review_id", "")}</span>
+                <span class="quote">"{ev.get("quote", "")}"</span>
             </div>'''
         return items
 
     def theme_cards(items, is_complaint=False):
         cards = ""
+        accent = "#ef4444" if is_complaint else "#22c55e"
         for item in items:
             theme = item.get("theme", item.get("claim", ""))
             count = item.get("review_count", "?")
             conf = item.get("confidence", "low")
             evidence = item.get("evidence", [])
-            accent = "#ef4444" if is_complaint else "#22c55e"
             cards += f'''
             <div class="card">
                 <div class="card-header">
@@ -184,35 +210,74 @@ def generate_html(obj, output_path, data_path=None, job_id=None):
             </div>'''
         return cards
 
-    def bullet_items(bullets):
-        items = ""
-        for b in bullets:
-            conf = b.get("confidence", "low")
-            evidence = b.get("evidence", [])
-            items += f'''
-            <div class="bullet-item">
-                <div class="bullet-header">
-                    {confidence_badge(conf)}
-                    <span class="bullet-claim">{b["claim"]}</span>
+    def improvement_cards(recs):
+        cards = ""
+        for i, rec in enumerate(recs):
+            title = rec.get("title", "")
+            desc = rec.get("description", "")
+            priority = rec.get("priority", "medium")
+            impact = rec.get("business_impact", "")
+            theme = rec.get("supporting_theme", "")
+            num = i + 1
+            cards += f'''
+            <div class="card">
+                <div class="card-header">
+                    <div style="display:flex;align-items:center;gap:10px">
+                        <span style="width:26px;height:26px;border-radius:50%;background:#eef2ff;color:#4f46e5;font-size:0.78rem;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0">{num}</span>
+                        <span class="theme-name">{title}</span>
+                    </div>
+                    {priority_badge(priority)}
                 </div>
-                <div class="evidence-list">{evidence_html(evidence)}</div>
+                <p style="font-size:0.88rem;color:#374151;line-height:1.65;margin-bottom:10px">{desc}</p>
+                {"" if not impact else f'<div style="background:#f5f6fa;border-left:3px solid #4f46e5;border-radius:0 8px 8px 0;padding:8px 12px;font-size:0.82rem;color:#4f46e5;font-weight:500;margin-bottom:8px">Business impact: {impact}</div>'}
+                {"" if not theme else f'<div style="font-size:0.75rem;color:#9ca3af">Based on: {theme}</div>'}
             </div>'''
-        return items
+        return cards
 
-    unknowns = obj.get("unknowns", [])
-    unknowns_html = ""
-    if unknowns:
-        tags = "".join(f'<span class="unknown-tag">{u}</span>' for u in unknowns)
-        unknowns_html = f'<section class="section"><h2>❓ Unknowns</h2><div class="unknown-tags">{tags}</div></section>'
+    def listing_cards(recs):
+        cards = ""
+        for rec in recs:
+            title = rec.get("title", "")
+            desc = rec.get("description", "")
+            rationale = rec.get("rationale", "")
+            cards += f'''
+            <div class="card">
+                <div class="card-header">
+                    <span class="theme-name">{title}</span>
+                </div>
+                <p style="font-size:0.88rem;color:#374151;line-height:1.65;margin-bottom:10px">{desc}</p>
+                {"" if not rationale else f'<div style="font-size:0.8rem;color:#6b7280;font-style:italic">{rationale}</div>'}
+            </div>'''
+        return cards
+
+    def marketing_quote_cards(quotes):
+        cards = ""
+        for q in quotes:
+            quote = q.get("quote", "")
+            theme = q.get("theme", "")
+            cards += f'''
+            <div style="background:#fafafa;border:1px solid #e2e5ec;border-radius:12px;padding:18px 22px;margin-bottom:10px">
+                <div style="font-size:1rem;color:#111827;line-height:1.65;font-style:italic;margin-bottom:8px">"{quote}"</div>
+                {"" if not theme else f'<div style="font-size:0.75rem;color:#6b7280;text-transform:uppercase;letter-spacing:0.07em;font-weight:600">{theme}</div>'}
+            </div>'''
+        return cards
+
+    # Quality indicator
+    q_pct = int(schema_pass_rate * 100)
+    q_color = "#16a34a" if q_pct >= 80 else "#d97706" if q_pct >= 60 else "#dc2626"
+    q_label = "Excellent" if q_pct >= 80 else "Good" if q_pct >= 60 else "Partial"
 
     ask_section_html = _ask_section(job_id) if job_id else ""
+
+    # Stat cards
+    tier_display = {"small": "Full Dataset", "medium": "Smart Sample", "large": "Large Dataset"}.get(tier, tier.title() if tier else "")
 
     html = f"""<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Review Intelligence Report</title>
+<title>{product_label} — Product Insights Report</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
   *, *::before, *::after {{ box-sizing: border-box; margin: 0; padding: 0; }}
@@ -248,48 +313,116 @@ def generate_html(obj, output_path, data_path=None, job_id=None):
   header {{
     border-bottom: 1px solid var(--border);
     padding-bottom: 28px;
-    margin-bottom: 40px;
+    margin-bottom: 36px;
   }}
 
   header h1 {{
-    font-size: clamp(1.8rem, 4vw, 2.6rem);
+    font-size: clamp(1.6rem, 4vw, 2.2rem);
     font-weight: 800;
     letter-spacing: -0.03em;
     color: var(--text);
     line-height: 1.15;
+    margin-bottom: 6px;
   }}
 
   header h1 span {{ color: var(--accent); }}
+  header .subtitle {{ color: var(--muted); font-size: 0.88rem; margin-top: 4px; }}
 
-  header .subtitle {{
-    color: var(--muted);
-    font-size: 0.88rem;
-    margin-top: 6px;
+  .export-row {{ display:flex; gap:8px; margin-top:14px; flex-wrap:wrap; }}
+  .export-btn {{
+    font-size:0.78rem;font-weight:600;padding:6px 14px;border-radius:8px;border:1px solid var(--border);
+    background:var(--surface);color:var(--muted);cursor:pointer;text-decoration:none;
+    font-family:'Inter',sans-serif;transition:border-color 0.15s,color 0.15s;
+  }}
+  .export-btn:hover {{ border-color:var(--accent);color:var(--accent); }}
+
+  /* Stat cards */
+  .stat-grid {{
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 12px;
+    margin-bottom: 32px;
   }}
 
-  .sentiment-block {{
+  .stat-card {{
     background: var(--surface);
     border: 1px solid var(--border);
     border-radius: 14px;
-    padding: 28px 32px;
+    padding: 18px 20px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+  }}
+
+  .stat-label {{
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--muted);
+    margin-bottom: 8px;
+  }}
+
+  .stat-value {{
+    font-size: 1.8rem;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    line-height: 1;
+  }}
+
+  .stat-sub {{
+    font-size: 0.75rem;
+    color: var(--muted);
+    margin-top: 4px;
+  }}
+
+  /* Executive summary */
+  .exec-summary {{
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 24px 28px;
     margin-bottom: 32px;
     box-shadow: 0 1px 3px rgba(0,0,0,0.05);
   }}
 
-  .sentiment-block h2 {{
-    font-size: 0.72rem;
+  .exec-summary .label {{
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--muted);
+    margin-bottom: 12px;
+  }}
+
+  .exec-summary p {{
+    font-size: 0.95rem;
+    line-height: 1.75;
+    color: var(--text);
+  }}
+
+  /* Sentiment */
+  .sentiment-block {{
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 24px 28px;
+    margin-bottom: 32px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+  }}
+
+  .section-label {{
+    font-size: 0.7rem;
     font-weight: 700;
     letter-spacing: 0.1em;
     text-transform: uppercase;
     color: var(--muted);
-    margin-bottom: 20px;
+    margin-bottom: 16px;
   }}
 
   .sentiment-row {{
     display: flex;
     align-items: center;
     gap: 14px;
-    margin-bottom: 12px;
+    margin-bottom: 10px;
   }}
 
   .sentiment-label {{
@@ -312,7 +445,6 @@ def generate_html(obj, output_path, data_path=None, job_id=None):
   .bar-fill {{
     height: 100%;
     border-radius: 99px;
-    transition: width 1.2s cubic-bezier(0.16, 1, 0.3, 1);
   }}
 
   .sentiment-pct {{
@@ -322,17 +454,11 @@ def generate_html(obj, output_path, data_path=None, job_id=None):
     font-weight: 600;
   }}
 
-  .n-reviews {{
-    font-size: 0.78rem;
-    color: var(--muted);
-    margin-top: 10px;
-  }}
-
   .section {{
     margin-bottom: 40px;
   }}
 
-  .section h2 {{
+  .section > h2 {{
     font-size: 1rem;
     font-weight: 700;
     margin-bottom: 16px;
@@ -367,6 +493,7 @@ def generate_html(obj, output_path, data_path=None, job_id=None):
     font-size: 0.95rem;
     font-weight: 700;
     color: var(--text);
+    flex: 1;
   }}
 
   .card-meta {{
@@ -415,42 +542,8 @@ def generate_html(obj, output_path, data_path=None, job_id=None):
     font-style: italic;
   }}
 
-  .bullet-item {{
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 16px 20px;
-    margin-bottom: 10px;
-    transition: border-color 0.15s, box-shadow 0.15s;
-    box-shadow: 0 1px 2px rgba(0,0,0,0.04);
-  }}
-
-  .bullet-item:hover {{ border-color: var(--accent); box-shadow: 0 2px 8px rgba(79,70,229,0.08); }}
-
-  .bullet-header {{
-    display: flex;
-    align-items: flex-start;
-    gap: 12px;
-    margin-bottom: 10px;
-    flex-wrap: wrap;
-  }}
-
-  .bullet-claim {{
-    font-size: 0.9rem;
-    line-height: 1.55;
-    flex: 1;
-    color: var(--text);
-  }}
-
-  .unknown-tags {{ display: flex; flex-wrap: wrap; gap: 8px; }}
-
-  .unknown-tag {{
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 99px;
-    padding: 5px 14px;
-    font-size: 0.78rem;
-    color: var(--muted);
+  .quality-bar {{
+    display:flex;align-items:center;gap:12px;margin-top:8px;
   }}
 </style>
 </head>
@@ -458,12 +551,48 @@ def generate_html(obj, output_path, data_path=None, job_id=None):
 <div class="container">
 
   <header>
-    <h1>Review <span style="color:var(--accent)">Intelligence</span> Report</h1>
-    <p class="subtitle">{product_label} · Amazon Reviews · {n} reviews analyzed</p>
+    <div style="font-size:0.72rem;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:var(--muted);margin-bottom:6px">Product Insights Report</div>
+    <h1>{product_label}</h1>
+    <p class="subtitle">{total_analyzed:,} reviews analyzed · {tier_display}</p>
+    <div class="export-row">
+      {"" if not job_id else f'<a class="export-btn" href="/export/csv/{job_id}" download>⬇ Export CSV</a><a class="export-btn" href="/export/report/{job_id}" download>⬇ Download Report</a>'}
+    </div>
   </header>
 
+  <!-- Dashboard stat cards -->
+  <div class="stat-grid">
+    <div class="stat-card">
+      <div class="stat-label">Reviews Analyzed</div>
+      <div class="stat-value" style="color:var(--accent)">{total_analyzed:,}</div>
+      <div class="stat-sub">of {total_uploaded:,} uploaded</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Positive Sentiment</div>
+      <div class="stat-value" style="color:var(--green)">{pos*100:.0f}%</div>
+      <div class="stat-sub">{int(pos * n):,} satisfied customers</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Negative Sentiment</div>
+      <div class="stat-value" style="color:var(--red)">{neg*100:.0f}%</div>
+      <div class="stat-sub">{int(neg * n):,} customers with issues</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Data Quality</div>
+      <div class="stat-value" style="color:{q_color}">{q_pct}%</div>
+      <div class="stat-sub">{q_label} · {chunks_processed} chunks passed</div>
+    </div>
+  </div>
+
+  {"" if not executive_summary else f'''
+  <!-- Executive Summary -->
+  <div class="exec-summary">
+    <div class="label">Executive Summary</div>
+    <p>{executive_summary}</p>
+  </div>'''}
+
+  <!-- Sentiment -->
   <div class="sentiment-block">
-    <h2>Sentiment Distribution</h2>
+    <div class="section-label">Sentiment Distribution</div>
     <div class="sentiment-row">
       <span class="sentiment-label">Positive</span>
       <div class="bar-track">
@@ -478,25 +607,38 @@ def generate_html(obj, output_path, data_path=None, job_id=None):
       </div>
       <span class="sentiment-pct" style="color: var(--red)">{neg*100:.1f}%</span>
     </div>
-    <p class="n-reviews">Based on {n} sampled reviews with ground-truth labels</p>
   </div>
 
+  {"" if not improvement_recs else f'''
+  <!-- Improvement Recommendations -->
   <section class="section">
-    <h2>📋 Executive Summary</h2>
-    {bullet_items(obj.get("summary_bullets", []))}
-  </section>
+    <h2>🛠 Top Improvement Opportunities</h2>
+    {improvement_cards(improvement_recs)}
+  </section>'''}
 
   <section class="section">
-    <h2>✅ Top Strengths</h2>
-    {theme_cards(obj.get("top_strengths", []), is_complaint=False)}
-  </section>
-
-  <section class="section">
-    <h2>❌ Top Complaints</h2>
+    <h2>❌ Top Customer Complaints</h2>
     {theme_cards(obj.get("top_complaints", []), is_complaint=True)}
   </section>
 
-  {unknowns_html}
+  <section class="section">
+    <h2>✅ What Customers Love</h2>
+    {theme_cards(obj.get("top_strengths", []), is_complaint=False)}
+  </section>
+
+  {"" if not listing_recs else f'''
+  <!-- Listing Recommendations -->
+  <section class="section">
+    <h2>🛒 Amazon Listing Recommendations</h2>
+    {listing_cards(listing_recs)}
+  </section>'''}
+
+  {"" if not marketing_quotes else f'''
+  <!-- Marketing Quotes -->
+  <section class="section">
+    <h2>⭐ Best Customer Quotes for Marketing</h2>
+    {marketing_quote_cards(marketing_quotes)}
+  </section>'''}
 
 </div>
 
